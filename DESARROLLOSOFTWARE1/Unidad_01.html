@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 01 - Introducción al Lenguaje C#</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1e1e1e;
+            color: #e0e0e0;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            display: none;
+            width: 90vw;
+            max-width: 1280px;
+            height: 72vh;
+            max-height: 720px;
+            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+            border-radius: 12px;
+            padding: 60px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        .slide h1 {
+            font-size: 3.5em;
+            color: #4CAF50;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .slide h2 {
+            font-size: 2.5em;
+            color: #64B5F6;
+            margin: 30px 0 20px 0;
+            border-bottom: 3px solid #64B5F6;
+            padding-bottom: 10px;
+        }
+
+        .slide h3 {
+            font-size: 1.8em;
+            color: #FFB74D;
+            margin: 25px 0 15px 0;
+        }
+
+        .slide p, .slide li {
+            font-size: 1.3em;
+            line-height: 1.8;
+            margin: 15px 0;
+        }
+
+        .slide ul, .slide ol {
+            margin-left: 40px;
+            margin-top: 15px;
+        }
+
+        .slide code {
+            background: #1a1a1a;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #CE9178;
+            font-size: 0.9em;
+        }
+
+        .slide pre {
+            background: #1a1a1a;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .slide pre code {
+            color: #D4D4D4;
+            font-size: 1.1em;
+            line-height: 1.6;
+            display: block;
+            background: none;
+            padding: 0;
+        }
+
+        .cover-slide {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .cover-slide h1 {
+            font-size: 4em;
+            margin-bottom: 40px;
+        }
+
+        .cover-slide .subtitle {
+            font-size: 2.5em;
+            color: #64B5F6;
+            margin: 20px 0;
+        }
+
+        .cover-slide .author {
+            font-size: 1.8em;
+            color: #FFB74D;
+            margin-top: 60px;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .nav-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
+        }
+
+        .nav-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            z-index: 1000;
+        }
+
+        .index-btn {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            background: #64B5F6;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        .index-btn:hover {
+            background: #42A5F5;
+            transform: translateY(-2px);
+        }
+
+        .index-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            padding: 60px;
+            overflow-y: auto;
+        }
+
+        .index-panel.active {
+            display: block;
+        }
+
+        .index-panel h2 {
+            color: #4CAF50;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .index-panel ul {
+            list-style: none;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .index-panel li {
+            margin: 15px 0;
+        }
+
+        .index-panel a {
+            color: #64B5F6;
+            text-decoration: none;
+            font-size: 1.4em;
+            display: block;
+            padding: 15px;
+            border-left: 4px solid #64B5F6;
+            transition: all 0.3s;
+        }
+
+        .index-panel a:hover {
+            background: rgba(100, 181, 246, 0.1);
+            padding-left: 25px;
+        }
+
+        .close-index {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 1.2em;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .notes {
+            display: none;
+            background: rgba(255, 193, 7, 0.2);
+            border-left: 4px solid #FFC107;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+
+        .notes.visible {
+            display: block;
+        }
+
+        .notes-title {
+            color: #FFC107;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .highlight-box {
+            background: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid #4CAF50;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .practice-box {
+            background: rgba(100, 181, 246, 0.1);
+            border: 2px solid #64B5F6;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .practice-box h3 {
+            color: #64B5F6;
+            margin-top: 0;
+        }
+
+        .quiz-question {
+            background: rgba(255, 183, 77, 0.1);
+            border-left: 4px solid #FFB74D;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .quiz-answer {
+            background: rgba(76, 175, 80, 0.2);
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                width: 95vw;
+                height: 80vh;
+                padding: 30px;
+            }
+
+            .slide h1 {
+                font-size: 2em;
+            }
+
+            .slide h2 {
+                font-size: 1.5em;
+            }
+
+            .slide p, .slide li {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Portada -->
+        <section class="slide active cover-slide">
+            <h1>Desarrollo de Software I</h1>
+            <div class="subtitle">Unidad 01: Introducción al Lenguaje C# y Configuración del Entorno</div>
+            <aside class="notes">
+                <div class="notes-title">Notas del Presentador:</div>
+                Bienvenidos a la primera unidad del curso. Esta unidad sienta las bases para todo el curso. Es importante crear un ambiente motivador y explicar la importancia de C# en el desarrollo de software moderno.
+            </aside>
+        </section>
+
+        <!-- Competencias y Resultados de Aprendizaje -->
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <h3>Competencia Fundamental:</h3>
+            <p><strong>CF4:</strong> Aplicar de forma intensiva y crítica las tecnologías de la información y la comunicación en las actividades profesionales.</p>
+            
+            <h3>Resultados de Aprendizaje:</h3>
+            <ul>
+                <li>Comprender la historia y evolución del lenguaje C#</li>
+                <li>Instalar y configurar correctamente Visual Studio</li>
+                <li>Crear y ejecutar programas básicos en C#</li>
+                <li>Navegar eficientemente por el entorno de desarrollo</li>
+                <li>Identificar la estructura básica de un programa en C#</li>
+            </ul>
+            <aside class="notes">
+                <div class="notes-title">Notas del Presentador:</div>
+                Estos resultados están alineados con el programa académico. Asegúrate de que los estudiantes comprendan que no solo aprenderán sintaxis, sino también buenas prácticas desde el inicio.
+            </aside>
+        </section>
+
+        <!-- Agenda -->
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <ol style="font-size: 1.4em; line-height: 2;">
+                <li>Historia y aplicaciones de C#</li>
+                <li>Instalación y configuración de Visual Studio</li>
+                <li>Estructura básica de un programa en C#</li>
+                <li>Primer programa: "Hola Mundo"</li>
+                <li>Navegación por Visual Studio</li>
+                <li>Prácticas guiadas</li>
+                <li>Evaluación práctica</li>
+                <li>Mini-Quiz</li>
+            </ol>
+            <aside class="notes">
+                <div class="notes-title">Notas del Presentador:</div>
+                Duración estimada: 2 horas. La primera parte será teórica (45 min), luego práctica guiada (45 min), y finalmente evaluación (30 min).
+            </aside>
+        </section>
+
+        <!-- Historia y Aplicaciones de C# -->
+        <section class="slide">
+            <h2>Historia y Aplicaciones de C#</h2>
+            <h3>Origen y Evolución</h3>
+            <ul>
+                <li><strong>2000:</strong> C# fue creado por Microsoft como parte de la plataforma .NET</li>
+                <li><strong>Diseñador principal:</strong> Anders Hejlsberg (también creador de Turbo Pascal y Delphi)</li>
+                <li><strong>Inspiración:</strong> Combina lo mejor de C++, Java y Visual Basic</li>
+                <li><strong>Versión actual:</strong> C# 12.0 (2023) - Lenguaje moderno y en constante evolución</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>¿Por qué C#?</strong> Es un lenguaje multiparadigma, fuertemente tipado, con excelente soporte para programación orientada a objetos y funcional.
+            </div>
+            <aside class="notes">
+                <div class="notes-title">Notas del Presentador:</div>
+                Mencionar que C# es uno de los lenguajes más demandados en el mercado laboral, especialmente en desarrollo empresarial y aplicaciones Windows.
+            </aside>
+        </section>
+
+        <!-- Aplicaciones de C# -->
+        <section class="slide">
+            <h2>Aplicaciones de C# en la Vida Real</h2>
+            <h3>Áreas de Aplicación:</h3>
+            <ul>
+                <li><strong>Desarrollo Web:</strong> ASP.NET Core para aplicaciones web modernas</li>
+                <li><strong>Aplicaciones de Escritorio:</strong> Windows Forms, WPF, .NET MAUI</li>
+                <li><strong>Desarrollo Móvil:</strong> Xamarin/.NET MAUI para iOS, Android y Windows</li>
+                <li><strong>Videojuegos:</strong> Unity Engine utiliza C# como lenguaje principal</li>
+                <li><strong>Servicios Backend:</strong> APIs REST, microservicios, servicios en la nube</li>
+                <li><strong>IoT:</strong> Desarrollo para dispositivos embebidos</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Ejemplo Real:</strong> Stack Overflow, Visual Studio, muchos servicios de Azure, y juegos como Pokémon GO fueron desarrollados usando C#.
+            </div>
+        </section>
+
+        <!-- Instalación de Visual Studio -->
+        <section class="slide">
+            <h2>Instalación y Configuración de Visual Studio</h2>
+            <h3>Requisitos del Sistema:</h3>
+            <ul>
+                <li>Windows 10/11 (64-bit) o macOS/Linux</li>
+                <li>4 GB RAM mínimo (8 GB recomendado)</li>
+                <li>20 GB espacio en disco</li>
+                <li>Conexión a Internet para descarga</li>
+            </ul>
+            <h3>Pasos de Instalación:</h3>
+            <ol>
+                <li>Descargar Visual Studio Community (gratuito) desde visualstudio.microsoft.com</li>
+                <li>Ejecutar el instalador</li>
+                <li>Seleccionar la carga de trabajo "Desarrollo de escritorio de .NET"</li>
+                <li>Incluir componentes: .NET SDK, C# compiler, Visual Studio Core Editor</li>
+                <li>Instalar y reiniciar</li>
+            </ol>
+            <aside class="notes">
+                <div class="notes-title">Notas del Presentador:</div>
+                Si hay estudiantes con problemas de instalación, recomendar Visual Studio Code como alternativa ligera, aunque Visual Studio Community es la mejor opción para principiantes.
+            </aside>
+        </section>
+
+        <!-- Configuración Inicial -->
+        <section class="slide">
+            <h2>Configuración Inicial de Visual Studio</h2>
+            <h3>Primera Configuración:</h3>
+            <ol>
+                <li><strong>Seleccionar tema:</strong> Oscuro/Claro según preferencia</li>
+                <li><strong>Configurar fuente:</strong> Consolas o Fira Code (recomendado para código)</li>
+                <li><strong>Habilitar números de línea:</strong> Herramientas → Opciones → Editor de texto</li>
+                <li><strong>Configurar formato automático:</strong> Formatear al guardar</li>
+            </ol>
+            <h3>Componentes Importantes:</h3>
+            <ul>
+                <li><strong>Solution Explorer:</strong> Navegación de archivos del proyecto</li>
+                <li><strong>Editor de Código:</strong> Área principal de escritura</li>
+                <li><strong>Output Window:</strong> Mensajes de compilación y errores</li>
+                <li><strong>Error List:</strong> Lista de errores y advertencias</li>
+            </ul>
+        </section>
+
+        <!-- Estructura Básica de un Programa -->
+        <section class="slide">
+            <h2>Estructura Básica de un Programa en C#</h2>
+            <h3>Componentes Fundamentales:</h3>
+            <pre><code>using System;
+
+namespace MiPrimerPrograma
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Hola Mundo");
+        }
+    }
+}</code></pre>
+            <h3>Explicación:</h3>
+            <ul>
+                <li><code>using System;</code> - Importa la biblioteca estándar</li>
+                <li><code>namespace</code> - Organiza el código en espacios lógicos</li>
+                <li><code>class Program</code> - Define una clase (POO)</li>
+                <li><code>Main</code> - Punto de entrada del programa</li>
+                <li><code>Console.WriteLine</code> - Muestra texto en la consola</li>
+            </ul>
+        </section>
+
+        <!-- En la Vida Real: Estructura -->
+        <section class="slide">
+            <h2>En la Vida Real: Estructura de Proyectos</h2>
+            <div class="highlight-box">
+                <strong>Escenario:</strong> En un proyecto real de software, el código se organiza en múltiples archivos y carpetas:
+            </div>
+            <pre><code>MiProyecto/
+├── Models/          # Clases de datos
+├── Views/           # Interfaces de usuario
+├── Controllers/     # Lógica de negocio
+├── Services/        # Servicios externos
+└── Program.cs       # Punto de entrada</code></pre>
+            <p><strong>Buenas Prácticas:</strong></p>
+            <ul>
+                <li>Usar nombres descriptivos para namespaces</li>
+                <li>Un archivo por clase</li>
+                <li>Organizar en carpetas lógicas</li>
+                <li>Comentar código complejo</li>
+            </ul>
+        </section>
+
+        <!-- Errores Comunes -->
+        <section class="slide">
+            <h2>Errores Comunes al Iniciar</h2>
+            <div class="highlight-box" style="border-left-color: #f44336;">
+                <h3 style="color: #f44336;">1. Olvidar punto y coma (;)</h3>
+                <pre><code>Console.WriteLine("Hola")  // ❌ Error
+Console.WriteLine("Hola"); // ✅ Correcto</code></pre>
+            </div>
+            <div class="highlight-box" style="border-left-color: #f44336;">
+                <h3 style="color: #f44336;">2. Mayúsculas y minúsculas incorrectas</h3>
+                <pre><code>console.WriteLine("Hola");  // ❌ Error (C# es case-sensitive)
+Console.WriteLine("Hola");  // ✅ Correcto</code></pre>
+            </div>
+            <div class="highlight-box" style="border-left-color: #f44336;">
+                <h3 style="color: #f44336;">3. Llaves no balanceadas</h3>
+                <pre><code>class Program {  // ❌ Falta cerrar la llave
+    static void Main() {
+        Console.WriteLine("Hola");
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Buenas Prácticas -->
+        <section class="slide">
+            <h2>Buenas Prácticas desde el Inicio</h2>
+            <ul>
+                <li><strong>Nombres descriptivos:</strong> Usar nombres claros para variables y clases</li>
+                <li><strong>Indentación consistente:</strong> Usar 4 espacios o tabs</li>
+                <li><strong>Comentarios útiles:</strong> Explicar el "por qué", no el "qué"</li>
+                <li><strong>Formato consistente:</strong> Seguir convenciones de C#</li>
+                <li><strong>Versionar código:</strong> Usar Git desde el inicio</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Convención de Nombres en C#:</strong>
+                <ul>
+                    <li>Clases: PascalCase (ej: <code>MiClase</code>)</li>
+                    <li>Métodos: PascalCase (ej: <code>CalcularPromedio</code>)</li>
+                    <li>Variables: camelCase (ej: <code>miVariable</code>)</li>
+                    <li>Constantes: UPPER_CASE (ej: <code>PI</code>)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Práctica Guiada #1 -->
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Práctica Guiada #1: Crear "Hola Mundo"</h2>
+                <h3>Objetivo:</h3>
+                <p>Crear y ejecutar tu primer programa en C#</p>
+                
+                <h3>Instrucciones Paso a Paso:</h3>
+                <ol>
+                    <li>Abrir Visual Studio</li>
+                    <li>Crear nuevo proyecto: Archivo → Nuevo → Proyecto</li>
+                    <li>Seleccionar "Aplicación de consola (.NET)"</li>
+                    <li>Nombre del proyecto: "HolaMundo"</li>
+                    <li>Ubicación: Elegir carpeta de trabajo</li>
+                    <li>Hacer clic en "Crear"</li>
+                    <li>Reemplazar el código en Program.cs con:</li>
+                </ol>
+                <pre><code>using System;
+
+namespace HolaMundo
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("¡Hola Mundo desde C#!");
+            Console.WriteLine("Mi nombre es: [Tu Nombre]");
+            Console.ReadKey();
+        }
+    }
+}</code></pre>
+                <p><strong>Ejecutar:</strong> Presionar F5 o clic en "Iniciar"</p>
+            </div>
+        </section>
+
+        <!-- Solución Práctica #1 -->
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Solución Práctica Guiada #1</h2>
+                <h3>Resultado Esperado:</h3>
+                <pre><code>¡Hola Mundo desde C#!
+Mi nombre es: [Tu Nombre]</code></pre>
+                <h3>Explicación del Código:</h3>
+                <ul>
+                    <li><code>Console.WriteLine()</code> - Escribe texto y salta línea</li>
+                    <li><code>Console.ReadKey()</code> - Espera a que presiones una tecla antes de cerrar</li>
+                    <li>Sin <code>ReadKey()</code>, la ventana se cerraría inmediatamente</li>
+                </ul>
+                <h3>Variaciones para Probar:</h3>
+                <ul>
+                    <li>Cambiar el mensaje</li>
+                    <li>Agregar más líneas de texto</li>
+                    <li>Usar <code>Console.Write()</code> en lugar de <code>WriteLine()</code></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Práctica Guiada #2 -->
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Práctica Guiada #2: Explorar Visual Studio</h2>
+                <h3>Objetivo:</h3>
+                <p>Familiarizarse con las herramientas principales de Visual Studio</p>
+                
+                <h3>Actividades:</h3>
+                <ol>
+                    <li><strong>Solution Explorer:</strong>
+                        <ul>
+                            <li>Ubicar el panel Solution Explorer (lado derecho)</li>
+                            <li>Expandir el proyecto "HolaMundo"</li>
+                            <li>Identificar archivos: Program.cs, .csproj</li>
+                        </ul>
+                    </li>
+                    <li><strong>Editor de Código:</strong>
+                        <ul>
+                            <li>Hacer clic en Program.cs</li>
+                            <li>Observar colores de sintaxis</li>
+                            <li>Probar autocompletado (IntelliSense): escribir "Conso" y presionar Tab</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ventana de Salida:</strong>
+                        <ul>
+                            <li>Ver → Otras ventanas → Salida</li>
+                            <li>Ejecutar el programa (F5)</li>
+                            <li>Observar mensajes de compilación</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Solución Práctica #2 -->
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Solución Práctica Guiada #2</h2>
+                <h3>Atajos de Teclado Útiles:</h3>
+                <ul>
+                    <li><strong>F5:</strong> Iniciar depuración</li>
+                    <li><strong>Ctrl+F5:</strong> Ejecutar sin depuración</li>
+                    <li><strong>Ctrl+K, Ctrl+D:</strong> Formatear documento</li>
+                    <li><strong>Ctrl+Space:</strong> Mostrar IntelliSense</li>
+                    <li><strong>Ctrl+/:</strong> Comentar/descomentar línea</li>
+                    <li><strong>F12:</strong> Ir a definición</li>
+                </ul>
+                <h3>Panel de Propiedades:</h3>
+                <p>Seleccionar el proyecto en Solution Explorer y observar las propiedades en el panel inferior. Aquí puedes cambiar:</p>
+                <ul>
+                    <li>Versión de .NET</li>
+                    <li>Nombre del ensamblado</li>
+                    <li>Configuración de compilación</li>
+                </ul>
+                <div class="highlight-box">
+                    <strong>Consejo:</strong> Personaliza Visual Studio según tus preferencias. Ve a Herramientas → Opciones para explorar todas las configuraciones disponibles.
+                </div>
+            </div>
+        </section>
+
+        <!-- Práctica Evaluada -->
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Práctica Evaluada</h2>
+                <h3>Enunciado:</h3>
+                <p>Crear un programa de consola que muestre información personal y académica. El programa debe:</p>
+                <ol>
+                    <li>Mostrar tu nombre completo</li>
+                    <li>Mostrar tu carrera universitaria</li>
+                    <li>Mostrar el nombre de la asignatura</li>
+                    <li>Mostrar un mensaje de motivación sobre aprender C#</li>
+                    <li>Usar comentarios explicativos en el código</li>
+                    <li>Usar nombres descriptivos para el namespace y la clase</li>
+                </ol>
+                
+                <h3>Criterios de Evaluación:</h3>
+                <ul>
+                    <li><strong>Funcionalidad (40%):</strong> El programa compila y ejecuta correctamente</li>
+                    <li><strong>Código (30%):</strong> Uso correcto de la estructura básica de C#</li>
+                    <li><strong>Comentarios (15%):</strong> Comentarios claros y útiles</li>
+                    <li><strong>Nombres (15%):</strong> Nombres descriptivos siguiendo convenciones</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Rúbrica -->
+        <section class="slide">
+            <h2>Rúbrica de Evaluación</h2>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                <tr style="background: #4CAF50;">
+                    <th style="padding: 15px; text-align: left;">Criterio</th>
+                    <th style="padding: 15px;">Excelente (4)</th>
+                    <th style="padding: 15px;">Bueno (3)</th>
+                    <th style="padding: 15px;">Regular (2)</th>
+                    <th style="padding: 15px;">Insuficiente (1)</th>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #555;">Funcionalidad</td>
+                    <td style="padding: 10px; border: 1px solid #555;">Todo funciona perfectamente</td>
+                    <td style="padding: 10px; border: 1px solid #555;">Funciona con pequeños errores</td>
+                    <td style="padding: 10px; border: 1px solid #555;">Funciona parcialmente</td>
+                    <td style="padding: 10px; border: 1px solid #555;">No funciona</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #555;">Estructura</td>
+                    <td style="padding: 10px; border: 1px solid #555;">Estructura perfecta</td>
+                    <td style="padding: 10px; border: 1px solid #555;">Estructura correcta</td>
+                    <td style="padding: 10px; border: 1px solid #555;">Estructura básica</td>
+                    <td style="padding: 10px; border: 1px solid #555;">Estructura incorrecta</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #555;">Comentarios</td>
+                    <td style="padding: 10px; border: 1px solid #555;">Comentarios excelentes</td>
+                    <td style="padding: 10px; border: 1px solid #555;">Comentarios adecuados</td>
+                    <td style="padding: 10px; border: 1px solid #555;">Pocos comentarios</td>
+                    <td style="padding: 10px; border: 1px solid #555;">Sin comentarios</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #555;">Nombres</td>
+                    <td style="padding: 10px; border: 1px solid #555;">Nombres muy descriptivos</td>
+                    <td style="padding: 10px; border: 1px solid #555;">Nombres descriptivos</td>
+                    <td style="padding: 10px; border: 1px solid #555;">Nombres básicos</td>
+                    <td style="padding: 10px; border: 1px solid #555;">Nombres poco claros</td>
+                </tr>
+            </table>
+            <p style="margin-top: 20px;"><strong>Puntuación Total:</strong> 16 puntos</p>
+        </section>
+
+        <!-- Mini-Quiz -->
+        <section class="slide">
+            <h2>Mini-Quiz</h2>
+            <div class="quiz-question">
+                <p><strong>1. ¿En qué año fue creado C#?</strong></p>
+                <p>a) 1995</p>
+                <p>b) 2000</p>
+                <p>c) 2005</p>
+                <p>d) 2010</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>2. ¿Cuál es el punto de entrada de un programa en C#?</strong></p>
+                <p>a) Start()</p>
+                <p>b) Main()</p>
+                <p>c) Begin()</p>
+                <p>d) Init()</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>3. ¿Qué comando muestra texto en la consola?</strong></p>
+                <p>a) System.Print()</p>
+                <p>b) Console.Write()</p>
+                <p>c) Output.Show()</p>
+                <p>d) Display.Text()</p>
+            </div>
+        </section>
+
+        <!-- Mini-Quiz Continuación -->
+        <section class="slide">
+            <h2>Mini-Quiz (Continuación)</h2>
+            <div class="quiz-question">
+                <p><strong>4. ¿C# es case-sensitive (sensible a mayúsculas/minúsculas)?</strong></p>
+                <p>a) Verdadero</p>
+                <p>b) Falso</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>5. ¿Qué IDE es recomendado para desarrollo en C#?</strong></p>
+                <p>a) Eclipse</p>
+                <p>b) Visual Studio</p>
+                <p>c) NetBeans</p>
+                <p>d) PyCharm</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>6. ¿Qué palabra clave se usa para importar bibliotecas en C#?</strong></p>
+                <p>a) import</p>
+                <p>b) include</p>
+                <p>c) using</p>
+                <p>d) require</p>
+            </div>
+        </section>
+
+        <!-- Mini-Quiz Continuación 2 -->
+        <section class="slide">
+            <h2>Mini-Quiz (Continuación)</h2>
+            <div class="quiz-question">
+                <p><strong>7. ¿Cuál es la extensión de archivo para código fuente en C#?</strong></p>
+                <p>a) .cpp</p>
+                <p>b) .java</p>
+                <p>c) .cs</p>
+                <p>d) .csharp</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>8. ¿Qué atajo de teclado ejecuta un programa en Visual Studio?</strong></p>
+                <p>a) F1</p>
+                <p>b) F5</p>
+                <p>c) F9</p>
+                <p>d) F12</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>9. ¿El método Main() debe ser estático (static)?</strong></p>
+                <p>a) Verdadero</p>
+                <p>b) Falso</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>10. ¿Qué estructura organiza el código en espacios lógicos en C#?</strong></p>
+                <p>a) package</p>
+                <p>b) module</p>
+                <p>c) namespace</p>
+                <p>d) library</p>
+            </div>
+        </div>
+        </section>
+
+        <!-- Respuestas del Quiz -->
+        <section class="slide">
+            <h2>Respuestas del Mini-Quiz</h2>
+            <div class="quiz-answer">
+                <p><strong>1. b) 2000</strong> - C# fue creado en el año 2000 por Microsoft.</p>
+            </div>
+            <div class="quiz-answer">
+                <p><strong>2. b) Main()</strong> - El método Main() es el punto de entrada de cualquier programa en C#.</p>
+            </div>
+            <div class="quiz-answer">
+                <p><strong>3. b) Console.Write()</strong> - Console.Write() o Console.WriteLine() muestran texto en la consola.</p>
+            </div>
+            <div class="quiz-answer">
+                <p><strong>4. a) Verdadero</strong> - C# distingue entre mayúsculas y minúsculas.</p>
+            </div>
+            <div class="quiz-answer">
+                <p><strong>5. b) Visual Studio</strong> - Visual Studio es el IDE oficial y más recomendado para C#.</p>
+            </div>
+            <div class="quiz-answer">
+                <p><strong>6. c) using</strong> - La palabra clave "using" se usa para importar namespaces.</p>
+            </div>
+            <div class="quiz-answer">
+                <p><strong>7. c) .cs</strong> - Los archivos de código fuente en C# tienen extensión .cs</p>
+            </div>
+            <div class="quiz-answer">
+                <p><strong>8. b) F5</strong> - F5 inicia la depuración y ejecuta el programa.</p>
+            </div>
+            <div class="quiz-answer">
+                <p><strong>9. a) Verdadero</strong> - El método Main() debe ser estático para ser el punto de entrada.</p>
+            </div>
+            <div class="quiz-answer">
+                <p><strong>10. c) namespace</strong> - Los namespaces organizan el código en espacios lógicos.</p>
+            </div>
+        </section>
+
+        <!-- Resumen -->
+        <section class="slide">
+            <h2>Resumen de la Unidad</h2>
+            <ul style="font-size: 1.4em; line-height: 2;">
+                <li>✓ C# es un lenguaje moderno creado en 2000, ampliamente usado en desarrollo empresarial</li>
+                <li>✓ Visual Studio es el IDE recomendado para desarrollo en C#</li>
+                <li>✓ La estructura básica incluye: using, namespace, class y método Main()</li>
+                <li>✓ Console.WriteLine() muestra texto en la consola</li>
+                <li>✓ C# es case-sensitive y requiere punto y coma al final de las instrucciones</li>
+                <li>✓ Los nombres siguen convenciones: PascalCase para clases, camelCase para variables</li>
+                <li>✓ Es importante usar comentarios y mantener código organizado desde el inicio</li>
+                <li>✓ Visual Studio ofrece herramientas poderosas como IntelliSense y depuración</li>
+            </ul>
+            <div class="highlight-box" style="margin-top: 30px;">
+                <strong>Próxima Unidad:</strong> Variables, Tipos de Datos y Operadores - Aprenderemos a trabajar con datos y realizar operaciones básicas.
+            </div>
+        </section>
+
+        <!-- Tarea -->
+        <section class="slide">
+            <h2>Tarea para Casa</h2>
+            <div class="practice-box">
+                <h3>Actividad:</h3>
+                <p>Investigar y documentar los tipos de datos básicos en C# y los operadores principales.</p>
+                
+                <h3>Entregables:</h3>
+                <ol>
+                    <li><strong>Documento Word/PDF (2-3 páginas)</strong> que incluya:
+                        <ul>
+                            <li>Lista de tipos de datos primitivos en C# (int, double, string, bool, char, etc.)</li>
+                            <li>Rango de valores de cada tipo</li>
+                            <li>Operadores aritméticos (+, -, *, /, %)</li>
+                            <li>Operadores de comparación (==, !=, <, >, <=, >=)</li>
+                            <li>Operadores lógicos (&&, ||, !)</li>
+                            <li>Ejemplos de código para cada operador</li>
+                        </ul>
+                    </li>
+                    <li><strong>Programa en C#</strong> que demuestre el uso de al menos 5 tipos de datos diferentes</li>
+                </ol>
+                
+                <h3>Fecha de Entrega:</h3>
+                <p>Una semana después de esta clase</p>
+                
+                <h3>Criterios de Evaluación:</h3>
+                <ul>
+                    <li>Completitud de la información (40%)</li>
+                    <li>Claridad y organización (30%)</li>
+                    <li>Ejemplos de código funcionales (30%)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Recursos Adicionales -->
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Para ampliar tu conocimiento sobre esta unidad, visita nuestra página de recursos con:</p>
+                <ul>
+                    <li>Enlaces a documentación oficial de C#</li>
+                    <li>Videos tutoriales sobre Visual Studio</li>
+                    <li>Guías de instalación y configuración</li>
+                    <li>Ejercicios adicionales</li>
+                    <li>Recursos de aprendizaje</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_01_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">
+                        Ver Recursos Adicionales →
+                    </a>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">21</span>
+    </div>
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul id="indexList"></ul>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let notesVisible = false;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            updateCounter();
+            updateNavigation();
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function updateCounter() {
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.querySelector('.nav-btn:first-child');
+            const nextBtn = document.querySelector('.nav-btn:last-child');
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+        }
+
+        function toggleIndex() {
+            const panel = document.getElementById('indexPanel');
+            panel.classList.toggle('active');
+            if (panel.classList.contains('active')) {
+                buildIndex();
+            }
+        }
+
+        function buildIndex() {
+            const indexList = document.getElementById('indexList');
+            indexList.innerHTML = '';
+            slides.forEach((slide, index) => {
+                const title = slide.querySelector('h1, h2')?.textContent || `Diapositiva ${index + 1}`;
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = title;
+                a.onclick = (e) => {
+                    e.preventDefault();
+                    showSlide(index);
+                    toggleIndex();
+                };
+                li.appendChild(a);
+                indexList.appendChild(li);
+            });
+        }
+
+        function toggleNotes() {
+            notesVisible = !notesVisible;
+            const notes = document.querySelectorAll('.notes');
+            notes.forEach(note => {
+                if (notesVisible) {
+                    note.classList.add('visible');
+                } else {
+                    note.classList.remove('visible');
+                }
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            } else if (e.key === 'PageDown') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'PageUp') {
+                e.preventDefault();
+                previousSlide();
+            } else if (e.key === 'n' || e.key === 'N') {
+                toggleNotes();
+            }
+        });
+
+        updateNavigation();
+        buildIndex();
+    </script>
+</body>
+</html>
+

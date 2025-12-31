@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad II - Ciclo de desarrollo en TDD</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 60px;
+            background: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide h1 {
+            font-size: 3.5em;
+            color: #667eea;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .slide h2 {
+            font-size: 2.5em;
+            color: #764ba2;
+            margin-bottom: 25px;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .slide h3 {
+            font-size: 2em;
+            color: #555;
+            margin: 20px 0 15px 0;
+        }
+
+        .slide p {
+            font-size: 1.4em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .slide ul, .slide ol {
+            font-size: 1.3em;
+            line-height: 2;
+            color: #333;
+            margin-left: 40px;
+            margin-bottom: 20px;
+        }
+
+        .slide li {
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 25px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .code-block code {
+            color: #f8f8f2;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(118, 75, 162, 0.5);
+        }
+
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            z-index: 1000;
+        }
+
+        .index-btn {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            padding: 12px 25px;
+            background: #764ba2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+        }
+
+        .index-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            padding: 60px;
+            overflow-y: auto;
+        }
+
+        .index-panel.active {
+            display: block;
+        }
+
+        .index-panel h2 {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .index-list {
+            list-style: none;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .index-list li {
+            margin: 15px 0;
+        }
+
+        .index-list a {
+            color: white;
+            font-size: 1.5em;
+            text-decoration: none;
+            display: block;
+            padding: 15px 20px;
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            transition: all 0.3s;
+            border-left: 4px solid #667eea;
+        }
+
+        .index-list a:hover {
+            background: rgba(102, 126, 234, 0.6);
+            transform: translateX(10px);
+        }
+
+        .close-index {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        .notes {
+            display: none;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #856404;
+        }
+
+        .notes.active {
+            display: block;
+        }
+
+        .title-slide {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .title-slide h1 {
+            color: white;
+            font-size: 4em;
+            margin-bottom: 30px;
+        }
+
+        .title-slide h2 {
+            color: white;
+            border: none;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .title-slide p {
+            font-size: 1.8em;
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            width: 100%;
+        }
+
+        .practice-box {
+            background: #e8f4f8;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .practice-box h3 {
+            color: #667eea;
+            margin-top: 0;
+        }
+
+        .quiz-question {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .quiz-option {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quiz-option:hover {
+            background: #e8f4f8;
+        }
+
+        .summary-list {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .red-phase {
+            background: #fee;
+            border-left: 5px solid #e74c3c;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .green-phase {
+            background: #efe;
+            border-left: 5px solid #27ae60;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .refactor-phase {
+            background: #eef;
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px 20px;
+            }
+            .slide h1 {
+                font-size: 2em;
+            }
+            .slide h2 {
+                font-size: 1.8em;
+            }
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Portada -->
+        <section class="slide active title-slide">
+            <h1>Desarrollo Basado en Pruebas (TDD)</h1>
+            <h2>Unidad II: Ciclo de desarrollo en TDD</h2>
+            <aside class="notes">Bienvenidos a la segunda unidad. Hoy profundizaremos en el ciclo fundamental de TDD: Red-Green-Refactor.</aside>
+        </section>
+
+        <!-- Competencias y Resultados de Aprendizaje -->
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <div class="summary-list">
+                <h3>Competencia Específica CE13</h3>
+                <p>Especificar y ejecutar pruebas de calidad de los prototipos (diseño), simulaciones y los componentes de software desarrollados para garantizar su fidelidad y precisión en todos los niveles (Test units) y garantizando una asertiva aceptación de los usuarios (UCT).</p>
+                
+                <h3 style="margin-top: 30px;">Resultados de Aprendizaje</h3>
+                <ul>
+                    <li>Dominar el ciclo Red-Green-Refactor de TDD</li>
+                    <li>Aplicar correctamente cada fase del ciclo TDD</li>
+                    <li>Escribir pruebas automatizadas que fallen primero (Red)</li>
+                    <li>Implementar código mínimo para hacer pasar las pruebas (Green)</li>
+                    <li>Refactorizar código manteniendo las pruebas pasando (Refactor)</li>
+                </ul>
+            </div>
+            <aside class="notes">El ciclo Red-Green-Refactor es el corazón de TDD. Deben dominarlo completamente.</aside>
+        </section>
+
+        <!-- Agenda -->
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <div class="summary-list">
+                <ol>
+                    <li><strong>Red: Prueba automatizada</strong>
+                        <ul>
+                            <li>Escribir prueba que falle primero</li>
+                            <li>Definir comportamiento esperado</li>
+                            <li>Verificar que la prueba falla por la razón correcta</li>
+                        </ul>
+                    </li>
+                    <li><strong>Green: Código mínimo</strong>
+                        <ul>
+                            <li>Implementar código mínimo para pasar</li>
+                            <li>No optimizar prematuramente</li>
+                            <li>Verificar que la prueba pasa</li>
+                        </ul>
+                    </li>
+                    <li><strong>Refactor: Mejorar código</strong>
+                        <ul>
+                            <li>Mejorar sin cambiar comportamiento</li>
+                            <li>Mantener pruebas pasando</li>
+                            <li>Principios de código limpio</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+            <aside class="notes">Esta agenda cubre las tres fases fundamentales del ciclo TDD.</aside>
+        </section>
+
+        <!-- El Ciclo Red-Green-Refactor -->
+        <section class="slide">
+            <h2>El Ciclo Red-Green-Refactor</h2>
+            <div class="two-column">
+                <div>
+                    <div class="red-phase">
+                        <h3 style="color: #e74c3c; margin-top: 0;">🔴 RED</h3>
+                        <p>Escribir una prueba que falle</p>
+                        <p style="font-size: 0.9em; margin-top: 10px;">Define qué debe hacer el código</p>
+                    </div>
+                    <div class="green-phase">
+                        <h3 style="color: #27ae60; margin-top: 0;">🟢 GREEN</h3>
+                        <p>Escribir código mínimo para pasar</p>
+                        <p style="font-size: 0.9em; margin-top: 10px;">Implementa solo lo necesario</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="refactor-phase">
+                        <h3 style="color: #3498db; margin-top: 0;">🔵 REFACTOR</h3>
+                        <p>Mejorar el código sin cambiar comportamiento</p>
+                        <p style="font-size: 0.9em; margin-top: 10px;">Mantén las pruebas pasando</p>
+                    </div>
+                    <div class="highlight" style="margin-top: 30px; padding: 20px; text-align: center;">
+                        <strong>Ciclo Continuo</strong><br>
+                        Repetir para cada nueva funcionalidad
+                    </div>
+                </div>
+            </div>
+            <aside class="notes">Este ciclo se repite constantemente durante el desarrollo.</aside>
+        </section>
+
+        <!-- Fase RED: Detalles -->
+        <section class="slide">
+            <h2>Fase RED: Escribir Prueba que Falle</h2>
+            <div class="red-phase">
+                <h3>Objetivo:</h3>
+                <p>Escribir una prueba automatizada que defina el comportamiento deseado y que <strong>falle</strong> porque la funcionalidad aún no existe.</p>
+
+                <h3>Pasos:</h3>
+                <ol>
+                    <li>Pensar en qué debe hacer el código</li>
+                    <li>Escribir la prueba que verifica ese comportamiento</li>
+                    <li>Ejecutar la prueba y verificar que <strong>falla</strong></li>
+                    <li>Verificar que falla por la razón correcta (no por un error de sintaxis)</li>
+                </ol>
+
+                <h3>¿Por qué debe fallar primero?</h3>
+                <ul>
+                    <li>Confirma que la prueba realmente verifica algo</li>
+                    <li>Evita falsos positivos</li>
+                    <li>Define claramente el comportamiento esperado</li>
+                </ul>
+            </div>
+            <aside class="notes">La fase RED es crucial. Si la prueba no falla primero, puede que no esté probando nada.</aside>
+        </section>
+
+        <!-- Ejemplo RED -->
+        <section class="slide">
+            <h2>Ejemplo: Fase RED</h2>
+            <p>Queremos crear una función que calcule el área de un círculo:</p>
+            
+            <div class="code-block">
+<code>// Paso 1: Escribir la prueba (RED)
+describe('CalculadoraGeometrica', () => {
+    test('debe calcular el área de un círculo dado su radio', () => {
+        const calc = new CalculadoraGeometrica();
+        const area = calc.areaCirculo(5);
+        expect(area).toBeCloseTo(78.54, 2); // π * r² = π * 25 ≈ 78.54
+    });
+});
+
+// Ejecutar: npm test
+// Resultado esperado: ❌ FAIL - CalculadoraGeometrica is not defined</code>
+            </div>
+
+            <div class="highlight" style="margin-top: 20px; padding: 15px;">
+                <strong>Importante:</strong> La prueba debe fallar porque la clase no existe, no por un error de sintaxis o lógica en la prueba misma.
+            </div>
+            <aside class="notes">Este es un ejemplo claro de cómo escribir una prueba en la fase RED.</aside>
+        </section>
+
+        <!-- Fase GREEN: Detalles -->
+        <section class="slide">
+            <h2>Fase GREEN: Código Mínimo para Pasar</h2>
+            <div class="green-phase">
+                <h3>Objetivo:</h3>
+                <p>Escribir el código <strong>mínimo necesario</strong> para hacer que la prueba pase. No optimizar, no agregar funcionalidades extra.</p>
+
+                <h3>Principios:</h3>
+                <ul>
+                    <li><strong>Simplicidad:</strong> Código más simple que funcione</li>
+                    <li><strong>Mínimo:</strong> Solo lo necesario para pasar la prueba</li>
+                    <li><strong>Sin optimización prematura:</strong> No pensar en casos futuros</li>
+                    <li><strong>Verificación:</strong> Ejecutar la prueba y confirmar que pasa</li>
+                </ul>
+
+                <h3>¿Por qué código mínimo?</h3>
+                <ul>
+                    <li>Evita código innecesario</li>
+                    <li>Mantiene el foco en el comportamiento actual</li>
+                    <li>Facilita el refactoring posterior</li>
+                </ul>
+            </div>
+            <aside class="notes">La fase GREEN requiere disciplina para no agregar código innecesario.</aside>
+        </section>
+
+        <!-- Ejemplo GREEN -->
+        <section class="slide">
+            <h2>Ejemplo: Fase GREEN</h2>
+            <p>Ahora implementamos el código mínimo para hacer pasar la prueba:</p>
+            
+            <div class="code-block">
+<code>// Paso 2: Implementar código mínimo (GREEN)
+class CalculadoraGeometrica {
+    areaCirculo(radio) {
+        return Math.PI * radio * radio;
+    }
+}
+
+// Ejecutar: npm test
+// Resultado esperado: ✅ PASS</code>
+            </div>
+
+            <div class="highlight" style="margin-top: 20px; padding: 15px;">
+                <strong>Observaciones:</strong>
+                <ul style="margin-top: 10px;">
+                    <li>Implementamos solo lo necesario</li>
+                    <li>No agregamos validaciones ni casos especiales aún</li>
+                    <li>El código es simple y directo</li>
+                    <li>La prueba ahora pasa ✅</li>
+                </ul>
+            </div>
+            <aside class="notes">Este código es mínimo pero suficiente. No hay código innecesario.</aside>
+        </section>
+
+        <!-- Fase REFACTOR: Detalles -->
+        <section class="slide">
+            <h2>Fase REFACTOR: Mejorar el Código</h2>
+            <div class="refactor-phase">
+                <h3>Objetivo:</h3>
+                <p>Mejorar la calidad del código <strong>sin cambiar su comportamiento</strong>. Las pruebas deben seguir pasando.</p>
+
+                <h3>¿Qué mejorar?</h3>
+                <ul>
+                    <li><strong>Nombres:</strong> Variables y funciones más descriptivas</li>
+                    <li><strong>Estructura:</strong> Organizar mejor el código</li>
+                    <li><strong>Duplicación:</strong> Eliminar código duplicado</li>
+                    <li><strong>Complejidad:</strong> Reducir complejidad ciclomática</li>
+                    <li><strong>Principios SOLID:</strong> Aplicar principios de diseño</li>
+                </ul>
+
+                <h3>Regla de oro:</h3>
+                <p style="font-weight: bold; color: #e74c3c;">Si las pruebas dejan de pasar durante el refactor, has cambiado el comportamiento. Revierte y vuelve a intentar.</p>
+            </div>
+            <aside class="notes">El refactor es donde mejoramos el código sin romper funcionalidad.</aside>
+        </section>
+
+        <!-- Ejemplo REFACTOR -->
+        <section class="slide">
+            <h2>Ejemplo: Fase REFACTOR</h2>
+            <p>Mejoramos el código manteniendo las pruebas pasando:</p>
+            
+            <div class="code-block">
+<code>// Paso 3: Refactorizar (REFACTOR)
+class CalculadoraGeometrica {
+    areaCirculo(radio) {
+        const PI = Math.PI;
+        const radioAlCuadrado = Math.pow(radio, 2);
+        return PI * radioAlCuadrado;
+    }
+}
+
+// O mejor aún, usando constantes:
+class CalculadoraGeometrica {
+    static PI = Math.PI;
+    
+    areaCirculo(radio) {
+        return this.constructor.PI * Math.pow(radio, 2);
+    }
+}
+
+// Ejecutar: npm test
+// Resultado esperado: ✅ PASS (comportamiento igual, código mejor)</code>
+            </div>
+
+            <div class="highlight" style="margin-top: 20px; padding: 15px;">
+                <strong>Nota:</strong> El comportamiento es idéntico, pero el código es más legible y mantenible.
+            </div>
+            <aside class="notes">El refactor mejora el código sin cambiar qué hace.</aside>
+        </section>
+
+        <!-- Ciclo Completo: Ejemplo Práctico -->
+        <section class="slide">
+            <h2>Ciclo Completo: Ejemplo Práctico</h2>
+            <div class="practice-box">
+                <h3>Escenario: Crear una clase ValidarContraseña</h3>
+                
+                <div class="red-phase" style="margin: 15px 0;">
+                    <h4>🔴 RED - Prueba 1:</h4>
+                    <div class="code-block" style="margin: 10px 0; font-size: 0.9em;">
+<code>test('debe rechazar contraseña menor a 8 caracteres', () => {
+    const validador = new ValidarContraseña();
+    expect(validador.esValida('abc123')).toBe(false);
+});</code>
+                    </div>
+                </div>
+
+                <div class="green-phase" style="margin: 15px 0;">
+                    <h4>🟢 GREEN - Implementación mínima:</h4>
+                    <div class="code-block" style="margin: 10px 0; font-size: 0.9em;">
+<code>class ValidarContraseña {
+    esValida(contraseña) {
+        return contraseña.length >= 8;
+    }
+}</code>
+                    </div>
+                </div>
+
+                <div class="refactor-phase" style="margin: 15px 0;">
+                    <h4>🔵 REFACTOR - Mejorar:</h4>
+                    <div class="code-block" style="margin: 10px 0; font-size: 0.9em;">
+<code>class ValidarContraseña {
+    static LONGITUD_MINIMA = 8;
+    
+    esValida(contraseña) {
+        return contraseña && contraseña.length >= this.constructor.LONGITUD_MINIMA;
+    }
+}</code>
+                    </div>
+                </div>
+            </div>
+            <aside class="notes">Este ejemplo muestra el ciclo completo en acción.</aside>
+        </section>
+
+        <!-- Continuación del Ciclo -->
+        <section class="slide">
+            <h2>Continuación del Ciclo</h2>
+            <div class="practice-box">
+                <h3>Agregando más funcionalidad:</h3>
+                
+                <div class="red-phase" style="margin: 15px 0;">
+                    <h4>🔴 RED - Prueba 2:</h4>
+                    <div class="code-block" style="margin: 10px 0; font-size: 0.9em;">
+<code>test('debe rechazar contraseña sin mayúsculas', () => {
+    const validador = new ValidarContraseña();
+    expect(validador.esValida('abc12345')).toBe(false);
+});</code>
+                    </div>
+                </div>
+
+                <div class="green-phase" style="margin: 15px 0;">
+                    <h4>🟢 GREEN - Actualizar implementación:</h4>
+                    <div class="code-block" style="margin: 10px 0; font-size: 0.9em;">
+<code>esValida(contraseña) {
+    if (!contraseña || contraseña.length < 8) return false;
+    return /[A-Z]/.test(contraseña);
+}</code>
+                    </div>
+                </div>
+
+                <div class="refactor-phase" style="margin: 15px 0;">
+                    <h4>🔵 REFACTOR - Mejorar estructura:</h4>
+                    <div class="code-block" style="margin: 10px 0; font-size: 0.9em;">
+<code>esValida(contraseña) {
+    return this.tieneLongitudMinima(contraseña) && 
+           this.tieneMayuscula(contraseña);
+}
+
+tieneLongitudMinima(contraseña) {
+    return contraseña && contraseña.length >= 8;
+}
+
+tieneMayuscula(contraseña) {
+    return /[A-Z]/.test(contraseña);
+}</code>
+                    </div>
+                </div>
+            </div>
+            <aside class="notes">El ciclo continúa agregando funcionalidad incrementalmente.</aside>
+        </section>
+
+        <!-- En la Vida Real: RED -->
+        <section class="slide">
+            <h2>En la Vida Real: Fase RED</h2>
+            <div class="practice-box">
+                <h3>Escenario: Sistema de descuentos en e-commerce</h3>
+                
+                <p><strong>Situación:</strong> Necesitas implementar un sistema que aplique descuentos según el monto total de la compra.</p>
+
+                <p><strong>Fase RED - Pensar primero:</strong></p>
+                <ul>
+                    <li>¿Qué descuentos necesito? (5% para compras > $100, 10% para > $500)</li>
+                    <li>¿Qué casos límite hay? (compra exactamente $100, $500)</li>
+                    <li>¿Qué validaciones necesito? (montos negativos, cero)</li>
+                </ul>
+
+                <div class="code-block" style="margin-top: 20px;">
+<code>// RED: Escribir todas las pruebas primero
+test('debe aplicar 5% de descuento para compras mayores a $100', () => {
+    const calculadora = new CalculadoraDescuentos();
+    expect(calculadora.calcularDescuento(150)).toBe(7.5); // 5% de 150
+});
+
+test('debe aplicar 10% de descuento para compras mayores a $500', () => {
+    const calculadora = new CalculadoraDescuentos();
+    expect(calculadora.calcularDescuento(600)).toBe(60); // 10% de 600
+});
+
+test('no debe aplicar descuento para compras menores a $100', () => {
+    const calculadora = new CalculadoraDescuentos();
+    expect(calculadora.calcularDescuento(50)).toBe(0);
+});</code>
+                </div>
+            </div>
+            <aside class="notes">En la vida real, pensar primero en todas las pruebas ayuda a entender mejor el problema.</aside>
+        </section>
+
+        <!-- En la Vida Real: GREEN -->
+        <section class="slide">
+            <h2>En la Vida Real: Fase GREEN</h2>
+            <div class="practice-box">
+                <h3>Implementación mínima para pasar todas las pruebas:</h3>
+                
+                <div class="code-block">
+<code>class CalculadoraDescuentos {
+    calcularDescuento(monto) {
+        if (monto <= 0) return 0;
+        if (monto > 500) return monto * 0.10;
+        if (monto > 100) return monto * 0.05;
+        return 0;
+    }
+}</code>
+                </div>
+
+                <p style="margin-top: 20px;"><strong>Observaciones:</strong></p>
+                <ul>
+                    <li>Código simple y directo</li>
+                    <li>Pasa todas las pruebas</li>
+                    <li>No hay optimización prematura</li>
+                    <li>Fácil de entender</li>
+                </ul>
+
+                <div class="highlight" style="margin-top: 20px; padding: 15px;">
+                    <strong>Ahora que las pruebas pasan, podemos refactorizar con confianza.</strong>
+                </div>
+            </div>
+            <aside class="notes">El código mínimo funciona y pasa todas las pruebas. Ahora podemos mejorarlo.</aside>
+        </section>
+
+        <!-- En la Vida Real: REFACTOR -->
+        <section class="slide">
+            <h2>En la Vida Real: Fase REFACTOR</h2>
+            <div class="practice-box">
+                <h3>Mejorando el código manteniendo las pruebas pasando:</h3>
+                
+                <div class="code-block">
+<code>class CalculadoraDescuentos {
+    static UMBRAL_DESCUENTO_BASICO = 100;
+    static UMBRAL_DESCUENTO_PREMIUM = 500;
+    static PORCENTAJE_DESCUENTO_BASICO = 0.05;
+    static PORCENTAJE_DESCUENTO_PREMIUM = 0.10;
+
+    calcularDescuento(monto) {
+        if (!this.esMontoValido(monto)) return 0;
+        
+        if (this.esDescuentoPremium(monto)) {
+            return this.aplicarDescuento(monto, this.constructor.PORCENTAJE_DESCUENTO_PREMIUM);
+        }
+        
+        if (this.esDescuentoBasico(monto)) {
+            return this.aplicarDescuento(monto, this.constructor.PORCENTAJE_DESCUENTO_BASICO);
+        }
+        
+        return 0;
+    }
+
+    esMontoValido(monto) {
+        return monto > 0;
+    }
+
+    esDescuentoPremium(monto) {
+        return monto > this.constructor.UMBRAL_DESCUENTO_PREMIUM;
+    }
+
+    esDescuentoBasico(monto) {
+        return monto > this.constructor.UMBRAL_DESCUENTO_BASICO;
+    }
+
+    aplicarDescuento(monto, porcentaje) {
+        return monto * porcentaje;
+    }
+}</code>
+                </div>
+
+                <p style="margin-top: 20px;"><strong>Mejoras:</strong></p>
+                <ul>
+                    <li>Código más legible y mantenible</li>
+                    <li>Constantes para valores mágicos</li>
+                    <li>Métodos pequeños y con responsabilidad única</li>
+                    <li><strong>Las pruebas siguen pasando ✅</strong></li>
+                </ul>
+            </div>
+            <aside class="notes">El refactor mejora significativamente el código sin cambiar su comportamiento.</aside>
+        </section>
+
+        <!-- Errores Comunes -->
+        <section class="slide">
+            <h2>Errores Comunes en el Ciclo TDD</h2>
+            <div class="summary-list">
+                <h3>1. Saltarse la fase RED</h3>
+                <p><strong>Error:</strong> Escribir código primero y luego la prueba.</p>
+                <p><strong>Correcto:</strong> Siempre escribir la prueba primero y verificar que falla.</p>
+
+                <h3>2. Escribir código excesivo en GREEN</h3>
+                <p><strong>Error:</strong> Implementar funcionalidades que la prueba no requiere.</p>
+                <p><strong>Correcto:</strong> Solo el código mínimo necesario para pasar la prueba.</p>
+
+                <h3>3. Saltarse el REFACTOR</h3>
+                <p><strong>Error:</strong> Hacer pasar la prueba y seguir con la siguiente.</p>
+                <p><strong>Correcto:</strong> Siempre refactorizar después de hacer pasar la prueba.</p>
+
+                <h3>4. Cambiar comportamiento en REFACTOR</h3>
+                <p><strong>Error:</strong> Agregar nuevas funcionalidades durante el refactor.</p>
+                <p><strong>Correcto:</strong> Refactorizar solo mejora código, no cambia comportamiento.</p>
+
+                <h3>5. Ciclos muy largos</h3>
+                <p><strong>Error:</strong> Pasar mucho tiempo en cada fase.</p>
+                <p><strong>Correcto:</strong> Mantener ciclos cortos (minutos, no horas).</p>
+            </div>
+            <aside class="notes">Estos errores son muy comunes. Estén atentos para evitarlos.</aside>
+        </section>
+
+        <!-- Buenas Prácticas -->
+        <section class="slide">
+            <h2>Buenas Prácticas del Ciclo TDD</h2>
+            <div class="summary-list">
+                <h3>1. Mantén el ciclo rápido</h3>
+                <p>Cada iteración del ciclo debe tomar minutos, no horas. Esto mantiene el flujo y la concentración.</p>
+
+                <h3>2. Una funcionalidad a la vez</h3>
+                <p>No intentes implementar múltiples funcionalidades en un solo ciclo. Mantén el foco.</p>
+
+                <h3>3. Verifica que la prueba falla primero</h3>
+                <p>En RED, asegúrate de que la prueba realmente falla y por la razón correcta.</p>
+
+                <h3>4. No optimices prematuramente</h3>
+                <p>En GREEN, implementa solo lo necesario. La optimización viene en REFACTOR.</p>
+
+                <h3>5. Refactoriza constantemente</h3>
+                <p>No acumules deuda técnica. Refactoriza después de cada ciclo GREEN.</p>
+
+                <h3>6. Confía en las pruebas</h3>
+                <p>Si las pruebas pasan, puedes refactorizar con confianza. Si fallan, sabes exactamente qué rompiste.</p>
+            </div>
+            <aside class="notes">Estas prácticas hacen que TDD sea efectivo y sostenible.</aside>
+        </section>
+
+        <!-- Práctica Guiada 1 -->
+        <section class="slide">
+            <h2>Práctica Guiada #1: Calculadora de Impuestos</h2>
+            <div class="practice-box">
+                <h3>Objetivo:</h3>
+                <p>Implementar una calculadora de impuestos usando el ciclo Red-Green-Refactor completo.</p>
+
+                <h3>Requisitos:</h3>
+                <ul>
+                    <li>Calcular impuesto del 10% para montos menores a $1000</li>
+                    <li>Calcular impuesto del 15% para montos mayores o iguales a $1000</li>
+                    <li>Validar que el monto sea positivo</li>
+                </ul>
+
+                <h3>Paso 1: RED - Escribir primera prueba</h3>
+                <div class="code-block" style="font-size: 0.95em;">
+<code>describe('CalculadoraImpuestos', () => {
+    test('debe calcular 10% de impuesto para montos menores a $1000', () => {
+        const calc = new CalculadoraImpuestos();
+        expect(calc.calcularImpuesto(500)).toBe(50); // 10% de 500
+    });
+});</code>
+                </div>
+
+                <h3>Paso 2: Ejecutar y verificar que falla</h3>
+                <p>Ejecuta: <code>npm test</code> - Debe fallar porque CalculadoraImpuestos no existe.</p>
+            </div>
+            <aside class="notes">Vamos paso a paso siguiendo el ciclo completo.</aside>
+        </section>
+
+        <!-- Práctica Guiada 1 - Continuación -->
+        <section class="slide">
+            <h2>Práctica Guiada #1: Continuación</h2>
+            <div class="practice-box">
+                <h3>Paso 3: GREEN - Implementar código mínimo</h3>
+                <div class="code-block" style="font-size: 0.95em;">
+<code>class CalculadoraImpuestos {
+    calcularImpuesto(monto) {
+        return monto * 0.10;
+    }
+}</code>
+                </div>
+
+                <h3>Paso 4: Ejecutar - Debe pasar ✅</h3>
+                <p>Ejecuta: <code>npm test</code> - Ahora debe pasar.</p>
+
+                <h3>Paso 5: REFACTOR - Mejorar código</h3>
+                <div class="code-block" style="font-size: 0.95em;">
+<code>class CalculadoraImpuestos {
+    static TASA_IMPUESTO_BASICO = 0.10;
+    
+    calcularImpuesto(monto) {
+        return monto * this.constructor.TASA_IMPUESTO_BASICO;
+    }
+}</code>
+                </div>
+
+                <h3>Paso 6: Agregar siguiente funcionalidad (RED)</h3>
+                <div class="code-block" style="font-size: 0.95em;">
+<code>test('debe calcular 15% de impuesto para montos >= $1000', () => {
+    const calc = new CalculadoraImpuestos();
+    expect(calc.calcularImpuesto(1000)).toBe(150); // 15% de 1000
+});</code>
+                </div>
+            </div>
+            <aside class="notes">Continúen el ciclo para completar todos los requisitos.</aside>
+        </section>
+
+        <!-- Práctica Guiada 2 -->
+        <section class="slide">
+            <h2>Práctica Guiada #2: Sistema de Puntos</h2>
+            <div class="practice-box">
+                <h3>Objetivo:</h3>
+                <p>Crear un sistema de puntos de fidelidad usando TDD completo.</p>
+
+                <h3>Requisitos:</h3>
+                <ul>
+                    <li>Acumular 1 punto por cada $10 gastados</li>
+                    <li>Canjear puntos (1 punto = $0.10 de descuento)</li>
+                    <li>Validar que no se puedan canjear más puntos de los disponibles</li>
+                </ul>
+
+                <h3>RED - Escribir todas las pruebas primero:</h3>
+                <div class="code-block" style="font-size: 0.9em;">
+<code>describe('SistemaPuntos', () => {
+    test('debe acumular 1 punto por cada $10 gastados', () => {
+        const sistema = new SistemaPuntos();
+        sistema.agregarCompra(50);
+        expect(sistema.obtenerPuntos()).toBe(5); // 50 / 10 = 5 puntos
+    });
+
+    test('debe canjear puntos por descuento', () => {
+        const sistema = new SistemaPuntos();
+        sistema.agregarCompra(100); // 10 puntos
+        const descuento = sistema.canjearPuntos(5);
+        expect(descuento).toBe(0.50); // 5 puntos * $0.10
+        expect(sistema.obtenerPuntos()).toBe(5); // Quedan 5 puntos
+    });
+
+    test('no debe permitir canjear más puntos de los disponibles', () => {
+        const sistema = new SistemaPuntos();
+        sistema.agregarCompra(50); // 5 puntos
+        expect(() => sistema.canjearPuntos(10)).toThrow('Puntos insuficientes');
+    });
+});</code>
+                </div>
+            </div>
+            <aside class="notes">Escriban todas las pruebas primero, luego implementen.</aside>
+        </section>
+
+        <!-- Práctica Guiada 2 - Solución -->
+        <section class="slide">
+            <h2>Práctica Guiada #2: Solución</h2>
+            <div class="practice-box">
+                <h3>GREEN - Implementación mínima:</h3>
+                <div class="code-block" style="font-size: 0.9em;">
+<code>class SistemaPuntos {
+    constructor() {
+        this.puntos = 0;
+    }
+
+    agregarCompra(monto) {
+        this.puntos += Math.floor(monto / 10);
+    }
+
+    obtenerPuntos() {
+        return this.puntos;
+    }
+
+    canjearPuntos(cantidad) {
+        if (cantidad > this.puntos) {
+            throw new Error('Puntos insuficientes');
+        }
+        this.puntos -= cantidad;
+        return cantidad * 0.10;
+    }
+}</code>
+                </div>
+
+                <h3>REFACTOR - Mejorar código:</h3>
+                <div class="code-block" style="font-size: 0.9em;">
+<code>class SistemaPuntos {
+    static PUNTOS_POR_DOLAR = 10;
+    static VALOR_PUNTO = 0.10;
+
+    constructor() {
+        this.puntos = 0;
+    }
+
+    agregarCompra(monto) {
+        this.puntos += this.calcularPuntos(monto);
+    }
+
+    calcularPuntos(monto) {
+        return Math.floor(monto / this.constructor.PUNTOS_POR_DOLAR);
+    }
+
+    obtenerPuntos() {
+        return this.puntos;
+    }
+
+    canjearPuntos(cantidad) {
+        this.validarPuntosSuficientes(cantidad);
+        this.puntos -= cantidad;
+        return this.calcularDescuento(cantidad);
+    }
+
+    validarPuntosSuficientes(cantidad) {
+        if (cantidad > this.puntos) {
+            throw new Error('Puntos insuficientes');
+        }
+    }
+
+    calcularDescuento(cantidad) {
+        return cantidad * this.constructor.VALOR_PUNTO;
+    }
+}</code>
+                </div>
+            </div>
+            <aside class="notes">Noten cómo el refactor mejora la legibilidad y mantenibilidad.</aside>
+        </section>
+
+        <!-- Práctica Evaluada -->
+        <section class="slide">
+            <h2>Práctica Evaluada</h2>
+            <div class="practice-box">
+                <h3>Enunciado:</h3>
+                <p>Implementa una clase <code>GestorTareas</code> usando el ciclo completo Red-Green-Refactor que gestione una lista de tareas con las siguientes funcionalidades:</p>
+                
+                <ol>
+                    <li>Agregar una tarea con título y descripción</li>
+                    <li>Marcar una tarea como completada</li>
+                    <li>Eliminar una tarea</li>
+                    <li>Obtener todas las tareas pendientes</li>
+                    <li>Obtener todas las tareas completadas</li>
+                    <li>Contar el total de tareas</li>
+                    <li>Validar que no se puedan agregar tareas con título vacío</li>
+                </ol>
+
+                <h3>Criterios de Evaluación:</h3>
+                <ul>
+                    <li><strong>Ciclo Red-Green-Refactor (50%):</strong> Cada funcionalidad debe seguir el ciclo completo, pruebas escritas primero, código mínimo, refactor aplicado</li>
+                    <li><strong>Calidad de las pruebas (25%):</strong> Pruebas claras, una aserción por prueba, nombres descriptivos</li>
+                    <li><strong>Calidad del código refactorizado (15%):</strong> Código limpio, bien estructurado, sin duplicación</li>
+                    <li><strong>Funcionalidad completa (10%):</strong> Todos los requisitos implementados correctamente</li>
+                </ul>
+
+                <h3>Rúbrica:</h3>
+                <ul>
+                    <li><strong>Excelente (90-100):</strong> Ciclo perfectamente aplicado, código impecable después del refactor</li>
+                    <li><strong>Bueno (75-89):</strong> Ciclo aplicado correctamente, código funcional y bien refactorizado</li>
+                    <li><strong>Satisfactorio (60-74):</strong> Ciclo aplicado parcialmente, algunas funcionalidades sin refactor</li>
+                    <li><strong>Necesita mejorar (<60):</strong> Ciclo no aplicado, código sin refactorizar</li>
+                </ul>
+            </div>
+            <aside class="notes">Esta práctica evalúa el dominio completo del ciclo Red-Green-Refactor.</aside>
+        </section>
+
+        <!-- Mini-Quiz -->
+        <section class="slide">
+            <h2>Mini-Quiz</h2>
+            <div class="quiz-question">
+                <h3>1. ¿Cuál es el orden correcto del ciclo TDD?</h3>
+                <div class="quiz-option">a) Green → Red → Refactor</div>
+                <div class="quiz-option">b) Red → Green → Refactor</div>
+                <div class="quiz-option">c) Refactor → Red → Green</div>
+                <div class="quiz-option">d) Red → Refactor → Green</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>2. En la fase RED, ¿por qué es importante que la prueba falle primero?</h3>
+                <div class="quiz-option">a) Para ahorrar tiempo</div>
+                <div class="quiz-option">b) Para confirmar que la prueba realmente verifica algo</div>
+                <div class="quiz-option">c) Para evitar escribir código</div>
+                <div class="quiz-option">d) No es importante</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>3. En la fase GREEN, ¿qué principio debemos seguir?</h3>
+                <div class="quiz-option">a) Escribir código perfecto desde el inicio</div>
+                <div class="quiz-option">b) Escribir código mínimo para hacer pasar la prueba</div>
+                <div class="quiz-option">c) Optimizar el código inmediatamente</div>
+                <div class="quiz-option">d) Agregar funcionalidades extra</div>
+            </div>
+        </section>
+
+        <!-- Mini-Quiz Continuación -->
+        <section class="slide">
+            <h2>Mini-Quiz (Continuación)</h2>
+            <div class="quiz-question">
+                <h3>4. En la fase REFACTOR, ¿qué podemos hacer?</h3>
+                <div class="quiz-option">a) Cambiar el comportamiento del código</div>
+                <div class="quiz-option">b) Agregar nuevas funcionalidades</div>
+                <div class="quiz-option">c) Mejorar el código sin cambiar su comportamiento</div>
+                <div class="quiz-option">d) Eliminar pruebas</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>5. ¿Qué pasa si las pruebas fallan durante el REFACTOR?</h3>
+                <div class="quiz-option">a) Es normal, podemos continuar</div>
+                <div class="quiz-option">b) Hemos cambiado el comportamiento, debemos revertir</div>
+                <div class="quiz-option">c) Debemos escribir nuevas pruebas</div>
+                <div class="quiz-option">d) Debemos eliminar las pruebas que fallan</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>6. Verdadero o Falso: El ciclo TDD debe ser rápido (minutos, no horas).</h3>
+                <div class="quiz-option">Verdadero</div>
+                <div class="quiz-option">Falso</div>
+            </div>
+        </section>
+
+        <!-- Mini-Quiz Continuación 2 -->
+        <section class="slide">
+            <h2>Mini-Quiz (Continuación)</h2>
+            <div class="quiz-question">
+                <h3>7. ¿Cuál es un error común en la fase GREEN?</h3>
+                <div class="quiz-option">a) Escribir código mínimo</div>
+                <div class="quiz-option">b) Implementar funcionalidades que la prueba no requiere</div>
+                <div class="quiz-option">c) Verificar que la prueba pasa</div>
+                <div class="quiz-option">d) Seguir el ciclo correctamente</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>8. ¿Qué debemos hacer después de hacer pasar una prueba?</h3>
+                <div class="quiz-option">a) Escribir la siguiente prueba inmediatamente</div>
+                <div class="quiz-option">b) Refactorizar el código</div>
+                <div class="quiz-option">c) Optimizar el código</div>
+                <div class="quiz-option">d) Documentar el código</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>9. Verdadero o Falso: En REFACTOR podemos agregar nuevas funcionalidades.</h3>
+                <div class="quiz-option">Verdadero</div>
+                <div class="quiz-option">Falso - REFACTOR solo mejora código existente</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>10. ¿Cuál es la duración ideal de un ciclo completo Red-Green-Refactor?</h3>
+                <div class="quiz-option">a) Horas</div>
+                <div class="quiz-option">b) Minutos</div>
+                <div class="quiz-option">c) Días</div>
+                <div class="quiz-option">d) Semanas</div>
+            </div>
+        </section>
+
+        <!-- Respuestas del Quiz -->
+        <section class="slide">
+            <h2>Respuestas del Mini-Quiz</h2>
+            <div class="summary-list">
+                <ol>
+                    <li><strong>b) Red → Green → Refactor</strong> - Este es el orden correcto del ciclo</li>
+                    <li><strong>b) Para confirmar que la prueba realmente verifica algo</strong> - Evita falsos positivos</li>
+                    <li><strong>b) Escribir código mínimo para hacer pasar la prueba</strong> - Sin optimización prematura</li>
+                    <li><strong>c) Mejorar el código sin cambiar su comportamiento</strong> - REFACTOR solo mejora</li>
+                    <li><strong>b) Hemos cambiado el comportamiento, debemos revertir</strong> - REFACTOR no debe cambiar comportamiento</li>
+                    <li><strong>Verdadero</strong> - Los ciclos deben ser rápidos para mantener el flujo</li>
+                    <li><strong>b) Implementar funcionalidades que la prueba no requiere</strong> - Error común</li>
+                    <li><strong>b) Refactorizar el código</strong> - Siempre refactorizar después de GREEN</li>
+                    <li><strong>Falso</strong> - REFACTOR solo mejora código, no agrega funcionalidades</li>
+                    <li><strong>b) Minutos</strong> - Los ciclos deben ser rápidos</li>
+                </ol>
+            </div>
+            <aside class="notes">Si tuvieron dudas, revisen esos conceptos antes de continuar.</aside>
+        </section>
+
+        <!-- Resumen -->
+        <section class="slide">
+            <h2>Resumen de la Unidad</h2>
+            <div class="summary-list">
+                <h3>Puntos Clave:</h3>
+                <ul>
+                    <li>El ciclo <strong>Red-Green-Refactor</strong> es el corazón de TDD</li>
+                    <li><strong>RED:</strong> Escribir prueba que falle primero - define comportamiento esperado</li>
+                    <li><strong>GREEN:</strong> Código mínimo para pasar - sin optimización prematura</li>
+                    <li><strong>REFACTOR:</strong> Mejorar código sin cambiar comportamiento - mantener pruebas pasando</li>
+                    <li>El ciclo debe ser rápido (minutos, no horas)</li>
+                    <li>Cada fase tiene un propósito específico y no debe saltarse</li>
+                    <li>Las pruebas son la red de seguridad durante el refactor</li>
+                    <li>El ciclo se repite constantemente durante el desarrollo</li>
+                    <li>Confiar en las pruebas permite refactorizar con seguridad</li>
+                </ul>
+            </div>
+            <aside class="notes">Este resumen cubre los conceptos fundamentales del ciclo TDD.</aside>
+        </section>
+
+        <!-- Tarea -->
+        <section class="slide">
+            <h2>Tarea para Casa</h2>
+            <div class="practice-box">
+                <h3>Actividad:</h3>
+                <p>Implementa un sistema de gestión de inventario usando el ciclo completo Red-Green-Refactor con las siguientes funcionalidades:</p>
+                
+                <ol>
+                    <li>Agregar productos con nombre, precio y cantidad</li>
+                    <li>Buscar producto por nombre</li>
+                    <li>Actualizar cantidad de un producto</li>
+                    <li>Eliminar producto</li>
+                    <li>Calcular valor total del inventario</li>
+                    <li>Obtener productos con stock bajo (< 10 unidades)</li>
+                    <li>Validar que no se puedan agregar productos con precio negativo</li>
+                </ol>
+
+                <h3>Requisitos Específicos:</h3>
+                <ul>
+                    <li>Cada funcionalidad debe seguir el ciclo completo: RED → GREEN → REFACTOR</li>
+                    <li>Documentar cada fase del ciclo con comentarios</li>
+                    <li>Incluir capturas de pantalla mostrando las pruebas fallando (RED) y pasando (GREEN)</li>
+                    <li>Mostrar el código antes y después del refactor</li>
+                </ul>
+
+                <h3>Entregables:</h3>
+                <ul>
+                    <li>Código fuente completo con commits que muestren el proceso</li>
+                    <li>Documento explicando el proceso seguido en cada funcionalidad</li>
+                    <li>Capturas de pantalla del proceso Red-Green-Refactor</li>
+                    <li>Reflexión sobre la experiencia (1-2 páginas)</li>
+                </ul>
+
+                <h3>Fecha de entrega:</h3>
+                <p>Una semana después de esta clase</p>
+            </div>
+            <aside class="notes">Esta tarea les permitirá practicar el ciclo completo múltiples veces.</aside>
+        </section>
+
+        <!-- Recursos Adicionales -->
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Para ampliar tu conocimiento sobre esta unidad, visita nuestra página de recursos con:</p>
+                <ul>
+                    <li>Videos sobre el ciclo RED-GREEN-REFACTOR</li>
+                    <li>Ejemplos prácticos de TDD</li>
+                    <li>Frameworks de testing</li>
+                    <li>Mejores prácticas</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_02_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">
+                        Ver Recursos Adicionales →
+                    </a>
+                </p>
+            </div>
+        </section>
+
+        <!-- Diapositiva Final -->
+        <section class="slide title-slide">
+            <h1>¡Gracias!</h1>
+            <h2>Unidad II: Ciclo de desarrollo en TDD</h2>
+            <p style="margin-top: 50px; font-size: 1.5em;">Próxima clase: Unidad III - Diseño de pruebas</p>
+            <p style="font-size: 1.2em; margin-top: 30px;">Preguntas y dudas</p>
+            <aside class="notes">Practiquen el ciclo Red-Green-Refactor hasta que sea natural.</aside>
+        </section>
+    </div>
+
+    <!-- Controles -->
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">23</span>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul class="index-list" id="indexList"></ul>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        // Generar índice
+        const indexList = document.getElementById('indexList');
+        slides.forEach((slide, index) => {
+            const title = slide.querySelector('h1, h2');
+            if (title && !slide.classList.contains('title-slide')) {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = `${index + 1}. ${title.textContent}`;
+                a.onclick = (e) => {
+                    e.preventDefault();
+                    goToSlide(index);
+                    toggleIndex();
+                };
+                li.appendChild(a);
+                indexList.appendChild(li);
+            }
+        });
+
+        function showSlide(n) {
+            if (n >= totalSlides) n = 0;
+            if (n < 0) n = totalSlides - 1;
+            
+            slides[currentSlide].classList.remove('active');
+            currentSlide = n;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            // Actualizar botones
+            document.querySelector('.nav-btn:first-child').disabled = currentSlide === 0;
+            document.querySelector('.nav-btn:last-child').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function goToSlide(n) {
+            showSlide(n);
+        }
+
+        function toggleIndex() {
+            document.getElementById('indexPanel').classList.toggle('active');
+        }
+
+        // Navegación con teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            } else if (e.key === 'n' || e.key === 'N') {
+                e.preventDefault();
+                const notes = slides[currentSlide].querySelector('.notes');
+                if (notes) {
+                    notes.classList.toggle('active');
+                }
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                goToSlide(0);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                goToSlide(totalSlides - 1);
+            }
+        });
+
+        // Inicializar
+        showSlide(0);
+    </script>
+</body>
+</html>
+

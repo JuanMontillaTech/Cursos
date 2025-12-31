@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 07 - Herencia, Encapsulación y Manejo de Excepciones</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; overflow: hidden; }
+        .presentation-container { width: 100vw; height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; }
+        .slide { display: none; width: 90vw; max-width: 1280px; height: 72vh; max-height: 720px; background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 60px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); overflow-y: auto; position: relative; }
+        .slide.active { display: block; }
+        .slide h1 { font-size: 3.5em; color: #4CAF50; margin-bottom: 30px; text-align: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        .slide h2 { font-size: 2.5em; color: #64B5F6; margin: 30px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        .slide h3 { font-size: 1.8em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .slide p, .slide li { font-size: 1.3em; line-height: 1.8; margin: 15px 0; }
+        .slide ul, .slide ol { margin-left: 40px; margin-top: 15px; }
+        .slide code { background: #1a1a1a; padding: 3px 8px; border-radius: 4px; font-family: 'Consolas', 'Monaco', monospace; color: #CE9178; font-size: 0.9em; }
+        .slide pre { background: #1a1a1a; border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; overflow-x: auto; box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3); }
+        .slide pre code { color: #D4D4D4; font-size: 1.1em; line-height: 1.6; display: block; background: none; padding: 0; }
+        .cover-slide { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .cover-slide h1 { font-size: 4em; margin-bottom: 40px; }
+        .cover-slide .subtitle { font-size: 2.5em; color: #64B5F6; margin: 20px 0; }
+        .cover-slide .author { font-size: 1.8em; color: #FFB74D; margin-top: 60px; }
+        .navigation { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
+        .nav-btn { background: #4CAF50; color: white; border: none; padding: 15px 30px; font-size: 1.2em; border-radius: 8px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); }
+        .nav-btn:hover { background: #45a049; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5); }
+        .nav-btn:disabled { background: #555; cursor: not-allowed; transform: none; }
+        .slide-counter { position: fixed; top: 30px; right: 30px; background: rgba(0, 0, 0, 0.7); padding: 10px 20px; border-radius: 8px; font-size: 1.1em; z-index: 1000; }
+        .index-btn { position: fixed; top: 30px; left: 30px; background: #64B5F6; color: white; border: none; padding: 15px 25px; font-size: 1.1em; border-radius: 8px; cursor: pointer; z-index: 1000; transition: all 0.3s; }
+        .index-btn:hover { background: #42A5F5; transform: translateY(-2px); }
+        .index-panel { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.95); z-index: 2000; padding: 60px; overflow-y: auto; }
+        .index-panel.active { display: block; }
+        .index-panel h2 { color: #4CAF50; font-size: 2.5em; margin-bottom: 30px; text-align: center; }
+        .index-panel ul { list-style: none; max-width: 800px; margin: 0 auto; }
+        .index-panel li { margin: 15px 0; }
+        .index-panel a { color: #64B5F6; text-decoration: none; font-size: 1.4em; display: block; padding: 15px; border-left: 4px solid #64B5F6; transition: all 0.3s; }
+        .index-panel a:hover { background: rgba(100, 181, 246, 0.1); padding-left: 25px; }
+        .close-index { position: absolute; top: 30px; right: 30px; background: #f44336; color: white; border: none; padding: 15px 25px; font-size: 1.2em; border-radius: 8px; cursor: pointer; }
+        .notes { display: none; background: rgba(255, 193, 7, 0.2); border-left: 4px solid #FFC107; padding: 15px; margin-top: 20px; border-radius: 4px; }
+        .notes.visible { display: block; }
+        .notes-title { color: #FFC107; font-weight: bold; margin-bottom: 10px; }
+        .highlight-box { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .practice-box { background: rgba(100, 181, 246, 0.1); border: 2px solid #64B5F6; padding: 25px; margin: 25px 0; border-radius: 8px; }
+        .practice-box h3 { color: #64B5F6; margin-top: 0; }
+        .quiz-question { background: rgba(255, 183, 77, 0.1); border-left: 4px solid #FFB74D; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .quiz-answer { background: rgba(76, 175, 80, 0.2); border-left: 4px solid #4CAF50; padding: 15px; margin: 10px 0; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table th, table td { padding: 10px; border: 1px solid #555; text-align: left; }
+        table th { background: #4CAF50; }
+        @media (max-width: 768px) { .slide { width: 95vw; height: 80vh; padding: 30px; } .slide h1 { font-size: 2em; } .slide h2 { font-size: 1.5em; } .slide p, .slide li { font-size: 1em; } }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <section class="slide active cover-slide">
+            <h1>Desarrollo de Software I</h1>
+            <div class="subtitle">Unidad 07: Herencia, Encapsulación y Manejo de Excepciones</div>
+        </section>
+
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <h3>Resultados de Aprendizaje:</h3>
+            <ul>
+                <li>Comprender y aplicar encapsulación usando modificadores de acceso</li>
+                <li>Implementar herencia entre clases</li>
+                <li>Manejar excepciones usando try-catch-finally</li>
+                <li>Crear jerarquías de clases con herencia</li>
+                <li>Validar entrada de datos y manejar errores</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <ol style="font-size: 1.4em; line-height: 2;">
+                <li>Encapsulación</li>
+                <li>Modificadores de acceso (private, public, protected)</li>
+                <li>Herencia entre clases</li>
+                <li>Clases base y derivadas</li>
+                <li>Manejo de excepciones (try-catch)</li>
+                <li>Bloque finally</li>
+                <li>Prácticas guiadas</li>
+                <li>Evaluación práctica</li>
+                <li>Mini-Quiz</li>
+            </ol>
+        </section>
+
+        <section class="slide">
+            <h2>Encapsulación</h2>
+            <p>La <strong>encapsulación</strong> es el principio de ocultar los detalles internos de una clase y exponer solo lo necesario.</p>
+            <h3>Ventajas:</h3>
+            <ul>
+                <li><strong>Seguridad:</strong> Protege datos de acceso no autorizado</li>
+                <li><strong>Control:</strong> Permite validar datos antes de asignarlos</li>
+                <li><strong>Mantenibilidad:</strong> Cambios internos no afectan código externo</li>
+                <li><strong>Claridad:</strong> Define claramente qué es público y qué es privado</li>
+            </ul>
+            <h3>Ejemplo:</h3>
+            <pre><code>class Persona
+{
+    private int edad;  // Privado: solo accesible dentro de la clase
+    
+    public void SetEdad(int nuevaEdad)
+    {
+        if (nuevaEdad > 0 && nuevaEdad < 150)
+        {
+            edad = nuevaEdad;  // Validación antes de asignar
+        }
+    }
+}</code></pre>
+        </section>
+
+        <section class="slide">
+            <h2>Modificadores de Acceso</h2>
+            <p>Los <strong>modificadores de acceso</strong> controlan desde dónde se puede acceder a miembros de una clase.</p>
+            <table>
+                <tr><th>Modificador</th><th>Acceso</th><th>Descripción</th></tr>
+                <tr><td><code>public</code></td><td>Público</td><td>Accesible desde cualquier lugar</td></tr>
+                <tr><td><code>private</code></td><td>Privado</td><td>Solo accesible dentro de la clase</td></tr>
+                <tr><td><code>protected</code></td><td>Protegido</td><td>Accesible en la clase y clases derivadas</td></tr>
+            </table>
+            <h3>Ejemplo:</h3>
+            <pre><code>class Persona
+{
+    public string Nombre;        // Accesible desde cualquier lugar
+    private int edad;            // Solo dentro de Persona
+    protected string telefono;   // En Persona y clases derivadas
+    
+    public void MostrarInfo()
+    {
+        Console.WriteLine($"Nombre: {Nombre}, Edad: {edad}");
+    }
+}</code></pre>
+        </section>
+
+        <section class="slide">
+            <h2>Herencia</h2>
+            <p>La <strong>herencia</strong> permite crear una nueva clase basada en una clase existente, heredando sus propiedades y métodos.</p>
+            <h3>Sintaxis:</h3>
+            <pre><code>class ClaseBase
+{
+    // Propiedades y métodos
+}
+
+class ClaseDerivada : ClaseBase
+{
+    // Propiedades y métodos adicionales
+}</code></pre>
+            <h3>Ejemplo:</h3>
+            <pre><code>// Clase base
+class Persona
+{
+    public string Nombre;
+    public int Edad;
+    
+    public void MostrarInfo()
+    {
+        Console.WriteLine($"Nombre: {Nombre}, Edad: {Edad}");
+    }
+}
+
+// Clase derivada
+class Estudiante : Persona
+{
+    public string Carrera;
+    
+    public void MostrarCarrera()
+    {
+        Console.WriteLine($"Carrera: {Carrera}");
+    }
+}</code></pre>
+        </section>
+
+        <section class="slide">
+            <h2>Herencia: Ejemplo Completo</h2>
+            <pre><code>// Clase base
+class Persona
+{
+    protected string nombre;
+    protected int edad;
+    
+    public Persona(string nombre, int edad)
+    {
+        this.nombre = nombre;
+        this.edad = edad;
+    }
+    
+    public virtual void MostrarInfo()
+    {
+        Console.WriteLine($"Nombre: {nombre}, Edad: {edad}");
+    }
+}
+
+// Clase derivada
+class Estudiante : Persona
+{
+    private string carrera;
+    
+    public Estudiante(string nombre, int edad, string carrera) 
+        : base(nombre, edad)
+    {
+        this.carrera = carrera;
+    }
+    
+    public override void MostrarInfo()
+    {
+        base.MostrarInfo();
+        Console.WriteLine($"Carrera: {carrera}");
+    }
+}
+
+// Uso
+Estudiante est = new Estudiante("Juan", 20, "Ingeniería");
+est.MostrarInfo();  // Muestra nombre, edad y carrera</code></pre>
+        </section>
+
+        <section class="slide">
+            <h2>Manejo de Excepciones: try-catch</h2>
+            <p>Las <strong>excepciones</strong> son errores que ocurren durante la ejecución del programa. El manejo de excepciones permite controlar estos errores.</p>
+            <h3>Sintaxis:</h3>
+            <pre><code>try
+{
+    // Código que puede generar error
+}
+catch (TipoExcepcion ex)
+{
+    // Código que maneja el error
+}</code></pre>
+            <h3>Ejemplo:</h3>
+            <pre><code>try
+{
+    Console.Write("Ingrese un número: ");
+    int numero = Convert.ToInt32(Console.ReadLine());
+    Console.WriteLine($"Número ingresado: {numero}");
+}
+catch (FormatException)
+{
+    Console.WriteLine("Error: Debe ingresar un número válido");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Error: {ex.Message}");
+}</code></pre>
+        </section>
+
+        <section class="slide">
+            <h2>Bloque finally</h2>
+            <p>El bloque <code>finally</code> se ejecuta siempre, sin importar si hubo una excepción o no.</p>
+            <h3>Sintaxis:</h3>
+            <pre><code>try
+{
+    // Código que puede generar error
+}
+catch (Exception ex)
+{
+    // Manejo del error
+}
+finally
+{
+    // Código que siempre se ejecuta
+}</code></pre>
+            <h3>Ejemplo:</h3>
+            <pre><code>try
+{
+    Console.Write("Ingrese un número: ");
+    int numero = Convert.ToInt32(Console.ReadLine());
+    Console.WriteLine($"Número: {numero}");
+}
+catch (FormatException)
+{
+    Console.WriteLine("Error: Número inválido");
+}
+finally
+{
+    Console.WriteLine("Operación completada");
+    // Este código siempre se ejecuta
+}</code></pre>
+            <div class="highlight-box">
+                <strong>Uso común:</strong> finally se usa para limpiar recursos (cerrar archivos, conexiones, etc.)
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>En la Vida Real: Manejo de Errores</h2>
+            <div class="highlight-box">
+                <strong>Escenario:</strong> Programa de entrada de datos con validación
+            </div>
+            <pre><code>class Validador
+{
+    public static int LeerEntero(string mensaje)
+    {
+        int valor = 0;
+        bool valido = false;
+        
+        while (!valido)
+        {
+            try
+            {
+                Console.Write(mensaje);
+                valor = Convert.ToInt32(Console.ReadLine());
+                valido = true;
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Error: Debe ingresar un número entero válido");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error inesperado: {ex.Message}");
+            }
+        }
+        
+        return valor;
+    }
+}
+
+// Uso
+int edad = Validador.LeerEntero("Ingrese su edad: ");</code></pre>
+        </section>
+
+        <section class="slide">
+            <h2>Errores Comunes</h2>
+            <div class="highlight-box" style="border-left-color: #f44336;">
+                <h3 style="color: #f44336;">1. Acceder a miembros privados desde fuera</h3>
+                <pre><code>class Persona
+{
+    private int edad;
+}
+
+Persona p = new Persona();
+p.edad = 25;  // ❌ Error: edad es privado
+
+// ✅ Solución: Usar propiedades públicas o métodos
+public int Edad { get; set; }</code></pre>
+            </div>
+            <div class="highlight-box" style="border-left-color: #f44336;">
+                <h3 style="color: #f44336;">2. No manejar excepciones</h3>
+                <pre><code>int numero = Convert.ToInt32(Console.ReadLine());  
+// ❌ Si el usuario ingresa texto, el programa crashea
+
+try
+{
+    int numero = Convert.ToInt32(Console.ReadLine());
+}
+catch (FormatException)
+{
+    Console.WriteLine("Error: número inválido");
+}
+// ✅ Maneja el error apropiadamente</code></pre>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Buenas Prácticas</h2>
+            <ul>
+                <li><strong>Usar private para datos internos:</strong> Proteger información sensible</li>
+                <li><strong>Usar propiedades públicas:</strong> Controlar acceso a datos</li>
+                <li><strong>Herencia cuando hay relación "es-un":</strong> Estudiante ES-UN Persona</li>
+                <li><strong>Manejar excepciones específicas:</strong> catch específico antes de general</li>
+                <li><strong>Usar finally para limpiar:</strong> Liberar recursos siempre</li>
+            </ul>
+            <h3>Ejemplo de Código Limpio:</h3>
+            <pre><code>class Persona
+{
+    private int edad;  // Privado para protección
+    
+    public int Edad   // Propiedad pública con validación
+    {
+        get { return edad; }
+        set 
+        {
+            if (value > 0 && value < 150)
+                edad = value;
+            else
+                throw new ArgumentException("Edad inválida");
+        }
+    }
+}</code></pre>
+        </section>
+
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Práctica Guiada #1: Jerarquía con Herencia</h2>
+                <h3>Objetivo:</h3>
+                <p>Crear una jerarquía de clases (Persona, Estudiante, Profesor) con herencia.</p>
+                <h3>Instrucciones:</h3>
+                <ol>
+                    <li>Crear clase base <code>Persona</code> con: Nombre, Edad</li>
+                    <li>Crear clase <code>Estudiante</code> que herede de Persona, agregar: Carrera</li>
+                    <li>Crear clase <code>Profesor</code> que herede de Persona, agregar: Materia</li>
+                    <li>Crear constructores para cada clase</li>
+                    <li>Crear método <code>MostrarInfo()</code> en cada clase</li>
+                    <li>En Main, crear objetos y mostrar información</li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Solución Práctica Guiada #1</h2>
+                <pre><code>using System;
+
+namespace JerarquiaClases
+{
+    // Clase base
+    class Persona
+    {
+        public string Nombre;
+        public int Edad;
+        
+        public Persona(string nombre, int edad)
+        {
+            Nombre = nombre;
+            Edad = edad;
+        }
+        
+        public virtual void MostrarInfo()
+        {
+            Console.WriteLine($"Nombre: {Nombre}, Edad: {Edad}");
+        }
+    }
+    
+    // Clase derivada
+    class Estudiante : Persona
+    {
+        public string Carrera;
+        
+        public Estudiante(string nombre, int edad, string carrera) 
+            : base(nombre, edad)
+        {
+            Carrera = carrera;
+        }
+        
+        public override void MostrarInfo()
+        {
+            base.MostrarInfo();
+            Console.WriteLine($"Carrera: {Carrera}");
+        }
+    }
+    
+    // Clase derivada
+    class Profesor : Persona
+    {
+        public string Materia;
+        
+        public Profesor(string nombre, int edad, string materia) 
+            : base(nombre, edad)
+        {
+            Materia = materia;
+        }
+        
+        public override void MostrarInfo()
+        {
+            base.MostrarInfo();
+            Console.WriteLine($"Materia: {Materia}");
+        }
+    }
+    
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Estudiante est = new Estudiante("Juan", 20, "Ingeniería");
+            Profesor prof = new Profesor("María", 35, "Matemáticas");
+            
+            est.MostrarInfo();
+            Console.WriteLine();
+            prof.MostrarInfo();
+            
+            Console.ReadKey();
+        }
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Práctica Guiada #2: Manejo de Errores</h2>
+                <h3>Objetivo:</h3>
+                <p>Implementar manejo de errores en un programa de entrada de datos.</p>
+                <h3>Instrucciones:</h3>
+                <ol>
+                    <li>Crear función <code>LeerEntero()</code> que valide entrada</li>
+                    <li>Usar try-catch para manejar FormatException</li>
+                    <li>Repetir hasta que se ingrese un número válido</li>
+                    <li>Crear función <code>LeerDouble()</code> similar</li>
+                    <li>Crear programa que use estas funciones</li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Solución Práctica Guiada #2</h2>
+                <pre><code>using System;
+
+namespace ManejoErrores
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int edad = LeerEntero("Ingrese su edad: ");
+            double altura = LeerDouble("Ingrese su altura (m): ");
+            
+            Console.WriteLine($"\nEdad: {edad} años");
+            Console.WriteLine($"Altura: {altura:F2} metros");
+            
+            Console.ReadKey();
+        }
+        
+        static int LeerEntero(string mensaje)
+        {
+            int valor = 0;
+            bool valido = false;
+            
+            while (!valido)
+            {
+                try
+                {
+                    Console.Write(mensaje);
+                    valor = Convert.ToInt32(Console.ReadLine());
+                    valido = true;
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("Error: Debe ingresar un número entero válido");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error inesperado: {ex.Message}");
+                }
+            }
+            
+            return valor;
+        }
+        
+        static double LeerDouble(string mensaje)
+        {
+            double valor = 0;
+            bool valido = false;
+            
+            while (!valido)
+            {
+                try
+                {
+                    Console.Write(mensaje);
+                    valor = Convert.ToDouble(Console.ReadLine());
+                    valido = true;
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("Error: Debe ingresar un número válido");
+                }
+            }
+            
+            return valor;
+        }
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Práctica Evaluada</h2>
+                <h3>Enunciado:</h3>
+                <p>Crear un sistema de gestión académica que incluya:</p>
+                <ol>
+                    <li>Clase base <code>Persona</code> con encapsulación (propiedades privadas con get/set)</li>
+                    <li>Clase <code>Estudiante</code> que herede de Persona, agregar: Promedio</li>
+                    <li>Clase <code>Profesor</code> que herede de Persona, agregar: Salario</li>
+                    <li>Validación en propiedades (edad entre 0-120, promedio entre 0-100)</li>
+                    <li>Manejo de excepciones al ingresar datos</li>
+                    <li>Métodos para mostrar información en cada clase</li>
+                </ol>
+                <h3>Criterios de Evaluación:</h3>
+                <ul>
+                    <li><strong>Encapsulación (30%):</strong> Uso correcto de modificadores de acceso</li>
+                    <li><strong>Herencia (30%):</strong> Jerarquía correcta de clases</li>
+                    <li><strong>Excepciones (20%):</strong> Manejo adecuado de errores</li>
+                    <li><strong>Código (20%):</strong> Organización y claridad</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Rúbrica de Evaluación</h2>
+            <table>
+                <tr><th>Criterio</th><th>Excelente (4)</th><th>Bueno (3)</th><th>Regular (2)</th><th>Insuficiente (1)</th></tr>
+                <tr><td>Encapsulación</td><td>Uso perfecto de private/public</td><td>Uso correcto</td><td>Uso básico</td><td>Uso incorrecto</td></tr>
+                <tr><td>Herencia</td><td>Jerarquía perfecta</td><td>Jerarquía correcta</td><td>Jerarquía básica</td><td>Sin herencia</td></tr>
+                <tr><td>Excepciones</td><td>Manejo completo</td><td>Manejo adecuado</td><td>Manejo básico</td><td>Sin manejo</td></tr>
+                <tr><td>Código</td><td>Excelente organización</td><td>Buena organización</td><td>Organización básica</td><td>Sin organización</td></tr>
+            </table>
+            <p style="margin-top: 20px;"><strong>Puntuación Total:</strong> 16 puntos</p>
+        </section>
+
+        <section class="slide">
+            <h2>Mini-Quiz</h2>
+            <div class="quiz-question">
+                <p><strong>1. ¿Qué modificador hace un miembro accesible solo dentro de la clase?</strong></p>
+                <p>a) public</p><p>b) private</p><p>c) protected</p><p>d) internal</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>2. ¿Qué es la herencia?</strong></p>
+                <p>a) Crear objetos</p><p>b) Crear una clase basada en otra</p><p>c) Modificar clases</p><p>d) Eliminar clases</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>3. ¿Qué palabra clave se usa para heredar en C#?</strong></p>
+                <p>a) extends</p><p>b) inherits</p><p>c) :</p><p>d) inherits from</p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Mini-Quiz (Continuación)</h2>
+            <div class="quiz-question">
+                <p><strong>4. ¿Qué bloque se ejecuta siempre, incluso si hay excepción?</strong></p>
+                <p>a) try</p><p>b) catch</p><p>c) finally</p><p>d) throw</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>5. ¿Qué excepción se lanza cuando se ingresa texto en lugar de número?</strong></p>
+                <p>a) ArgumentException</p><p>b) FormatException</p><p>c) NullReferenceException</p><p>d) IndexOutOfRangeException</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>6. ¿protected permite acceso en clases derivadas?</strong></p>
+                <p>a) Verdadero</p><p>b) Falso</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>7. ¿Cuántas clases base puede tener una clase en C#?</strong></p>
+                <p>a) Una</p><p>b) Múltiples</p><p>c) Ninguna</p><p>d) Infinitas</p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Mini-Quiz (Continuación)</h2>
+            <div class="quiz-question">
+                <p><strong>8. ¿Qué palabra clave se usa para llamar al constructor de la clase base?</strong></p>
+                <p>a) super</p><p>b) base</p><p>c) parent</p><p>d) this</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>9. ¿Puedes tener múltiples bloques catch?</strong></p>
+                <p>a) Verdadero</p><p>b) Falso</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>10. ¿Qué es la encapsulación?</strong></p>
+                <p>a) Ocultar detalles internos</p><p>b) Crear objetos</p><p>c) Heredar clases</p><p>d) Manejar errores</p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Respuestas del Mini-Quiz</h2>
+            <div class="quiz-answer"><p><strong>1. b) private</strong> - private solo permite acceso dentro de la clase.</p></div>
+            <div class="quiz-answer"><p><strong>2. b) Crear una clase basada en otra</strong> - La herencia crea clases derivadas.</p></div>
+            <div class="quiz-answer"><p><strong>3. c) :</strong> - Se usa : para heredar en C#.</p></div>
+            <div class="quiz-answer"><p><strong>4. c) finally</strong> - finally siempre se ejecuta.</p></div>
+            <div class="quiz-answer"><p><strong>5. b) FormatException</strong> - FormatException para formato inválido.</p></div>
+            <div class="quiz-answer"><p><strong>6. a) Verdadero</strong> - protected permite acceso en derivadas.</p></div>
+            <div class="quiz-answer"><p><strong>7. a) Una</strong> - C# solo permite herencia simple.</p></div>
+            <div class="quiz-answer"><p><strong>8. b) base</strong> - base llama al constructor base.</p></div>
+            <div class="quiz-answer"><p><strong>9. a) Verdadero</strong> - Puedes tener múltiples catch.</p></div>
+            <div class="quiz-answer"><p><strong>10. a) Ocultar detalles internos</strong> - Encapsulación oculta detalles.</p></div>
+        </section>
+
+        <section class="slide">
+            <h2>Resumen de la Unidad</h2>
+            <ul style="font-size: 1.4em; line-height: 2;">
+                <li>✓ La encapsulación protege datos usando modificadores de acceso</li>
+                <li>✓ private: solo dentro de la clase, public: desde cualquier lugar</li>
+                <li>✓ protected: accesible en la clase y clases derivadas</li>
+                <li>✓ La herencia permite crear clases basadas en otras</li>
+                <li>✓ Se usa : para heredar en C#</li>
+                <li>✓ base llama al constructor de la clase base</li>
+                <li>✓ try-catch maneja excepciones</li>
+                <li>✓ finally siempre se ejecuta</li>
+            </ul>
+            <div class="highlight-box" style="margin-top: 30px;">
+                <strong>Próxima Unidad:</strong> Proyecto Final - Integraremos todos los conocimientos adquiridos en un proyecto funcional.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Tarea para Casa</h2>
+            <div class="practice-box">
+                <h3>Actividad:</h3>
+                <p>Diseñar el esquema del proyecto final y preparar una presentación preliminar.</p>
+                <h3>Entregables:</h3>
+                <ol>
+                    <li><strong>Documento de Diseño (3-4 páginas)</strong> con:
+                        <ul>
+                            <li>Descripción del proyecto</li>
+                            <li>Clases que se utilizarán</li>
+                            <li>Propiedades y métodos de cada clase</li>
+                            <li>Estructura del programa principal</li>
+                            <li>Funcionalidades principales</li>
+                        </ul>
+                    </li>
+                    <li><strong>Presentación Preliminar (5-10 diapositivas)</strong> con:
+                        <ul>
+                            <li>Objetivo del proyecto</li>
+                            <li>Funcionalidades principales</li>
+                            <li>Estructura de clases</li>
+                            <li>Cronograma de desarrollo</li>
+                        </ul>
+                    </li>
+                </ol>
+                <h3>Fecha de Entrega:</h3>
+                <p>Una semana después de esta clase</p>
+            </div>
+        </section>
+
+        <!-- Recursos Adicionales -->
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Para ampliar tu conocimiento sobre esta unidad, visita nuestra página de recursos con:</p>
+                <ul>
+                    <li>Videos sobre herencia y polimorfismo</li>
+                    <li>Ejemplos de clases abstractas</li>
+                    <li>Interfaces en C#</li>
+                    <li>Manejo de excepciones avanzado</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_07_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">
+                        Ver Recursos Adicionales →
+                    </a>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+    <div class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">24</span></div>
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul id="indexList"></ul>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let notesVisible = false;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            updateCounter();
+            updateNavigation();
+        }
+
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function previousSlide() { showSlide(currentSlide - 1); }
+
+        function updateCounter() {
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.querySelector('.nav-btn:first-child');
+            const nextBtn = document.querySelector('.nav-btn:last-child');
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+        }
+
+        function toggleIndex() {
+            const panel = document.getElementById('indexPanel');
+            panel.classList.toggle('active');
+            if (panel.classList.contains('active')) buildIndex();
+        }
+
+        function buildIndex() {
+            const indexList = document.getElementById('indexList');
+            indexList.innerHTML = '';
+            slides.forEach((slide, index) => {
+                const title = slide.querySelector('h1, h2')?.textContent || `Diapositiva ${index + 1}`;
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = title;
+                a.onclick = (e) => { e.preventDefault(); showSlide(index); toggleIndex(); };
+                li.appendChild(a);
+                indexList.appendChild(li);
+            });
+        }
+
+        function toggleNotes() {
+            notesVisible = !notesVisible;
+            document.querySelectorAll('.notes').forEach(note => {
+                note.classList.toggle('visible', notesVisible);
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); previousSlide(); }
+            else if (e.key === 'PageDown') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'PageUp') { e.preventDefault(); previousSlide(); }
+            else if (e.key === 'n' || e.key === 'N') { toggleNotes(); }
+        });
+
+        updateNavigation();
+        buildIndex();
+    </script>
+</body>
+</html>
+

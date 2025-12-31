@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 05 - Funciones y Métodos</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; overflow: hidden; }
+        .presentation-container { width: 100vw; height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; }
+        .slide { display: none; width: 90vw; max-width: 1280px; height: 72vh; max-height: 720px; background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 60px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); overflow-y: auto; position: relative; }
+        .slide.active { display: block; }
+        .slide h1 { font-size: 3.5em; color: #4CAF50; margin-bottom: 30px; text-align: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        .slide h2 { font-size: 2.5em; color: #64B5F6; margin: 30px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        .slide h3 { font-size: 1.8em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .slide p, .slide li { font-size: 1.3em; line-height: 1.8; margin: 15px 0; }
+        .slide ul, .slide ol { margin-left: 40px; margin-top: 15px; }
+        .slide code { background: #1a1a1a; padding: 3px 8px; border-radius: 4px; font-family: 'Consolas', 'Monaco', monospace; color: #CE9178; font-size: 0.9em; }
+        .slide pre { background: #1a1a1a; border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; overflow-x: auto; box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3); }
+        .slide pre code { color: #D4D4D4; font-size: 1.1em; line-height: 1.6; display: block; background: none; padding: 0; }
+        .cover-slide { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .cover-slide h1 { font-size: 4em; margin-bottom: 40px; }
+        .cover-slide .subtitle { font-size: 2.5em; color: #64B5F6; margin: 20px 0; }
+        .cover-slide .author { font-size: 1.8em; color: #FFB74D; margin-top: 60px; }
+        .navigation { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
+        .nav-btn { background: #4CAF50; color: white; border: none; padding: 15px 30px; font-size: 1.2em; border-radius: 8px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); }
+        .nav-btn:hover { background: #45a049; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5); }
+        .nav-btn:disabled { background: #555; cursor: not-allowed; transform: none; }
+        .slide-counter { position: fixed; top: 30px; right: 30px; background: rgba(0, 0, 0, 0.7); padding: 10px 20px; border-radius: 8px; font-size: 1.1em; z-index: 1000; }
+        .index-btn { position: fixed; top: 30px; left: 30px; background: #64B5F6; color: white; border: none; padding: 15px 25px; font-size: 1.1em; border-radius: 8px; cursor: pointer; z-index: 1000; transition: all 0.3s; }
+        .index-btn:hover { background: #42A5F5; transform: translateY(-2px); }
+        .index-panel { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.95); z-index: 2000; padding: 60px; overflow-y: auto; }
+        .index-panel.active { display: block; }
+        .index-panel h2 { color: #4CAF50; font-size: 2.5em; margin-bottom: 30px; text-align: center; }
+        .index-panel ul { list-style: none; max-width: 800px; margin: 0 auto; }
+        .index-panel li { margin: 15px 0; }
+        .index-panel a { color: #64B5F6; text-decoration: none; font-size: 1.4em; display: block; padding: 15px; border-left: 4px solid #64B5F6; transition: all 0.3s; }
+        .index-panel a:hover { background: rgba(100, 181, 246, 0.1); padding-left: 25px; }
+        .close-index { position: absolute; top: 30px; right: 30px; background: #f44336; color: white; border: none; padding: 15px 25px; font-size: 1.2em; border-radius: 8px; cursor: pointer; }
+        .notes { display: none; background: rgba(255, 193, 7, 0.2); border-left: 4px solid #FFC107; padding: 15px; margin-top: 20px; border-radius: 4px; }
+        .notes.visible { display: block; }
+        .notes-title { color: #FFC107; font-weight: bold; margin-bottom: 10px; }
+        .highlight-box { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .practice-box { background: rgba(100, 181, 246, 0.1); border: 2px solid #64B5F6; padding: 25px; margin: 25px 0; border-radius: 8px; }
+        .practice-box h3 { color: #64B5F6; margin-top: 0; }
+        .quiz-question { background: rgba(255, 183, 77, 0.1); border-left: 4px solid #FFB74D; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .quiz-answer { background: rgba(76, 175, 80, 0.2); border-left: 4px solid #4CAF50; padding: 15px; margin: 10px 0; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table th, table td { padding: 10px; border: 1px solid #555; text-align: left; }
+        table th { background: #4CAF50; }
+        @media (max-width: 768px) { .slide { width: 95vw; height: 80vh; padding: 30px; } .slide h1 { font-size: 2em; } .slide h2 { font-size: 1.5em; } .slide p, .slide li { font-size: 1em; } }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <section class="slide active cover-slide">
+            <h1>Desarrollo de Software I</h1>
+            <div class="subtitle">Unidad 05: Funciones y Métodos</div>
+        </section>
+
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <h3>Resultados de Aprendizaje:</h3>
+            <ul>
+                <li>Declarar y usar funciones en C#</li>
+                <li>Pasar parámetros a funciones</li>
+                <li>Retornar valores desde funciones</li>
+                <li>Diferenciar entre funciones predefinidas y personalizadas</li>
+                <li>Modularizar código usando funciones</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <ol style="font-size: 1.4em; line-height: 2;">
+                <li>¿Qué es una función?</li>
+                <li>Declaración de funciones</li>
+                <li>Funciones con parámetros</li>
+                <li>Funciones con valor de retorno</li>
+                <li>Funciones void (sin retorno)</li>
+                <li>Funciones predefinidas de C#</li>
+                <li>Ámbito de variables</li>
+                <li>Prácticas guiadas</li>
+                <li>Evaluación práctica</li>
+                <li>Mini-Quiz</li>
+            </ol>
+        </section>
+
+        <section class="slide">
+            <h2>¿Qué es una Función?</h2>
+            <p>Una <strong>función</strong> (o método) es un bloque de código que realiza una tarea específica y puede ser reutilizado.</p>
+            <h3>Ventajas de Usar Funciones:</h3>
+            <ul>
+                <li><strong>Reutilización:</strong> Escribir código una vez y usarlo múltiples veces</li>
+                <li><strong>Modularidad:</strong> Dividir programas complejos en partes más pequeñas</li>
+                <li><strong>Mantenibilidad:</strong> Más fácil de entender y modificar</li>
+                <li><strong>Organización:</strong> Código más limpio y estructurado</li>
+            </ul>
+            <h3>Analogía:</h3>
+            <div class="highlight-box">
+                <p>Una función es como una <strong>receta</strong>: defines los ingredientes (parámetros), los pasos (código), y obtienes un resultado (valor de retorno).</p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Declaración de Funciones</h2>
+            <h3>Sintaxis Básica:</h3>
+            <pre><code>tipoRetorno NombreFuncion()
+{
+    // Código de la función
+    return valor;  // Si tiene retorno
+}</code></pre>
+            <h3>Ejemplo Simple:</h3>
+            <pre><code>// Función que saluda
+static void Saludar()
+{
+    Console.WriteLine("¡Hola!");
+}
+
+// Llamar a la función
+Saludar();  // Imprime: ¡Hola!</code></pre>
+            <div class="highlight-box">
+                <strong>Nota:</strong> En C#, las funciones dentro de una clase deben ser <code>static</code> para ser llamadas desde <code>Main</code> sin crear una instancia.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Funciones con Parámetros</h2>
+            <p>Los <strong>parámetros</strong> permiten pasar datos a una función.</p>
+            <h3>Sintaxis:</h3>
+            <pre><code>tipoRetorno NombreFuncion(tipo1 param1, tipo2 param2)
+{
+    // Usar param1 y param2
+}</code></pre>
+            <h3>Ejemplo:</h3>
+            <pre><code>// Función que suma dos números
+static int Sumar(int a, int b)
+{
+    return a + b;
+}
+
+// Llamar la función
+int resultado = Sumar(5, 3);  // resultado = 8</code></pre>
+            <h3>Ejemplo con Múltiples Parámetros:</h3>
+            <pre><code>static void MostrarInfo(string nombre, int edad)
+{
+    Console.WriteLine($"Nombre: {nombre}, Edad: {edad}");
+}
+
+MostrarInfo("Juan", 25);  // Nombre: Juan, Edad: 25</code></pre>
+        </section>
+
+        <section class="slide">
+            <h2>Funciones con Valor de Retorno</h2>
+            <p>Las funciones pueden devolver un valor usando <code>return</code>.</p>
+            <h3>Ejemplo:</h3>
+            <pre><code>// Calcular el área de un rectángulo
+static double CalcularArea(double largo, double ancho)
+{
+    double area = largo * ancho;
+    return area;
+}
+
+// Usar la función
+double area = CalcularArea(10, 5);  // area = 50</code></pre>
+            <h3>Tipos de Retorno:</h3>
+            <ul>
+                <li><code>int</code>, <code>double</code>, <code>string</code>, <code>bool</code>, etc.</li>
+                <li><code>void</code> - No retorna nada</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Importante:</strong> Una función con tipo de retorno diferente a <code>void</code> debe tener al menos un <code>return</code>.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Funciones void (Sin Retorno)</h2>
+            <p>Las funciones <code>void</code> no retornan ningún valor. Se usan para realizar acciones.</p>
+            <h3>Ejemplo:</h3>
+            <pre><code>// Función que imprime un mensaje
+static void ImprimirMensaje(string mensaje)
+{
+    Console.WriteLine(mensaje);
+}
+
+// Función que muestra un menú
+static void MostrarMenu()
+{
+    Console.WriteLine("1. Opción 1");
+    Console.WriteLine("2. Opción 2");
+    Console.WriteLine("3. Salir");
+}
+
+// Llamar funciones void
+ImprimirMensaje("Bienvenido");
+MostrarMenu();</code></pre>
+            <div class="highlight-box">
+                <strong>Nota:</strong> Las funciones void pueden usar <code>return;</code> sin valor para salir temprano.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>En la Vida Real: Funciones</h2>
+            <div class="highlight-box">
+                <strong>Escenario:</strong> Calculadora de áreas de figuras geométricas
+            </div>
+            <pre><code>// Función para área de círculo
+static double AreaCirculo(double radio)
+{
+    return Math.PI * radio * radio;
+}
+
+// Función para área de rectángulo
+static double AreaRectangulo(double largo, double ancho)
+{
+    return largo * ancho;
+}
+
+// Función para área de triángulo
+static double AreaTriangulo(double base, double altura)
+{
+    return (base * altura) / 2;
+}
+
+// Usar las funciones
+double area1 = AreaCirculo(5);
+double area2 = AreaRectangulo(10, 8);
+double area3 = AreaTriangulo(6, 4);</code></pre>
+            <p><strong>Aplicación:</strong> Las funciones permiten organizar código en módulos reutilizables, facilitando el mantenimiento y la comprensión.</p>
+        </section>
+
+        <section class="slide">
+            <h2>Funciones Predefinidas de C#</h2>
+            <p>C# incluye muchas funciones útiles ya implementadas.</p>
+            <h3>Matemáticas (Math):</h3>
+            <pre><code>double resultado;
+
+resultado = Math.Max(10, 20);      // 20 (el mayor)
+resultado = Math.Min(10, 20);      // 10 (el menor)
+resultado = Math.Abs(-5);          // 5 (valor absoluto)
+resultado = Math.Round(3.7);       // 4 (redondear)
+resultado = Math.Sqrt(16);         // 4 (raíz cuadrada)
+resultado = Math.Pow(2, 3);        // 8 (2 elevado a 3)</code></pre>
+            <h3>Strings:</h3>
+            <pre><code>string texto = "Hola Mundo";
+int longitud = texto.Length;                    // 10
+string mayusculas = texto.ToUpper();            // "HOLA MUNDO"
+string minusculas = texto.ToLower();            // "hola mundo"
+bool contiene = texto.Contains("Mundo");      // true</code></pre>
+        </section>
+
+        <section class="slide">
+            <h2>Ámbito de Variables</h2>
+            <p>El <strong>ámbito</strong> (scope) determina dónde una variable es accesible.</p>
+            <h3>Variables Locales:</h3>
+            <pre><code>static void MiFuncion()
+{
+    int x = 10;  // Variable local
+    Console.WriteLine(x);  // ✅ OK
+}
+
+static void OtraFuncion()
+{
+    Console.WriteLine(x);  // ❌ Error: x no existe aquí
+}</code></pre>
+            <h3>Parámetros:</h3>
+            <pre><code>static void Procesar(int numero)
+{
+    // numero es accesible solo dentro de esta función
+    Console.WriteLine(numero);
+}</code></pre>
+            <div class="highlight-box">
+                <strong>Regla:</strong> Las variables declaradas dentro de una función solo existen dentro de esa función.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Errores Comunes</h2>
+            <div class="highlight-box" style="border-left-color: #f44336;">
+                <h3 style="color: #f44336;">1. Olvidar return en función con retorno</h3>
+                <pre><code>static int Sumar(int a, int b)
+{
+    int resultado = a + b;
+    // ❌ Error: falta return
+}
+
+static int Sumar(int a, int b)
+{
+    return a + b;  // ✅ Correcto
+}</code></pre>
+            </div>
+            <div class="highlight-box" style="border-left-color: #f44336;">
+                <h3 style="color: #f44336;">2. Usar variable fuera de su ámbito</h3>
+                <pre><code>static void Funcion1()
+{
+    int x = 5;
+}
+
+static void Funcion2()
+{
+    Console.WriteLine(x);  // ❌ Error: x no existe aquí
+}</code></pre>
+            </div>
+            <div class="highlight-box" style="border-left-color: #f44336;">
+                <h3 style="color: #f44336;">3. Olvidar static</h3>
+                <pre><code>void MiFuncion()  // ❌ Error si se llama desde Main
+{
+}
+
+static void MiFuncion()  // ✅ Correcto
+{
+}</code></pre>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Buenas Prácticas</h2>
+            <ul>
+                <li><strong>Nombres descriptivos:</strong> <code>CalcularPromedio</code> en lugar de <code>Calc</code></li>
+                <li><strong>Una función, una responsabilidad:</strong> Cada función debe hacer una cosa</li>
+                <li><strong>Parámetros claros:</strong> Usar nombres que indiquen qué esperan</li>
+                <li><strong>Comentarios cuando sea necesario:</strong> Explicar funciones complejas</li>
+                <li><strong>Mantener funciones pequeñas:</strong> Máximo 20-30 líneas idealmente</li>
+            </ul>
+            <h3>Ejemplo de Código Limpio:</h3>
+            <pre><code>// Función bien nombrada y con propósito claro
+static double CalcularDescuento(double precio, double porcentaje)
+{
+    return precio * (porcentaje / 100);
+}
+
+// Uso claro
+double descuento = CalcularDescuento(100, 15);  // 15% de descuento</code></pre>
+        </section>
+
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Práctica Guiada #1: Áreas de Figuras</h2>
+                <h3>Objetivo:</h3>
+                <p>Crear un programa que calcule el área de varias figuras geométricas utilizando funciones.</p>
+                <h3>Instrucciones:</h3>
+                <ol>
+                    <li>Crear función para área de círculo: <code>AreaCirculo(radio)</code></li>
+                    <li>Crear función para área de rectángulo: <code>AreaRectangulo(largo, ancho)</code></li>
+                    <li>Crear función para área de triángulo: <code>AreaTriangulo(base, altura)</code></li>
+                    <li>Crear menú para seleccionar figura</li>
+                    <li>Pedir datos necesarios y mostrar resultado</li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Solución Práctica Guiada #1</h2>
+                <pre><code>using System;
+
+namespace CalculadoraAreas
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("=== Calculadora de Áreas ===");
+            Console.WriteLine("1. Círculo");
+            Console.WriteLine("2. Rectángulo");
+            Console.WriteLine("3. Triángulo");
+            Console.Write("Seleccione opción: ");
+            
+            int opcion = Convert.ToInt32(Console.ReadLine());
+            
+            switch (opcion)
+            {
+                case 1:
+                    Console.Write("Radio: ");
+                    double radio = Convert.ToDouble(Console.ReadLine());
+                    Console.WriteLine($"Área: {AreaCirculo(radio):F2}");
+                    break;
+                case 2:
+                    Console.Write("Largo: ");
+                    double largo = Convert.ToDouble(Console.ReadLine());
+                    Console.Write("Ancho: ");
+                    double ancho = Convert.ToDouble(Console.ReadLine());
+                    Console.WriteLine($"Área: {AreaRectangulo(largo, ancho):F2}");
+                    break;
+                case 3:
+                    Console.Write("Base: ");
+                    double baseTri = Convert.ToDouble(Console.ReadLine());
+                    Console.Write("Altura: ");
+                    double altura = Convert.ToDouble(Console.ReadLine());
+                    Console.WriteLine($"Área: {AreaTriangulo(baseTri, altura):F2}");
+                    break;
+            }
+        }
+        
+        static double AreaCirculo(double radio)
+        {
+            return Math.PI * radio * radio;
+        }
+        
+        static double AreaRectangulo(double largo, double ancho)
+        {
+            return largo * ancho;
+        }
+        
+        static double AreaTriangulo(double baseTri, double altura)
+        {
+            return (baseTri * altura) / 2;
+        }
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Práctica Guiada #2: Validación de Datos</h2>
+                <h3>Objetivo:</h3>
+                <p>Implementar funciones para validar datos ingresados por el usuario.</p>
+                <h3>Instrucciones:</h3>
+                <ol>
+                    <li>Crear función <code>ValidarEdad(int edad)</code> que retorne true si edad está entre 0 y 120</li>
+                    <li>Crear función <code>ValidarEmail(string email)</code> que verifique si contiene "@"</li>
+                    <li>Crear función <code>ValidarNumeroPositivo(double num)</code> que retorne true si num > 0</li>
+                    <li>Crear programa que use estas funciones para validar entrada del usuario</li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Solución Práctica Guiada #2</h2>
+                <pre><code>using System;
+
+namespace ValidacionDatos
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Validar edad
+            Console.Write("Ingrese su edad: ");
+            int edad = Convert.ToInt32(Console.ReadLine());
+            
+            if (ValidarEdad(edad))
+            {
+                Console.WriteLine("Edad válida");
+            }
+            else
+            {
+                Console.WriteLine("Edad inválida (debe estar entre 0 y 120)");
+            }
+            
+            // Validar email
+            Console.Write("Ingrese su email: ");
+            string email = Console.ReadLine();
+            
+            if (ValidarEmail(email))
+            {
+                Console.WriteLine("Email válido");
+            }
+            else
+            {
+                Console.WriteLine("Email inválido (debe contener @)");
+            }
+            
+            // Validar número positivo
+            Console.Write("Ingrese un número: ");
+            double numero = Convert.ToDouble(Console.ReadLine());
+            
+            if (ValidarNumeroPositivo(numero))
+            {
+                Console.WriteLine("Número válido");
+            }
+            else
+            {
+                Console.WriteLine("Número inválido (debe ser positivo)");
+            }
+        }
+        
+        static bool ValidarEdad(int edad)
+        {
+            return edad >= 0 && edad <= 120;
+        }
+        
+        static bool ValidarEmail(string email)
+        {
+            return email.Contains("@");
+        }
+        
+        static bool ValidarNumeroPositivo(double num)
+        {
+            return num > 0;
+        }
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Práctica Evaluada</h2>
+                <h3>Enunciado:</h3>
+                <p>Crear un programa de utilidades matemáticas que incluya:</p>
+                <ol>
+                    <li>Función para calcular factorial de un número</li>
+                    <li>Función para verificar si un número es primo</li>
+                    <li>Función para calcular potencia (base^exponente)</li>
+                    <li>Función para calcular promedio de un arreglo</li>
+                    <li>Menú interactivo para seleccionar operación</li>
+                    <li>Validación de entrada usando funciones</li>
+                </ol>
+                <h3>Criterios de Evaluación:</h3>
+                <ul>
+                    <li><strong>Funcionalidad (40%):</strong> Todas las funciones trabajan correctamente</li>
+                    <li><strong>Funciones (30%):</strong> Uso correcto de funciones y parámetros</li>
+                    <li><strong>Código (20%):</strong> Organización y claridad</li>
+                    <li><strong>Validación (10%):</strong> Validación de entrada</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Rúbrica de Evaluación</h2>
+            <table>
+                <tr><th>Criterio</th><th>Excelente (4)</th><th>Bueno (3)</th><th>Regular (2)</th><th>Insuficiente (1)</th></tr>
+                <tr><td>Funcionalidad</td><td>Todas las funciones correctas</td><td>Mayoría funciona</td><td>Funciones básicas</td><td>No funciona</td></tr>
+                <tr><td>Funciones</td><td>Uso perfecto de funciones</td><td>Uso correcto</td><td>Uso básico</td><td>Uso incorrecto</td></tr>
+                <tr><td>Parámetros</td><td>Parámetros bien diseñados</td><td>Parámetros correctos</td><td>Parámetros básicos</td><td>Parámetros incorrectos</td></tr>
+                <tr><td>Código</td><td>Excelente organización</td><td>Buena organización</td><td>Organización básica</td><td>Sin organización</td></tr>
+            </table>
+            <p style="margin-top: 20px;"><strong>Puntuación Total:</strong> 16 puntos</p>
+        </section>
+
+        <section class="slide">
+            <h2>Mini-Quiz</h2>
+            <div class="quiz-question">
+                <p><strong>1. ¿Qué palabra clave se usa para retornar un valor de una función?</strong></p>
+                <p>a) return</p><p>b) break</p><p>c) exit</p><p>d) end</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>2. ¿Qué significa void en una función?</strong></p>
+                <p>a) Retorna un valor</p><p>b) No retorna nada</p><p>c) Tiene parámetros</p><p>d) Es una función especial</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>3. ¿Las funciones en C# dentro de clases deben ser static para llamarlas desde Main?</strong></p>
+                <p>a) Verdadero</p><p>b) Falso</p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Mini-Quiz (Continuación)</h2>
+            <div class="quiz-question">
+                <p><strong>4. ¿Cuántos valores puede retornar una función en C#?</strong></p>
+                <p>a) Múltiples</p><p>b) Solo uno</p><p>c) Ninguno</p><p>d) Infinitos</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>5. ¿Qué es un parámetro?</strong></p>
+                <p>a) Valor retornado</p><p>b) Valor pasado a la función</p><p>c) Nombre de la función</p><p>d) Tipo de retorno</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>6. ¿Puedes tener múltiples return en una función?</strong></p>
+                <p>a) Verdadero</p><p>b) Falso</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>7. ¿Qué función predefinida calcula la raíz cuadrada?</strong></p>
+                <p>a) Math.Sqrt</p><p>b) Math.Root</p><p>c) Math.Square</p><p>d) Math.Pow</p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Mini-Quiz (Continuación)</h2>
+            <div class="quiz-question">
+                <p><strong>8. ¿Las variables declaradas dentro de una función son accesibles fuera de ella?</strong></p>
+                <p>a) Verdadero</p><p>b) Falso</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>9. ¿Cuál es la ventaja principal de usar funciones?</strong></p>
+                <p>a) Hace el código más rápido</p><p>b) Permite reutilizar código</p><p>c) Reduce el tamaño del programa</p><p>d) Todas las anteriores</p>
+            </div>
+            <div class="quiz-question">
+                <p><strong>10. ¿Qué retorna Math.Max(5, 10)?</strong></p>
+                <p>a) 5</p><p>b) 10</p><p>c) 15</p><p>d) Error</p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Respuestas del Mini-Quiz</h2>
+            <div class="quiz-answer"><p><strong>1. a) return</strong> - return retorna un valor de la función.</p></div>
+            <div class="quiz-answer"><p><strong>2. b) No retorna nada</strong> - void significa que no retorna valor.</p></div>
+            <div class="quiz-answer"><p><strong>3. a) Verdadero</strong> - Las funciones deben ser static para llamarlas desde Main sin instancia.</p></div>
+            <div class="quiz-answer"><p><strong>4. b) Solo uno</strong> - Una función retorna un solo valor (o ninguno con void).</p></div>
+            <div class="quiz-answer"><p><strong>5. b) Valor pasado a la función</strong> - Los parámetros son valores que se pasan a la función.</p></div>
+            <div class="quiz-answer"><p><strong>6. a) Verdadero</strong> - Puedes tener múltiples return, pero solo se ejecutará uno.</p></div>
+            <div class="quiz-answer"><p><strong>7. a) Math.Sqrt</strong> - Math.Sqrt calcula la raíz cuadrada.</p></div>
+            <div class="quiz-answer"><p><strong>8. b) Falso</strong> - Las variables locales solo existen dentro de la función.</p></div>
+            <div class="quiz-answer"><p><strong>9. b) Permite reutilizar código</strong> - La reutilización es la ventaja principal.</p></div>
+            <div class="quiz-answer"><p><strong>10. b) 10</strong> - Math.Max retorna el mayor de los dos valores.</p></div>
+        </section>
+
+        <section class="slide">
+            <h2>Resumen de la Unidad</h2>
+            <ul style="font-size: 1.4em; line-height: 2;">
+                <li>✓ Las funciones permiten modularizar y reutilizar código</li>
+                <li>✓ Las funciones pueden recibir parámetros y retornar valores</li>
+                <li>✓ void significa que la función no retorna nada</li>
+                <li>✓ return se usa para retornar valores de funciones</li>
+                <li>✓ Las funciones deben ser static para llamarlas desde Main</li>
+                <li>✓ C# incluye muchas funciones predefinidas útiles (Math, string, etc.)</li>
+                <li>✓ Las variables locales solo existen dentro de la función</li>
+                <li>✓ Usar funciones mejora la organización y mantenibilidad del código</li>
+            </ul>
+            <div class="highlight-box" style="margin-top: 30px;">
+                <strong>Próxima Unidad:</strong> Programación Orientada a Objetos (POO) - Aprenderemos a crear clases y objetos para modelar el mundo real.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Tarea para Casa</h2>
+            <div class="practice-box">
+                <h3>Actividad:</h3>
+                <p>Investigar sobre Programación Orientada a Objetos (POO).</p>
+                <h3>Entregables:</h3>
+                <ol>
+                    <li><strong>Documento (3-4 páginas)</strong> con:
+                        <ul>
+                            <li>Qué es POO y sus principios básicos</li>
+                            <li>Qué son las clases y objetos</li>
+                            <li>Qué son las propiedades y métodos</li>
+                            <li>Qué son los constructores</li>
+                            <li>Ejemplos de clases en la vida real</li>
+                        </ul>
+                    </li>
+                    <li><strong>Programa en C#</strong> que demuestre:
+                        <ul>
+                            <li>Crear una clase simple (ej: Persona)</li>
+                            <li>Definir propiedades y métodos</li>
+                            <li>Crear objetos (instancias) de la clase</li>
+                            <li>Usar las propiedades y métodos</li>
+                        </ul>
+                    </li>
+                </ol>
+                <h3>Fecha de Entrega:</h3>
+                <p>Una semana después de esta clase</p>
+            </div>
+        </section>
+
+        <!-- Recursos Adicionales -->
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Para ampliar tu conocimiento sobre esta unidad, visita nuestra página de recursos con:</p>
+                <ul>
+                    <li>Videos sobre métodos y funciones</li>
+                    <li>Ejemplos de sobrecarga de métodos</li>
+                    <li>Parámetros y valores de retorno</li>
+                    <li>Mejores prácticas</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_05_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">
+                        Ver Recursos Adicionales →
+                    </a>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+    <div class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">24</span></div>
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul id="indexList"></ul>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let notesVisible = false;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            updateCounter();
+            updateNavigation();
+        }
+
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function previousSlide() { showSlide(currentSlide - 1); }
+
+        function updateCounter() {
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.querySelector('.nav-btn:first-child');
+            const nextBtn = document.querySelector('.nav-btn:last-child');
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+        }
+
+        function toggleIndex() {
+            const panel = document.getElementById('indexPanel');
+            panel.classList.toggle('active');
+            if (panel.classList.contains('active')) buildIndex();
+        }
+
+        function buildIndex() {
+            const indexList = document.getElementById('indexList');
+            indexList.innerHTML = '';
+            slides.forEach((slide, index) => {
+                const title = slide.querySelector('h1, h2')?.textContent || `Diapositiva ${index + 1}`;
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = title;
+                a.onclick = (e) => { e.preventDefault(); showSlide(index); toggleIndex(); };
+                li.appendChild(a);
+                indexList.appendChild(li);
+            });
+        }
+
+        function toggleNotes() {
+            notesVisible = !notesVisible;
+            document.querySelectorAll('.notes').forEach(note => {
+                note.classList.toggle('visible', notesVisible);
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); previousSlide(); }
+            else if (e.key === 'PageDown') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'PageUp') { e.preventDefault(); previousSlide(); }
+            else if (e.key === 'n' || e.key === 'N') { toggleNotes(); }
+        });
+
+        updateNavigation();
+        buildIndex();
+    </script>
+</body>
+</html>
+

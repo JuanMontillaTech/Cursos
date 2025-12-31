@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 01 - Recursos Adicionales</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        h1 { font-size: 3em; color: #4CAF50; margin-bottom: 20px; text-align: center; }
+        h2 { font-size: 2.2em; color: #64B5F6; margin: 40px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        h3 { font-size: 1.6em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .back-link { display: inline-block; background: #64B5F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-bottom: 30px; transition: all 0.3s; }
+        .back-link:hover { background: #42A5F5; transform: translateY(-2px); }
+        .resource-section { background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 30px; margin: 25px 0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+        .resource-item { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 15px 0; border-radius: 8px; transition: all 0.3s; }
+        .resource-item:hover { background: rgba(76, 175, 80, 0.2); transform: translateX(5px); }
+        .resource-item a { color: #64B5F6; text-decoration: none; font-size: 1.2em; font-weight: bold; }
+        .resource-item a:hover { color: #42A5F5; text-decoration: underline; }
+        .resource-item p { margin-top: 10px; color: #b0b0b0; font-size: 1em; line-height: 1.6; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin: 20px 0; border-radius: 8px; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 8px; }
+        .badge { display: inline-block; background: #9C27B0; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; margin-left: 10px; }
+        .badge.video { background: #f44336; }
+        .badge.doc { background: #2196F3; }
+        .badge.tool { background: #FF9800; }
+        .badge.github { background: #333; }
+        ul { margin-left: 30px; margin-top: 15px; }
+        li { margin: 10px 0; font-size: 1.1em; line-height: 1.8; }
+        .highlight-box { background: rgba(255, 193, 7, 0.1); border-left: 4px solid #FFC107; padding: 20px; margin: 20px 0; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="Unidad_01.html" class="back-link">← Volver a Unidad 01</a>
+        
+        <h1>Recursos Adicionales - Unidad 01</h1>
+        <p style="text-align: center; font-size: 1.2em; color: #b0b0b0; margin-bottom: 40px;">
+            Introducción a .NET MAUI - Enlaces, videos y material complementario
+        </p>
+
+        <div class="resource-section">
+            <h2>📚 Documentación Oficial de Microsoft</h2>
+            
+            <div class="resource-item">
+                <a href="https://learn.microsoft.com/dotnet/maui/" target="_blank">
+                    Documentación Oficial .NET MAUI <span class="badge doc">Oficial</span>
+                </a>
+                <p>Documentación completa y actualizada de .NET MAUI directamente de Microsoft. Incluye guías, tutoriales, ejemplos y referencias de API.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://learn.microsoft.com/dotnet/maui/get-started/first-app" target="_blank">
+                    Guía de Inicio Rápido <span class="badge doc">Tutorial</span>
+                </a>
+                <p>Paso a paso para crear tu primera aplicación .NET MAUI. Ideal para empezar desde cero.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://learn.microsoft.com/dotnet/maui/get-started/installation" target="_blank">
+                    Guía de Instalación <span class="badge doc">Instalación</span>
+                </a>
+                <p>Instrucciones detalladas para instalar y configurar .NET MAUI en Windows y macOS.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>🎥 Videos Educativos</h2>
+            
+            <div class="resource-item">
+                <h3>Introducción a .NET MAUI</h3>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/DhNwgXq8b6s" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <p>Video oficial de Microsoft introduciendo .NET MAUI y sus características principales.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.youtube.com/watch?v=DuNLR_NJv8U" target="_blank">
+                    .NET MAUI: ¿Qué es y por qué usarlo? <span class="badge video">Video</span>
+                </a>
+                <p>Explicación clara sobre qué es .NET MAUI y las ventajas de usarlo para desarrollo multiplataforma.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.youtube.com/watch?v=5bFj6WRtLq0" target="_blank">
+                    Instalación y Primer Proyecto <span class="badge video">Tutorial</span>
+                </a>
+                <p>Tutorial paso a paso sobre cómo instalar Visual Studio 2022 y crear tu primer proyecto MAUI.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>🛠️ Herramientas Recomendadas</h2>
+            
+            <div class="resource-item">
+                <a href="https://visualstudio.microsoft.com/downloads/" target="_blank">
+                    Visual Studio 2022 <span class="badge tool">Gratis</span>
+                </a>
+                <p>IDE principal para desarrollo .NET MAUI. Incluye diseñador XAML, depuración multiplataforma y Hot Reload.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://github.com/Redth/dotnet-maui-check" target="_blank">
+                    .NET MAUI Check Tool <span class="badge tool">Utilidad</span>
+                </a>
+                <p>Herramienta de línea de comandos que verifica que tu entorno esté correctamente configurado para .NET MAUI.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://marketplace.visualstudio.com/items?itemName=TeamXavalon.XAMLStyler" target="_blank">
+                    XAML Styler <span class="badge tool">Extensión</span>
+                </a>
+                <p>Extensión para Visual Studio que formatea automáticamente archivos XAML según mejores prácticas.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>📖 Libros y Tutoriales</h2>
+            
+            <div class="resource-item">
+                <a href="https://www.amazon.com/dp/1800569607" target="_blank">
+                    .NET MAUI Cross-Platform Application Development - Packt
+                </a>
+                <p>Libro completo sobre desarrollo con .NET MAUI, cubriendo desde conceptos básicos hasta temas avanzados.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://learn.microsoft.com/dotnet/maui/what-is-maui" target="_blank">
+                    ¿Qué es .NET MAUI? - Microsoft Learn
+                </a>
+                <p>Artículo oficial explicando en detalle qué es .NET MAUI, su arquitectura y beneficios.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>💡 Artículos Especializados</h2>
+            
+            <div class="resource-item">
+                <a href="https://devblogs.microsoft.com/dotnet/introducing-net-multi-platform-app-ui/" target="_blank">
+                    Introduciendo .NET MAUI - Blog de Microsoft
+                </a>
+                <p>Artículo del blog oficial de .NET anunciando .NET MAUI y sus características principales.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.reddit.com/r/dotnetMAUI/" target="_blank">
+                    Reddit - r/dotnetMAUI
+                </a>
+                <p>Comunidad activa de desarrolladores .NET MAUI compartiendo experiencias, problemas y soluciones.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>📦 Ejemplos de Código y Repositorios</h2>
+            
+            <div class="resource-item">
+                <a href="https://github.com/dotnet/maui-samples" target="_blank">
+                    .NET MAUI Samples <span class="badge github">GitHub</span>
+                </a>
+                <p>Repositorio oficial de Microsoft con ejemplos de código .NET MAUI. Incluye muestras de controles, layouts, navegación, etc.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://github.com/dotnet/maui" target="_blank">
+                    Repositorio .NET MAUI <span class="badge github">GitHub</span>
+                </a>
+                <p>Código fuente de .NET MAUI en GitHub. Útil para entender la implementación interna y reportar issues.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://github.com/dotnet-architecture/eShopOnContainers" target="_blank">
+                    eShopOnContainers <span class="badge github">Ejemplo</span>
+                </a>
+                <p>Aplicación de ejemplo completa mostrando arquitectura MVVM, servicios, y mejores prácticas.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>🎓 Cursos Online</h2>
+            
+            <div class="resource-item">
+                <a href="https://learn.microsoft.com/training/paths/build-apps-with-dotnet-maui/" target="_blank">
+                    Microsoft Learn - Ruta de Aprendizaje .NET MAUI
+                </a>
+                <p>Ruta de aprendizaje oficial gratuita de Microsoft con módulos interactivos sobre .NET MAUI.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.pluralsight.com/search?q=.net%20maui" target="_blank">
+                    Pluralsight - Cursos .NET MAUI
+                </a>
+                <p>Cursos profesionales sobre .NET MAUI (requiere suscripción de pago).</p>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <h3>💡 Consejo de Estudio</h3>
+            <p>Para esta unidad introductoria, te recomendamos: 1) Ver los videos introductorios para entender el contexto, 2) Seguir la guía oficial de instalación paso a paso, 3) Crear tu primer proyecto y experimentar, 4) Explorar los ejemplos en GitHub para ver código real. La práctica es esencial desde el inicio.</p>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #333;">
+            <a href="Unidad_01.html" class="back-link">← Volver a Unidad 01</a>
+            <a href="Unidad_02_Recursos.html" class="back-link" style="margin-left: 20px;">Siguiente: Recursos Unidad 02 →</a>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 08 - Proyecto Final</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; overflow: hidden; }
+        .presentation-container { width: 100vw; height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; }
+        .slide { display: none; width: 90vw; max-width: 1280px; height: 72vh; max-height: 720px; background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 60px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); overflow-y: auto; position: relative; }
+        .slide.active { display: block; }
+        .slide h1 { font-size: 3.5em; color: #4CAF50; margin-bottom: 30px; text-align: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        .slide h2 { font-size: 2.5em; color: #64B5F6; margin: 30px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        .slide h3 { font-size: 1.8em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .slide p, .slide li { font-size: 1.3em; line-height: 1.8; margin: 15px 0; }
+        .slide ul, .slide ol { margin-left: 40px; margin-top: 15px; }
+        .slide code { background: #1a1a1a; padding: 3px 8px; border-radius: 4px; font-family: 'Consolas', 'Monaco', monospace; color: #CE9178; font-size: 0.9em; }
+        .slide pre { background: #1a1a1a; border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; overflow-x: auto; box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3); }
+        .slide pre code { color: #D4D4D4; font-size: 1.1em; line-height: 1.6; display: block; background: none; padding: 0; }
+        .cover-slide { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .cover-slide h1 { font-size: 4em; margin-bottom: 40px; }
+        .cover-slide .subtitle { font-size: 2.5em; color: #64B5F6; margin: 20px 0; }
+        .cover-slide .author { font-size: 1.8em; color: #FFB74D; margin-top: 60px; }
+        .navigation { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
+        .nav-btn { background: #4CAF50; color: white; border: none; padding: 15px 30px; font-size: 1.2em; border-radius: 8px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); }
+        .nav-btn:hover { background: #45a049; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5); }
+        .nav-btn:disabled { background: #555; cursor: not-allowed; transform: none; }
+        .slide-counter { position: fixed; top: 30px; right: 30px; background: rgba(0, 0, 0, 0.7); padding: 10px 20px; border-radius: 8px; font-size: 1.1em; z-index: 1000; }
+        .index-btn { position: fixed; top: 30px; left: 30px; background: #64B5F6; color: white; border: none; padding: 15px 25px; font-size: 1.1em; border-radius: 8px; cursor: pointer; z-index: 1000; transition: all 0.3s; }
+        .index-btn:hover { background: #42A5F5; transform: translateY(-2px); }
+        .index-panel { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.95); z-index: 2000; padding: 60px; overflow-y: auto; }
+        .index-panel.active { display: block; }
+        .index-panel h2 { color: #4CAF50; font-size: 2.5em; margin-bottom: 30px; text-align: center; }
+        .index-panel ul { list-style: none; max-width: 800px; margin: 0 auto; }
+        .index-panel li { margin: 15px 0; }
+        .index-panel a { color: #64B5F6; text-decoration: none; font-size: 1.4em; display: block; padding: 15px; border-left: 4px solid #64B5F6; transition: all 0.3s; }
+        .index-panel a:hover { background: rgba(100, 181, 246, 0.1); padding-left: 25px; }
+        .close-index { position: absolute; top: 30px; right: 30px; background: #f44336; color: white; border: none; padding: 15px 25px; font-size: 1.2em; border-radius: 8px; cursor: pointer; }
+        .notes { display: none; background: rgba(255, 193, 7, 0.2); border-left: 4px solid #FFC107; padding: 15px; margin-top: 20px; border-radius: 4px; }
+        .notes.visible { display: block; }
+        .notes-title { color: #FFC107; font-weight: bold; margin-bottom: 10px; }
+        .highlight-box { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .practice-box { background: rgba(100, 181, 246, 0.1); border: 2px solid #64B5F6; padding: 25px; margin: 25px 0; border-radius: 8px; }
+        .practice-box h3 { color: #64B5F6; margin-top: 0; }
+        .quiz-question { background: rgba(255, 183, 77, 0.1); border-left: 4px solid #FFB74D; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .quiz-answer { background: rgba(76, 175, 80, 0.2); border-left: 4px solid #4CAF50; padding: 15px; margin: 10px 0; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table th, table td { padding: 10px; border: 1px solid #555; text-align: left; }
+        table th { background: #4CAF50; }
+        @media (max-width: 768px) { .slide { width: 95vw; height: 80vh; padding: 30px; } .slide h1 { font-size: 2em; } .slide h2 { font-size: 1.5em; } .slide p, .slide li { font-size: 1em; } }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <section class="slide active cover-slide">
+            <h1>Desarrollo de Software I</h1>
+            <div class="subtitle">Unidad 08: Proyecto Final</div>
+        </section>
+
+        <section class="slide">
+            <h2>Objetivo del Proyecto Final</h2>
+            <p>Integrar todos los conocimientos adquiridos durante el curso en un proyecto funcional y completo.</p>
+            <h3>Competencias a Demostrar:</h3>
+            <ul>
+                <li>Uso correcto de estructuras de control (if, switch, bucles)</li>
+                <li>Implementación de funciones y métodos</li>
+                <li>Aplicación de Programación Orientada a Objetos</li>
+                <li>Uso de herencia y encapsulación</li>
+                <li>Manejo de excepciones</li>
+                <li>Organización y documentación del código</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Ejemplos de Proyectos</h2>
+            <h3>1. Sistema de Gestión de Estudiantes</h3>
+            <ul>
+                <li>Registrar estudiantes (nombre, edad, carrera, calificaciones)</li>
+                <li>Calcular promedios</li>
+                <li>Buscar estudiantes</li>
+                <li>Mostrar reportes</li>
+            </ul>
+            <h3>2. Simulador de Tienda</h3>
+            <ul>
+                <li>Gestión de productos (agregar, buscar, modificar)</li>
+                <li>Carrito de compras</li>
+                <li>Cálculo de totales y descuentos</li>
+                <li>Generación de facturas</li>
+            </ul>
+            <h3>3. Calculadora Avanzada</h3>
+            <ul>
+                <li>Operaciones básicas y avanzadas</li>
+                <li>Historial de operaciones</li>
+                <li>Funciones matemáticas</li>
+                <li>Interfaz de menú</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Más Ejemplos de Proyectos</h2>
+            <h3>4. Agenda de Contactos</h3>
+            <ul>
+                <li>Agregar, editar, eliminar contactos</li>
+                <li>Buscar contactos</li>
+                <li>Agrupar por categorías</li>
+                <li>Exportar información</li>
+            </ul>
+            <h3>5. Sistema de Biblioteca</h3>
+            <ul>
+                <li>Gestión de libros</li>
+                <li>Préstamos y devoluciones</li>
+                <li>Búsqueda de libros</li>
+                <li>Reportes de préstamos</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Nota:</strong> Puedes proponer tu propio proyecto, pero debe ser aprobado por el profesor.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Estructura del Proyecto</h2>
+            <h3>Componentes Mínimos Requeridos:</h3>
+            <ol>
+                <li><strong>Clases:</strong> Al menos 3 clases con herencia</li>
+                <li><strong>Propiedades:</strong> Con encapsulación (private/public)</li>
+                <li><strong>Métodos:</strong> Funciones para operaciones principales</li>
+                <li><strong>Constructores:</strong> Para inicializar objetos</li>
+                <li><strong>Manejo de Excepciones:</strong> try-catch en entrada de datos</li>
+                <li><strong>Menú Interactivo:</strong> switch para navegación</li>
+                <li><strong>Bucles:</strong> Para procesar colecciones</li>
+            </ol>
+            <h3>Ejemplo de Estructura:</h3>
+            <pre><code>Proyecto/
+├── Clases/
+│   ├── ClaseBase.cs
+│   ├── ClaseDerivada1.cs
+│   └── ClaseDerivada2.cs
+├── Program.cs (Main)
+└── README.md (Documentación)</code></pre>
+        </section>
+
+        <section class="slide">
+            <h2>Criterios de Evaluación</h2>
+            <h3>1. Funcionalidad del Programa (30%)</h3>
+            <ul>
+                <li>El programa ejecuta sin errores</li>
+                <li>Todas las funcionalidades principales funcionan</li>
+                <li>Manejo adecuado de casos límite</li>
+            </ul>
+            <h3>2. Uso Correcto de Conceptos (30%)</h3>
+            <ul>
+                <li>Estructuras de control bien implementadas</li>
+                <li>Funciones y métodos utilizados apropiadamente</li>
+                <li>POO aplicado correctamente (clases, objetos, herencia)</li>
+            </ul>
+            <h3>3. Documentación del Código (20%)</h3>
+                <ul>
+                    <li>Comentarios explicativos</li>
+                    <li>Nombres descriptivos</li>
+                    <li>README con instrucciones</li>
+                </ul>
+            <h3>4. Creatividad e Innovación (20%)</h3>
+            <ul>
+                <li>Funcionalidades adicionales</li>
+                <li>Interfaz de usuario mejorada</li>
+                <li>Solución creativa a problemas</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Rúbrica Detallada</h2>
+            <table>
+                <tr><th>Criterio</th><th>Excelente (4)</th><th>Bueno (3)</th><th>Regular (2)</th><th>Insuficiente (1)</th></tr>
+                <tr><td>Funcionalidad</td><td>Todas las funciones perfectas</td><td>Mayoría funciona bien</td><td>Funciones básicas</td><td>No funciona</td></tr>
+                <tr><td>Estructuras</td><td>Uso perfecto</td><td>Uso correcto</td><td>Uso básico</td><td>Uso incorrecto</td></tr>
+                <tr><td>POO</td><td>Excelente diseño</td><td>Buen diseño</td><td>Diseño básico</td><td>Sin POO</td></tr>
+                <tr><td>Herencia</td><td>Jerarquía perfecta</td><td>Jerarquía correcta</td><td>Herencia básica</td><td>Sin herencia</td></tr>
+                <tr><td>Excepciones</td><td>Manejo completo</td><td>Manejo adecuado</td><td>Manejo básico</td><td>Sin manejo</td></tr>
+                <tr><td>Documentación</td><td>Excelente</td><td>Buena</td><td>Básica</td><td>Sin documentación</td></tr>
+                <tr><td>Creatividad</td><td>Muy creativo</td><td>Creativo</td><td>Básico</td><td>Sin creatividad</td></tr>
+            </table>
+            <p style="margin-top: 20px;"><strong>Puntuación Total:</strong> 28 puntos</p>
+        </section>
+
+        <section class="slide">
+            <h2>Plan de Desarrollo</h2>
+            <h3>Fase 1: Diseño (Semana 1)</h3>
+            <ul>
+                <li>Definir funcionalidades del proyecto</li>
+                <li>Diseñar estructura de clases</li>
+                <li>Crear diagrama de clases</li>
+                <li>Planificar interfaz de usuario</li>
+            </ul>
+            <h3>Fase 2: Implementación Base (Semana 2)</h3>
+            <ul>
+                <li>Crear clases base</li>
+                <li>Implementar propiedades y métodos básicos</li>
+                <li>Crear menú principal</li>
+            </ul>
+            <h3>Fase 3: Funcionalidades (Semana 3)</h3>
+            <ul>
+                <li>Implementar funcionalidades principales</li>
+                <li>Agregar manejo de excepciones</li>
+                <li>Probar y corregir errores</li>
+            </ul>
+            <h3>Fase 4: Pulido (Semana 4)</h3>
+            <ul>
+                <li>Documentar código</li>
+                <li>Mejorar interfaz</li>
+                <li>Preparar presentación</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Guía de Implementación</h2>
+            <h3>Paso 1: Crear Estructura Base</h3>
+            <pre><code>// Clase base
+class Entidad
+{
+    protected int id;
+    protected string nombre;
+    
+    public Entidad(int id, string nombre)
+    {
+        this.id = id;
+        this.nombre = nombre;
+    }
+    
+    public virtual void MostrarInfo()
+    {
+        Console.WriteLine($"ID: {id}, Nombre: {nombre}");
+    }
+}</code></pre>
+            <h3>Paso 2: Crear Clases Derivadas</h3>
+            <pre><code>class Estudiante : Entidad
+{
+    private double promedio;
+    
+    public Estudiante(int id, string nombre, double promedio) 
+        : base(id, nombre)
+    {
+        this.promedio = promedio;
+    }
+    
+    public override void MostrarInfo()
+    {
+        base.MostrarInfo();
+        Console.WriteLine($"Promedio: {promedio}");
+    }
+}</code></pre>
+        </section>
+
+        <section class="slide">
+            <h2>Guía de Implementación (Continuación)</h2>
+            <h3>Paso 3: Crear Menú Principal</h3>
+            <pre><code>static void MostrarMenu()
+{
+    Console.WriteLine("=== MENÚ PRINCIPAL ===");
+    Console.WriteLine("1. Agregar");
+    Console.WriteLine("2. Buscar");
+    Console.WriteLine("3. Mostrar todos");
+    Console.WriteLine("4. Salir");
+}
+
+static void Main(string[] args)
+{
+    int opcion;
+    do
+    {
+        MostrarMenu();
+        opcion = LeerEntero("Seleccione opción: ");
+        
+        switch (opcion)
+        {
+            case 1: Agregar(); break;
+            case 2: Buscar(); break;
+            case 3: MostrarTodos(); break;
+            case 4: Console.WriteLine("¡Hasta luego!"); break;
+            default: Console.WriteLine("Opción inválida"); break;
+        }
+    } while (opcion != 4);
+}</code></pre>
+        </section>
+
+        <section class="slide">
+            <h2>Buenas Prácticas para el Proyecto</h2>
+            <ul>
+                <li><strong>Planificar antes de codificar:</strong> Diseña primero, codifica después</li>
+                <li><strong>Desarrollar incrementalmente:</strong> Una funcionalidad a la vez</li>
+                <li><strong>Probar constantemente:</strong> Prueba cada función antes de continuar</li>
+                <li><strong>Documentar mientras desarrollas:</strong> No dejes la documentación para el final</li>
+                <li><strong>Usar control de versiones:</strong> Git para rastrear cambios</li>
+                <li><strong>Manejar errores apropiadamente:</strong> Validar entrada siempre</li>
+                <li><strong>Mantener código limpio:</strong> Nombres descriptivos, funciones pequeñas</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Consejo:</strong> Empieza con funcionalidades básicas y luego agrega características avanzadas.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Checklist de Entrega</h2>
+            <h3>Antes de Entregar, Verifica:</h3>
+            <ul>
+                <li>✓ El programa compila sin errores</li>
+                <li>✓ Todas las funcionalidades principales funcionan</li>
+                <li>✓ Hay al menos 3 clases con herencia</li>
+                <li>✓ Se usa encapsulación (private/public)</li>
+                <li>✓ Se manejan excepciones en entrada de datos</li>
+                <li>✓ El código está comentado</li>
+                <li>✓ Los nombres son descriptivos</li>
+                <li>✓ Hay un README con instrucciones</li>
+                <li>✓ El proyecto está organizado en carpetas</li>
+                <li>✓ Se incluye un archivo .sln o proyecto completo</li>
+            </ul>
+            <h3>Archivos a Entregar:</h3>
+            <ul>
+                <li>Código fuente (.cs)</li>
+                <li>README.md con descripción e instrucciones</li>
+                <li>Diagrama de clases (opcional pero recomendado)</li>
+                <li>Presentación del proyecto (5-10 diapositivas)</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Presentación del Proyecto</h2>
+            <h3>Estructura de la Presentación:</h3>
+            <ol>
+                <li><strong>Portada:</strong> Nombre del proyecto, autor, fecha</li>
+                <li><strong>Objetivo:</strong> Qué problema resuelve el proyecto</li>
+                <li><strong>Funcionalidades:</strong> Lista de características principales</li>
+                <li><strong>Arquitectura:</strong> Diagrama de clases y estructura</li>
+                <li><strong>Demostración:</strong> Ejecución en vivo del programa</li>
+                <li><strong>Desafíos:</strong> Problemas encontrados y cómo se resolvieron</li>
+                <li><strong>Aprendizajes:</strong> Qué aprendiste durante el desarrollo</li>
+                <li><strong>Mejoras Futuras:</strong> Qué agregarías si tuvieras más tiempo</li>
+            </ol>
+            <h3>Duración:</h3>
+            <p>10-15 minutos de presentación + 5 minutos de preguntas</p>
+        </section>
+
+        <section class="slide">
+            <h2>Recursos y Ayuda</h2>
+            <h3>Documentación Oficial:</h3>
+            <ul>
+                <li>Microsoft Learn - C#: https://learn.microsoft.com/dotnet/csharp/</li>
+                <li>Documentación de C#: https://learn.microsoft.com/dotnet/csharp/language-reference/</li>
+            </ul>
+            <h3>Comunidades:</h3>
+            <ul>
+                <li>Stack Overflow: https://stackoverflow.com/questions/tagged/c%23</li>
+                <li>Reddit r/csharp: https://www.reddit.com/r/csharp/</li>
+                <li>C# Corner: https://www.c-sharpcorner.com/</li>
+            </ul>
+            <h3>Ayuda del Profesor:</h3>
+            <ul>
+                <li>Horarios de consulta: [Definir con el profesor]</li>
+                <li>Email: [Email del profesor]</li>
+                <li>Revisión de código: Solicitar con anticipación</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Cronograma Sugerido</h2>
+            <table>
+                <tr><th>Semana</th><th>Actividad</th><th>Entregable</th></tr>
+                <tr><td>1</td><td>Diseño y planificación</td><td>Documento de diseño</td></tr>
+                <tr><td>2</td><td>Implementación base</td><td>Clases y estructura básica</td></tr>
+                <tr><td>3</td><td>Funcionalidades principales</td><td>Programa funcional</td></tr>
+                <tr><td>4</td><td>Pulido y documentación</td><td>Proyecto completo</td></tr>
+                <tr><td>5</td><td>Presentación</td><td>Demostración en clase</td></tr>
+            </table>
+            <div class="highlight-box" style="margin-top: 20px;">
+                <strong>Importante:</strong> No dejes todo para el final. Desarrolla de forma constante durante las semanas asignadas.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Ejemplo de README</h2>
+            <pre><code># Sistema de Gestión de Estudiantes
+
+## Descripción
+Sistema de consola para gestionar información de estudiantes, 
+calcular promedios y generar reportes.
+
+## Funcionalidades
+- Agregar estudiantes
+- Buscar estudiantes
+- Calcular promedios
+- Mostrar reportes
+
+## Requisitos
+- .NET 6.0 o superior
+- Visual Studio 2022 o VS Code
+
+## Instalación
+1. Clonar el repositorio
+2. Abrir en Visual Studio
+3. Compilar y ejecutar
+
+## Uso
+Ejecutar el programa y seguir el menú interactivo.
+
+## Autor
+[Tu Nombre]
+
+## Fecha
+[Fecha de entrega]</code></pre>
+        </section>
+
+        <section class="slide">
+            <h2>Consejos Finales</h2>
+            <ul style="font-size: 1.4em; line-height: 2;">
+                <li>✓ <strong>Empieza temprano:</strong> No esperes hasta la última semana</li>
+                <li>✓ <strong>Prueba frecuentemente:</strong> Verifica que cada parte funciona</li>
+                <li>✓ <strong>Pide ayuda cuando la necesites:</strong> El profesor está para ayudarte</li>
+                <li>✓ <strong>Documenta mientras desarrollas:</strong> Es más fácil que al final</li>
+                <li>✓ <strong>Mantén el código organizado:</strong> Facilita el mantenimiento</li>
+                <li>✓ <strong>Practica la presentación:</strong> Prepárate para demostrar tu trabajo</li>
+                <li>✓ <strong>Sé creativo:</strong> Agrega funcionalidades que te interesen</li>
+                <li>✓ <strong>Disfruta el proceso:</strong> Aprender haciendo es la mejor forma</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Resumen del Proyecto Final</h2>
+            <div class="highlight-box">
+                <h3>Objetivo Principal:</h3>
+                <p>Demostrar dominio de todos los conceptos aprendidos durante el curso mediante un proyecto funcional y completo.</p>
+            </div>
+            <h3>Componentes Clave:</h3>
+            <ul>
+                <li>Estructuras de control bien implementadas</li>
+                <li>Funciones y métodos reutilizables</li>
+                <li>Programación Orientada a Objetos</li>
+                <li>Herencia y encapsulación</li>
+                <li>Manejo de excepciones</li>
+                <li>Código documentado y organizado</li>
+            </ul>
+            <h3>Evaluación:</h3>
+            <p>Funcionalidad (30%) + Conceptos (30%) + Documentación (20%) + Creatividad (20%) = 100%</p>
+        </section>
+
+        <section class="slide">
+            <h2>¡Éxito en tu Proyecto!</h2>
+            <div class="highlight-box" style="text-align: center; padding: 40px;">
+                <h2 style="color: #4CAF50; margin-bottom: 20px;">¡Has llegado al final del curso!</h2>
+                <p style="font-size: 1.5em; margin: 20px 0;">Ahora es momento de demostrar todo lo que has aprendido.</p>
+                <p style="font-size: 1.3em; margin: 20px 0;">Confía en tus habilidades y desarrolla un proyecto del que te sientas orgulloso.</p>
+                <p style="font-size: 1.3em; margin-top: 30px; color: #FFB74D;"><strong>¡Mucho éxito en tu proyecto final!</strong></p>
+            </div>
+        </section>
+
+        <!-- Recursos Adicionales -->
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Para ampliar tu conocimiento sobre proyectos finales y desarrollo de software, visita nuestra página de recursos con:</p>
+                <ul>
+                    <li>Guías de mejores prácticas</li>
+                    <li>Ejemplos de proyectos completos</li>
+                    <li>Recursos de documentación</li>
+                    <li>Herramientas de desarrollo</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_08_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">
+                        Ver Recursos Adicionales →
+                    </a>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+    <div class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">19</span></div>
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul id="indexList"></ul>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let notesVisible = false;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            updateCounter();
+            updateNavigation();
+        }
+
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function previousSlide() { showSlide(currentSlide - 1); }
+
+        function updateCounter() {
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.querySelector('.nav-btn:first-child');
+            const nextBtn = document.querySelector('.nav-btn:last-child');
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+        }
+
+        function toggleIndex() {
+            const panel = document.getElementById('indexPanel');
+            panel.classList.toggle('active');
+            if (panel.classList.contains('active')) buildIndex();
+        }
+
+        function buildIndex() {
+            const indexList = document.getElementById('indexList');
+            indexList.innerHTML = '';
+            slides.forEach((slide, index) => {
+                const title = slide.querySelector('h1, h2')?.textContent || `Diapositiva ${index + 1}`;
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = title;
+                a.onclick = (e) => { e.preventDefault(); showSlide(index); toggleIndex(); };
+                li.appendChild(a);
+                indexList.appendChild(li);
+            });
+        }
+
+        function toggleNotes() {
+            notesVisible = !notesVisible;
+            document.querySelectorAll('.notes').forEach(note => {
+                note.classList.toggle('visible', notesVisible);
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); previousSlide(); }
+            else if (e.key === 'PageDown') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'PageUp') { e.preventDefault(); previousSlide(); }
+            else if (e.key === 'n' || e.key === 'N') { toggleNotes(); }
+        });
+
+        updateNavigation();
+        buildIndex();
+    </script>
+</body>
+</html>
+

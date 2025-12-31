@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 03 - Diagramas de Comportamiento e Interacción</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; overflow: hidden; }
+        .presentation-container { width: 100vw; height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; }
+        .slide { display: none; width: 90vw; max-width: 1280px; height: 72vh; max-height: 720px; background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 60px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); overflow-y: auto; position: relative; }
+        .slide.active { display: block; }
+        .slide h1 { font-size: 3.5em; color: #4CAF50; margin-bottom: 30px; text-align: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        .slide h2 { font-size: 2.5em; color: #64B5F6; margin: 30px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        .slide h3 { font-size: 1.8em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .slide p, .slide li { font-size: 1.3em; line-height: 1.8; margin: 15px 0; }
+        .slide ul, .slide ol { margin-left: 40px; margin-top: 15px; }
+        .slide code { background: #1a1a1a; padding: 3px 8px; border-radius: 4px; font-family: 'Consolas', 'Monaco', monospace; color: #CE9178; font-size: 0.9em; }
+        .slide pre { background: #1a1a1a; border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; overflow-x: auto; box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3); }
+        .slide pre code { color: #D4D4D4; font-size: 1.1em; line-height: 1.6; display: block; background: none; padding: 0; }
+        .cover-slide { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .cover-slide h1 { font-size: 4em; margin-bottom: 40px; }
+        .cover-slide .subtitle { font-size: 2.5em; color: #64B5F6; margin: 20px 0; }
+        .cover-slide .author { font-size: 1.8em; color: #FFB74D; margin-top: 60px; }
+        .navigation { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
+        .nav-btn { background: #4CAF50; color: white; border: none; padding: 15px 30px; font-size: 1.2em; border-radius: 8px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); }
+        .nav-btn:hover { background: #45a049; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5); }
+        .nav-btn:disabled { background: #555; cursor: not-allowed; transform: none; }
+        .slide-counter { position: fixed; top: 30px; right: 30px; background: rgba(0, 0, 0, 0.7); padding: 10px 20px; border-radius: 8px; font-size: 1.1em; z-index: 1000; }
+        .index-btn { position: fixed; top: 30px; left: 30px; background: #64B5F6; color: white; border: none; padding: 15px 25px; font-size: 1.1em; border-radius: 8px; cursor: pointer; z-index: 1000; transition: all 0.3s; }
+        .index-btn:hover { background: #42A5F5; transform: translateY(-2px); }
+        .index-panel { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.95); z-index: 2000; padding: 60px; overflow-y: auto; }
+        .index-panel.active { display: block; }
+        .index-panel h2 { color: #4CAF50; font-size: 2.5em; margin-bottom: 30px; text-align: center; }
+        .index-panel ul { list-style: none; max-width: 800px; margin: 0 auto; }
+        .index-panel li { margin: 15px 0; }
+        .index-panel a { color: #64B5F6; text-decoration: none; font-size: 1.4em; display: block; padding: 15px; border-left: 4px solid #64B5F6; transition: all 0.3s; }
+        .index-panel a:hover { background: rgba(100, 181, 246, 0.1); padding-left: 25px; }
+        .close-index { position: absolute; top: 30px; right: 30px; background: #f44336; color: white; border: none; padding: 15px 25px; font-size: 1.2em; border-radius: 8px; cursor: pointer; }
+        .notes { display: none; background: rgba(255, 193, 7, 0.2); border-left: 4px solid #FFC107; padding: 15px; margin-top: 20px; border-radius: 4px; }
+        .notes.visible { display: block; }
+        .notes-title { color: #FFC107; font-weight: bold; margin-bottom: 10px; }
+        .highlight-box { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .practice-box { background: rgba(100, 181, 246, 0.1); border: 2px solid #64B5F6; padding: 25px; margin: 25px 0; border-radius: 8px; }
+        .practice-box h3 { color: #64B5F6; margin-top: 0; }
+        .quiz-question { background: rgba(255, 183, 77, 0.1); border-left: 4px solid #FFB74D; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .quiz-answer { background: rgba(76, 175, 80, 0.2); border-left: 4px solid #4CAF50; padding: 15px; margin: 10px 0; border-radius: 4px; }
+        .diagram-box { background: rgba(156, 39, 176, 0.1); border: 2px solid #9C27B0; padding: 25px; margin: 25px 0; border-radius: 8px; text-align: center; }
+        @media (max-width: 768px) { .slide { width: 95vw; height: 80vh; padding: 30px; } .slide h1 { font-size: 2em; } .slide h2 { font-size: 1.5em; } .slide p, .slide li { font-size: 1em; } }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <section class="slide active cover-slide">
+            <h1>Modelado de Software usando UML</h1>
+            <div class="subtitle">Unidad 03: Diagramas de Comportamiento e Interacción</div>
+        </section>
+
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <h3>Resultados de Aprendizaje:</h3>
+            <ul>
+                <li>Comprender diagramas de casos de uso</li>
+                <li>Crear diagramas de actividades</li>
+                <li>Modelar estados con diagramas de estados</li>
+                <li>Documentar interacciones con diagramas de secuencia</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <ol style="font-size: 1.4em; line-height: 2;">
+                <li>Diagramas de Casos de Uso</li>
+                <li>Diagramas de Actividades</li>
+                <li>Diagramas de Estados</li>
+                <li>Diagramas de Secuencia</li>
+                <li>Comparación y uso práctico</li>
+            </ol>
+        </section>
+
+        <section class="slide">
+            <h2>Diagramas de Casos de Uso</h2>
+            <h3>Definición:</h3>
+            <p>Muestran las funcionalidades del sistema desde la perspectiva del usuario.</p>
+            <h3>Componentes:</h3>
+            <ul>
+                <li><strong>Actor:</strong> Usuario o sistema externo (hombrecito)</li>
+                <li><strong>Caso de Uso:</strong> Funcionalidad del sistema (óvalo)</li>
+                <li><strong>Relaciones:</strong> Asociación, inclusión, extensión</li>
+            </ul>
+            <div class="diagram-box">
+                <pre><code>    Actor
+      │
+      │
+  ┌───▼────┐
+  │ Caso de│
+  │  Uso   │
+  └────────┘</code></pre>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Diagramas de Actividades</h2>
+            <h3>Definición:</h3>
+            <p>Representan flujos de trabajo, procesos de negocio o algoritmos.</p>
+            <h3>Elementos principales:</h3>
+            <ul>
+                <li><strong>Actividad:</strong> Acción o tarea (rectángulo redondeado)</li>
+                <li><strong>Decisión:</strong> Punto de bifurcación (rombo)</li>
+                <li><strong>Flujo:</strong> Flechas que conectan actividades</li>
+                <li><strong>Inicio/Fin:</strong> Nodos inicial y final</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Uso:</strong> Ideal para modelar procesos de negocio y flujos de trabajo complejos.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Diagramas de Estados</h2>
+            <h3>Definición:</h3>
+            <p>Muestran los diferentes estados por los que pasa un objeto y las transiciones entre ellos.</p>
+            <h3>Componentes:</h3>
+            <ul>
+                <li><strong>Estado:</strong> Condición del objeto (rectángulo redondeado)</li>
+                <li><strong>Transición:</strong> Cambio de estado (flecha)</li>
+                <li><strong>Evento:</strong> Disparador de transición</li>
+                <li><strong>Estado inicial/final:</strong> Puntos de entrada/salida</li>
+            </ul>
+            <div class="diagram-box">
+                <pre><code>  [Inicial] → Estado1 → Estado2 → [Final]
+                ↑         │
+                └─────────┘</code></pre>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Diagramas de Secuencia</h2>
+            <h3>Definición:</h3>
+            <p>Muestran las interacciones entre objetos ordenadas por tiempo.</p>
+            <h3>Elementos:</h3>
+            <ul>
+                <li><strong>Línea de vida:</strong> Representa un objeto (rectángulo vertical)</li>
+                <li><strong>Mensaje:</strong> Comunicación entre objetos (flecha horizontal)</li>
+                <li><strong>Activación:</strong> Período de ejecución (rectángulo delgado)</li>
+                <li><strong>Fragmento:</strong> Condiciones y bucles</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Uso:</strong> Esencial para documentar cómo los objetos colaboran para realizar una funcionalidad.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Ejemplo: Caso de Uso - Sistema de Biblioteca</h2>
+            <div class="diagram-box">
+                <pre><code>    Usuario
+      │
+      ├─► Prestar Libro
+      │
+      ├─► Devolver Libro
+      │
+      └─► Consultar Disponibilidad
+
+    Bibliotecario
+      │
+      └─► Registrar Usuario</code></pre>
+            </div>
+            <p><strong>Relaciones:</strong> Los actores (Usuario, Bibliotecario) interactúan con casos de uso específicos del sistema.</p>
+        </section>
+
+        <section class="slide">
+            <h2>Ejemplo: Diagrama de Actividades</h2>
+            <div class="diagram-box">
+                <pre><code>  [Inicio]
+     │
+     ▼
+  Validar Usuario
+     │
+     ├─► [Válido] → Prestar Libro → [Fin]
+     │
+     └─► [Inválido] → Rechazar → [Fin]</code></pre>
+            </div>
+            <p><strong>Flujo:</strong> Muestra el proceso paso a paso con decisiones y actividades.</p>
+        </section>
+
+        <section class="slide">
+            <h2>Ejemplo: Diagrama de Estados - Libro</h2>
+            <div class="diagram-box">
+                <pre><code>  [Inicial]
+     │
+     ▼
+  Disponible
+     │
+     │ prestar()
+     ▼
+  Prestado
+     │
+     │ devolver()
+     ▼
+  Disponible
+     │
+     │ dañar()
+     ▼
+  [Final]</code></pre>
+            </div>
+            <p><strong>Estados:</strong> Disponible, Prestado. <strong>Transiciones:</strong> prestar(), devolver(), dañar().</p>
+        </section>
+
+        <section class="slide">
+            <h2>Cuándo Usar Cada Diagrama</h2>
+            <ul>
+                <li><strong>Casos de Uso:</strong> Análisis de requisitos, comunicación con stakeholders</li>
+                <li><strong>Actividades:</strong> Procesos de negocio, algoritmos complejos</li>
+                <li><strong>Estados:</strong> Objetos con comportamiento complejo basado en estados</li>
+                <li><strong>Secuencia:</strong> Diseño detallado de interacciones entre objetos</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Regla:</strong> Usa el diagrama más simple que comunique efectivamente la idea.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Práctica Guiada</h2>
+            <div class="practice-box">
+                <h3>Ejercicio: Sistema de E-commerce</h3>
+                <p>Crear para un sistema de compras online:</p>
+                <ol>
+                    <li>Diagrama de Casos de Uso (Cliente, Administrador)</li>
+                    <li>Diagrama de Actividades del proceso de compra</li>
+                    <li>Diagrama de Estados de una Orden</li>
+                    <li>Diagrama de Secuencia del proceso de pago</li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Resumen</h2>
+            <h3>Puntos Clave:</h3>
+            <ol>
+                <li>Los diagramas de comportamiento muestran CÓMO funciona el sistema</li>
+                <li>Casos de Uso: funcionalidades desde perspectiva del usuario</li>
+                <li>Actividades: flujos de trabajo y procesos</li>
+                <li>Estados: cambios de estado de objetos</li>
+                <li>Secuencia: interacciones ordenadas por tiempo</li>
+            </ol>
+            <div class="highlight-box">
+                <strong>Próxima Unidad:</strong> Agrupación de Objetos y Operaciones
+            </div>
+        </section>
+
+        <!-- Recursos Adicionales -->
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Para ampliar tu conocimiento sobre esta unidad, visita nuestra página de recursos con:</p>
+                <ul>
+                    <li>Videos sobre diagramas de comportamiento</li>
+                    <li>Ejemplos de casos de uso reales</li>
+                    <li>Tutoriales de diagramas de secuencia</li>
+                    <li>Plantillas y ejercicios</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_03_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">
+                        Ver Recursos Adicionales →
+                    </a>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+    <div class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">14</span></div>
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul id="indexList"></ul>
+    </div>
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        document.getElementById('total-slides').textContent = totalSlides;
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            updateCounter();
+            updateNavigation();
+        }
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function previousSlide() { showSlide(currentSlide - 1); }
+        function updateCounter() { document.getElementById('current-slide').textContent = currentSlide + 1; }
+        function updateNavigation() {
+            const prevBtn = document.querySelector('.nav-btn:first-child');
+            const nextBtn = document.querySelector('.nav-btn:last-child');
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+        }
+        function toggleIndex() {
+            const panel = document.getElementById('indexPanel');
+            panel.classList.toggle('active');
+            if (panel.classList.contains('active')) buildIndex();
+        }
+        function buildIndex() {
+            const indexList = document.getElementById('indexList');
+            indexList.innerHTML = '';
+            slides.forEach((slide, index) => {
+                const title = slide.querySelector('h1, h2')?.textContent || `Diapositiva ${index + 1}`;
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = title;
+                a.onclick = (e) => { e.preventDefault(); showSlide(index); toggleIndex(); };
+                li.appendChild(a);
+                indexList.appendChild(li);
+            });
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); previousSlide(); }
+        });
+        updateNavigation();
+        buildIndex();
+    </script>
+</body>
+</html>
+

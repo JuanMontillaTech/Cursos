@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 05 - Acceso a Datos y Funcionalidades Nativas</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; overflow: hidden; }
+        .presentation-container { width: 100vw; height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; }
+        .slide { display: none; width: 90vw; max-width: 1280px; height: 72vh; max-height: 720px; background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 60px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); overflow-y: auto; position: relative; }
+        .slide.active { display: block; }
+        .slide h1 { font-size: 3.5em; color: #4CAF50; margin-bottom: 30px; text-align: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        .slide h2 { font-size: 2.5em; color: #64B5F6; margin: 30px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        .slide h3 { font-size: 1.8em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .slide p, .slide li { font-size: 1.3em; line-height: 1.8; margin: 15px 0; }
+        .slide ul, .slide ol { margin-left: 40px; margin-top: 15px; }
+        .slide code { background: #1a1a1a; padding: 3px 8px; border-radius: 4px; font-family: 'Consolas', 'Monaco', monospace; color: #CE9178; font-size: 0.9em; }
+        .slide pre { background: #1a1a1a; border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; overflow-x: auto; box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3); }
+        .slide pre code { color: #D4D4D4; font-size: 1.1em; line-height: 1.6; display: block; background: none; padding: 0; }
+        .cover-slide { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .cover-slide h1 { font-size: 4em; margin-bottom: 40px; }
+        .cover-slide .subtitle { font-size: 2.5em; color: #64B5F6; margin: 20px 0; }
+        .cover-slide .code { font-size: 1.8em; color: #FFB74D; margin-top: 30px; }
+        .navigation { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
+        .nav-btn { background: #4CAF50; color: white; border: none; padding: 15px 30px; font-size: 1.2em; border-radius: 8px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); }
+        .nav-btn:hover { background: #45a049; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5); }
+        .nav-btn:disabled { background: #555; cursor: not-allowed; transform: none; }
+        .slide-counter { position: fixed; top: 30px; right: 30px; background: rgba(0, 0, 0, 0.7); padding: 10px 20px; border-radius: 8px; font-size: 1.1em; z-index: 1000; }
+        .index-btn { position: fixed; top: 30px; left: 30px; background: #64B5F6; color: white; border: none; padding: 15px 25px; font-size: 1.1em; border-radius: 8px; cursor: pointer; z-index: 1000; transition: all 0.3s; }
+        .index-btn:hover { background: #42A5F5; transform: translateY(-2px); }
+        .index-panel { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.95); z-index: 2000; padding: 60px; overflow-y: auto; }
+        .index-panel.active { display: block; }
+        .index-panel h2 { color: #4CAF50; font-size: 2.5em; margin-bottom: 30px; text-align: center; }
+        .index-panel ul { list-style: none; max-width: 800px; margin: 0 auto; }
+        .index-panel li { margin: 15px 0; }
+        .index-panel a { color: #64B5F6; text-decoration: none; font-size: 1.4em; display: block; padding: 15px; border-left: 4px solid #64B5F6; transition: all 0.3s; }
+        .index-panel a:hover { background: rgba(100, 181, 246, 0.1); padding-left: 25px; }
+        .close-index { position: absolute; top: 30px; right: 30px; background: #f44336; color: white; border: none; padding: 15px 25px; font-size: 1.2em; border-radius: 8px; cursor: pointer; }
+        .notes { display: none; background: rgba(255, 193, 7, 0.2); border-left: 4px solid #FFC107; padding: 15px; margin-top: 20px; border-radius: 4px; }
+        .notes.visible { display: block; }
+        .notes-title { color: #FFC107; font-weight: bold; margin-bottom: 10px; }
+        .highlight-box { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .practice-box { background: rgba(100, 181, 246, 0.1); border: 2px solid #64B5F6; padding: 25px; margin: 25px 0; border-radius: 8px; }
+        .practice-box h3 { color: #64B5F6; margin-top: 0; }
+        .quiz-question { background: rgba(255, 183, 77, 0.1); border-left: 4px solid #FFB74D; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .quiz-answer { background: rgba(76, 175, 80, 0.2); border-left: 4px solid #4CAF50; padding: 15px; margin: 10px 0; border-radius: 4px; }
+        .diagram-box { background: rgba(156, 39, 176, 0.1); border: 2px solid #9C27B0; padding: 25px; margin: 25px 0; border-radius: 8px; text-align: center; }
+        .code-box { background: #1a1a1a; border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; }
+        @media (max-width: 768px) { .slide { width: 95vw; height: 80vh; padding: 30px; } .slide h1 { font-size: 2em; } .slide h2 { font-size: 1.5em; } .slide p, .slide li { font-size: 1em; } }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <section class="slide active cover-slide">
+            <h1>Desarrollo de Aplicaciones Multiplataforma con .NET MAUI</h1>
+            <div class="subtitle">Unidad 05: Acceso a Datos y Funcionalidades Nativas</div>
+            <aside class="notes">
+                <div class="notes-title">Notas del Presentador:</div>
+                Esta unidad final integra todo lo aprendido: acceso a datos locales y remotos, y funcionalidades nativas de cada plataforma. Es crucial para aplicaciones reales.
+            </aside>
+        </section>
+
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <h3>Resultados de Aprendizaje:</h3>
+            <ul>
+                <li>Implementar almacenamiento local (Preferences, SecureStorage)</li>
+                <li>Usar SQLite para base de datos local</li>
+                <li>Consumir APIs REST con HttpClient</li>
+                <li>Acceder a funcionalidades nativas (cámara, geolocalización)</li>
+                <li>Gestionar permisos de plataforma</li>
+                <li>Publicar aplicaciones en tiendas</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <ol style="font-size: 1.4em; line-height: 2;">
+                <li>Almacenamiento local: Preferences</li>
+                <li>SecureStorage para datos sensibles</li>
+                <li>SQLite para bases de datos</li>
+                <li>Acceso a APIs REST</li>
+                <li>HttpClient y servicios</li>
+                <li>Funcionalidades nativas: Cámara</li>
+                <li>Geolocalización</li>
+                <li>Notificaciones</li>
+                <li>Permisos de plataforma</li>
+                <li>Publicación de aplicaciones</li>
+                <li>Práctica guiada</li>
+            </ol>
+        </section>
+
+        <section class="slide">
+            <h2>Preferences - Almacenamiento Simple</h2>
+            <div class="highlight-box">
+                <p><strong>Preferences:</strong> Almacenamiento clave-valor simple para datos no sensibles (configuraciones, preferencias).</p>
+            </div>
+            <h3>Usar Preferences:</h3>
+            <div class="code-box">
+                <pre><code>// Guardar valor
+Preferences.Set("nombre", "Juan");
+Preferences.Set("edad", 25);
+Preferences.Set("esActivo", true);
+
+// Leer valor
+string nombre = Preferences.Get("nombre", "Default");
+int edad = Preferences.Get("edad", 0);
+bool esActivo = Preferences.Get("esActivo", false);
+
+// Eliminar
+Preferences.Remove("nombre");
+
+// Limpiar todo
+Preferences.Clear();</code></pre>
+            </div>
+            <h3>Cuándo Usar:</h3>
+            <ul>
+                <li>Configuraciones de usuario</li>
+                <li>Preferencias de la app</li>
+                <li>Datos simples (no sensibles)</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>SecureStorage - Datos Sensibles</h2>
+            <div class="highlight-box">
+                <p><strong>SecureStorage:</strong> Almacenamiento seguro para datos sensibles como tokens, contraseñas, etc.</p>
+            </div>
+            <h3>Usar SecureStorage:</h3>
+            <div class="code-box">
+                <pre><code>// Guardar de forma segura
+try
+{
+    await SecureStorage.SetAsync("token", "abc123xyz");
+    await SecureStorage.SetAsync("usuario_id", "12345");
+}
+catch (Exception ex)
+{
+    // Manejar error
+}
+
+// Leer de forma segura
+try
+{
+    string token = await SecureStorage.GetAsync("token");
+    if (token != null)
+    {
+        // Usar token
+    }
+}
+catch (Exception ex)
+{
+    // Manejar error
+}
+
+// Eliminar
+SecureStorage.Remove("token");</code></pre>
+            </div>
+            <div class="highlight-box">
+                <strong>Nota:</strong> SecureStorage usa el KeyStore de cada plataforma (Android KeyStore, iOS Keychain, etc.)
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>SQLite - Base de Datos Local</h2>
+            <div class="highlight-box">
+                <p><strong>SQLite:</strong> Base de datos relacional local, ideal para datos estructurados complejos.</p>
+            </div>
+            <h3>Instalación:</h3>
+            <div class="code-box">
+                <pre><code>// NuGet Package
+Microsoft.Data.Sqlite
+// o
+sqlite-net-pcl</code></pre>
+            </div>
+            <h3>Modelo con SQLite-Net:</h3>
+            <div class="code-box">
+                <pre><code>using SQLite;
+
+public class Producto
+{
+    [PrimaryKey, AutoIncrement]
+    public int Id { get; set; }
+    
+    public string Nombre { get; set; }
+    public decimal Precio { get; set; }
+    public DateTime FechaCreacion { get; set; }
+}</code></pre>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Operaciones SQLite</h2>
+            <h3>Conexión y Operaciones:</h3>
+            <div class="code-box">
+                <pre><code>public class DatabaseService
+{
+    private SQLiteAsyncConnection _database;
+    private string _dbPath;
+    
+    public DatabaseService()
+    {
+        _dbPath = Path.Combine(
+            FileSystem.AppDataDirectory, 
+            "productos.db3");
+        _database = new SQLiteAsyncConnection(_dbPath);
+        _database.CreateTableAsync&lt;Producto&gt;().Wait();
+    }
+    
+    public async Task&lt;List&lt;Producto&gt;&gt; GetProductosAsync()
+    {
+        return await _database.Table&lt;Producto&gt;().ToListAsync();
+    }
+    
+    public async Task SaveProductoAsync(Producto producto)
+    {
+        if (producto.Id == 0)
+            await _database.InsertAsync(producto);
+        else
+            await _database.UpdateAsync(producto);
+    }
+    
+    public async Task DeleteProductoAsync(Producto producto)
+    {
+        await _database.DeleteAsync(producto);
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Acceso a APIs REST</h2>
+            <div class="highlight-box">
+                <p><strong>HttpClient:</strong> Clase para realizar peticiones HTTP a APIs REST.</p>
+            </div>
+            <h3>Configurar HttpClient:</h3>
+            <div class="code-box">
+                <pre><code>// En MauiProgram.cs
+builder.Services.AddHttpClient();
+
+// En servicio
+public class ApiService
+{
+    private readonly HttpClient _httpClient;
+    
+    public ApiService(HttpClient httpClient)
+    {
+        _httpClient = httpClient;
+        _httpClient.BaseAddress = new Uri("https://api.ejemplo.com/");
+    }
+    
+    public async Task&lt;List&lt;Producto&gt;&gt; GetProductosAsync()
+    {
+        var response = await _httpClient.GetAsync("api/productos");
+        response.EnsureSuccessStatusCode();
+        var json = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize&lt;List&lt;Producto&gt;&gt;(json);
+    }
+}</code></pre>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>HttpClient - Operaciones CRUD</h2>
+            <h3>GET, POST, PUT, DELETE:</h3>
+            <div class="code-box">
+                <pre><code>// GET
+var productos = await _httpClient.GetFromJsonAsync&lt;List&lt;Producto&gt;&gt;("api/productos");
+
+// POST
+var nuevoProducto = new Producto { Nombre = "Laptop", Precio = 999.99m };
+var response = await _httpClient.PostAsJsonAsync("api/productos", nuevoProducto);
+var producto = await response.Content.ReadFromJsonAsync&lt;Producto&gt;();
+
+// PUT
+producto.Precio = 899.99m;
+await _httpClient.PutAsJsonAsync($"api/productos/{producto.Id}", producto);
+
+// DELETE
+await _httpClient.DeleteAsync($"api/productos/{producto.Id}");</code></pre>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Cámara - Funcionalidad Nativa</h2>
+            <h3>Usar MediaPicker:</h3>
+            <div class="code-box">
+                <pre><code>// Tomar foto
+var foto = await MediaPicker.Default.CapturePhotoAsync();
+
+if (foto != null)
+{
+    using var stream = await foto.OpenReadAsync();
+    var imageSource = ImageSource.FromStream(() => stream);
+    // Usar imageSource en Image control
+}
+
+// Seleccionar foto de galería
+var foto = await MediaPicker.Default.PickPhotoAsync();
+
+if (foto != null)
+{
+    using var stream = await foto.OpenReadAsync();
+    // Procesar imagen
+}</code></pre>
+            </div>
+            <h3>Permisos Requeridos:</h3>
+            <ul>
+                <li>Android: CAMERA, READ_MEDIA_IMAGES</li>
+                <li>iOS: NSCameraUsageDescription, NSPhotoLibraryUsageDescription</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Geolocalización</h2>
+            <h3>Obtener Ubicación:</h3>
+            <div class="code-box">
+                <pre><code>using Microsoft.Maui.Devices.Sensors;
+
+public async Task&lt;Location&gt; GetLocationAsync()
+{
+    try
+    {
+        var request = new GeolocationRequest(
+            GeolocationAccuracy.Medium, 
+            TimeSpan.FromSeconds(10));
+        
+        var location = await Geolocation.Default.GetLocationAsync(request);
+        
+        if (location != null)
+        {
+            Console.WriteLine($"Lat: {location.Latitude}, Lng: {location.Longitude}");
+            return location;
+        }
+    }
+    catch (Exception ex)
+    {
+        // Manejar error
+    }
+    return null;
+}</code></pre>
+            </div>
+            <h3>Permisos:</h3>
+            <ul>
+                <li>Android: ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION</li>
+                <li>iOS: NSLocationWhenInUseUsageDescription</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Notificaciones</h2>
+            <h3>Notificaciones Locales:</h3>
+            <div class="code-box">
+                <pre><code>// En Android/iOS específico
+#if ANDROID
+using AndroidX.Core.App;
+
+var notification = new NotificationCompat.Builder(context, "canal_id")
+    .SetContentTitle("Título")
+    .SetContentText("Mensaje")
+    .SetSmallIcon(Resource.Drawable.icon)
+    .Build();
+
+var notificationManager = NotificationManagerCompat.From(context);
+notificationManager.Notify(1, notification);
+#endif</code></pre>
+            </div>
+            <h3>Usar Community Toolkit:</h3>
+            <div class="code-box">
+                <pre><code>// Instalar: CommunityToolkit.Maui
+// En MauiProgram.cs
+builder.UseMauiCommunityToolkit();
+
+// En código
+var notification = new NotificationRequest
+{
+    Title = "Título",
+    Message = "Mensaje",
+    Schedule = new NotificationRequestSchedule
+    {
+        NotifyTime = DateTime.Now.AddSeconds(5)
+    }
+};
+
+await notification.Show();</code></pre>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Permisos de Plataforma</h2>
+            <h3>Solicitar Permisos:</h3>
+            <div class="code-box">
+                <pre><code>using Microsoft.Maui.ApplicationModel;
+
+public async Task&lt;PermissionStatus&gt; RequestCameraPermissionAsync()
+{
+    var status = await Permissions.CheckStatusAsync&lt;Permissions.Camera&gt;();
+    
+    if (status == PermissionStatus.Granted)
+        return status;
+    
+    if (status == PermissionStatus.Denied && 
+        DeviceInfo.Platform == DevicePlatform.iOS)
+    {
+        // En iOS, el usuario debe ir a Settings
+        return status;
+    }
+    
+    if (Permissions.ShouldShowRationale&lt;Permissions.Camera&gt;())
+    {
+        // Mostrar explicación al usuario
+    }
+    
+    status = await Permissions.RequestAsync&lt;Permissions.Camera&gt;();
+    return status;
+}</code></pre>
+            </div>
+            <h3>Permisos Comunes:</h3>
+            <ul>
+                <li>Camera, Location, Storage, Contacts, etc.</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Publicación de Aplicaciones</h2>
+            <h3>Android (Google Play):</h3>
+            <ul>
+                <li>Firmar APK/AAB con keystore</li>
+                <li>Crear cuenta de desarrollador</li>
+                <li>Subir a Google Play Console</li>
+                <li>Completar información de la app</li>
+                <li>Revisar políticas de Google</li>
+            </ul>
+            <h3>iOS (App Store):</h3>
+            <ul>
+                <li>Requiere cuenta de desarrollador ($99/año)</li>
+                <li>Firmar con certificados de Apple</li>
+                <li>Subir via Xcode o Visual Studio</li>
+                <li>App Store Connect</li>
+            </ul>
+            <h3>Windows (Microsoft Store):</h3>
+            <ul>
+                <li>Crear paquete MSIX</li>
+                <li>Subir a Microsoft Partner Center</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Firmar Aplicación Android</h2>
+            <h3>Crear Keystore:</h3>
+            <div class="code-box">
+                <pre><code>keytool -genkey -v -keystore mi-release-key.keystore 
+        -alias mi-alias -keyalg RSA -keysize 2048 
+        -validity 10000</code></pre>
+            </div>
+            <h3>Configurar en proyecto:</h3>
+            <div class="code-box">
+                <pre><code>&lt;!-- Platforms/Android/AndroidManifest.xml --&gt;
+&lt;application android:label="MiApp" 
+             android:icon="@mipmap/appicon"&gt;
+&lt;/application&gt;
+
+&lt;!-- .csproj --&gt;
+&lt;PropertyGroup&gt;
+    &lt;AndroidKeyStore&gt;True&lt;/AndroidKeyStore&gt;
+    &lt;AndroidSigningKeyStore&gt;mi-release-key.keystore&lt;/AndroidSigningKeyStore&gt;
+    &lt;AndroidSigningKeyAlias&gt;mi-alias&lt;/AndroidSigningKeyAlias&gt;
+&lt;/PropertyGroup&gt;</code></pre>
+            </div>
+        </section>
+
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Práctica Guiada #5: App Completa con Datos</h2>
+                <h3>Objetivo:</h3>
+                <p>Crear aplicación completa integrando almacenamiento, API y funcionalidades nativas.</p>
+                <h3>Pasos:</h3>
+                <ol>
+                    <li>Crea app "MiTienda" con:
+                        <ul>
+                            <li>Lista de productos desde API REST</li>
+                            <li>SQLite para favoritos locales</li>
+                            <li>Preferences para configuración</li>
+                        </ul>
+                    </li>
+                    <li>Agrega funcionalidades:
+                        <ul>
+                            <li>Tomar foto del producto</li>
+                            <li>Mostrar ubicación de tienda</li>
+                            <li>Notificación cuando hay ofertas</li>
+                        </ul>
+                    </li>
+                    <li>Gestiona permisos correctamente</li>
+                    <li>Prepara para publicación</li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Mini-Quiz</h2>
+            <div class="quiz-question">
+                <h3>Pregunta 1:</h3>
+                <p>¿Cuándo usar Preferences vs SecureStorage?</p>
+                <div class="quiz-answer">
+                    <strong>Respuesta:</strong> Preferences para datos no sensibles (configuraciones). SecureStorage para datos sensibles (tokens, contraseñas).
+                </div>
+            </div>
+            <div class="quiz-question">
+                <h3>Pregunta 2:</h3>
+                <p>¿Qué es necesario antes de acceder a la cámara o ubicación?</p>
+                <div class="quiz-answer">
+                    <strong>Respuesta:</strong> Solicitar y obtener permisos usando Permissions.RequestAsync&lt;Permissions.Camera&gt;() o Permissions.Location.
+                </div>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Resumen de la Unidad</h2>
+            <h3>Puntos Clave:</h3>
+            <ul>
+                <li>Preferences para datos simples no sensibles</li>
+                <li>SecureStorage para datos sensibles</li>
+                <li>SQLite para bases de datos locales complejas</li>
+                <li>HttpClient para consumir APIs REST</li>
+                <li>Funcionalidades nativas: cámara, geolocalización, notificaciones</li>
+                <li>Siempre solicitar permisos antes de usar funcionalidades nativas</li>
+                <li>Publicación requiere firmar y configurar según plataforma</li>
+            </ul>
+            <div class="highlight-box">
+                <h3>¡Felicidades!</h3>
+                <p>Has completado el curso de .NET MAUI Básico. Ahora tienes las bases para crear aplicaciones multiplataforma completas.</p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Tarea Final del Curso</h2>
+            <div class="practice-box">
+                <h3>Proyecto Final Integrador:</h3>
+                <ol>
+                    <li><strong>Aplicación Completa (70 puntos):</strong>
+                        <ul>
+                            <li>App con al menos 3 páginas (Shell navigation)</li>
+                            <li>MVVM con ViewModels</li>
+                            <li>Almacenamiento local (Preferences o SQLite)</li>
+                            <li>Consumo de API REST (o datos mock)</li>
+                            <li>Al menos 2 funcionalidades nativas (cámara, ubicación, etc.)</li>
+                            <li>Manejo de permisos</li>
+                        </ul>
+                    </li>
+                    <li><strong>Documentación (20 puntos):</strong>
+                        <ul>
+                            <li>README con instrucciones</li>
+                            <li>Diagrama de arquitectura</li>
+                            <li>Explicación de funcionalidades</li>
+                        </ul>
+                    </li>
+                    <li><strong>Presentación (10 puntos):</strong>
+                        <ul>
+                            <li>Demo de 5 minutos</li>
+                            <li>Explicar decisiones técnicas</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Visita nuestra página de recursos para:</p>
+                <ul>
+                    <li>Guías de publicación en tiendas</li>
+                    <li>Ejemplos de APIs REST</li>
+                    <li>Mejores prácticas de seguridad</li>
+                    <li>Recursos para continuar aprendiendo</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_05_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">Ver Recursos →</a>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+    <div class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">18</span></div>
+    <div style="position: fixed; bottom: 100px; right: 30px; z-index: 1000;">
+        <a href="Unidad_04.html" style="background: #64B5F6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-size: 0.9em;">← Unidad Anterior</a>
+    </div>
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul id="indexList"></ul>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let notesVisible = false;
+        document.getElementById('total-slides').textContent = totalSlides;
+        function showSlide(n) { slides[currentSlide].classList.remove('active'); currentSlide = (n + totalSlides) % totalSlides; slides[currentSlide].classList.add('active'); updateCounter(); updateNavigation(); }
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function previousSlide() { showSlide(currentSlide - 1); }
+        function updateCounter() { document.getElementById('current-slide').textContent = currentSlide + 1; }
+        function updateNavigation() { const prevBtn = document.querySelector('.nav-btn:first-child'); const nextBtn = document.querySelector('.nav-btn:last-child'); prevBtn.disabled = currentSlide === 0; nextBtn.disabled = currentSlide === totalSlides - 1; }
+        function toggleIndex() { const panel = document.getElementById('indexPanel'); panel.classList.toggle('active'); if (panel.classList.contains('active')) { buildIndex(); } }
+        function buildIndex() { const indexList = document.getElementById('indexList'); indexList.innerHTML = ''; slides.forEach((slide, index) => { const title = slide.querySelector('h1, h2')?.textContent || `Diapositiva ${index + 1}`; const li = document.createElement('li'); const a = document.createElement('a'); a.href = '#'; a.textContent = title; a.onclick = (e) => { e.preventDefault(); showSlide(index); toggleIndex(); }; li.appendChild(a); indexList.appendChild(li); }); }
+        function toggleNotes() { notesVisible = !notesVisible; const notes = document.querySelectorAll('.notes'); notes.forEach(note => { if (notesVisible) { note.classList.add('visible'); } else { note.classList.remove('visible'); } }); }
+        document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); } else if (e.key === 'ArrowLeft') { e.preventDefault(); previousSlide(); } else if (e.key === 'PageDown') { e.preventDefault(); nextSlide(); } else if (e.key === 'PageUp') { e.preventDefault(); previousSlide(); } else if (e.key === 'n' || e.key === 'N') { toggleNotes(); } });
+        updateNavigation();
+        buildIndex();
+    </script>
+</body>
+</html>
+

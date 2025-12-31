@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 02 - Recursos Adicionales</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        h1 { font-size: 3em; color: #4CAF50; margin-bottom: 20px; text-align: center; }
+        h2 { font-size: 2.2em; color: #64B5F6; margin: 40px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        h3 { font-size: 1.6em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .back-link { display: inline-block; background: #64B5F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-bottom: 30px; transition: all 0.3s; }
+        .back-link:hover { background: #42A5F5; transform: translateY(-2px); }
+        .resource-section { background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 30px; margin: 25px 0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+        .resource-item { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 15px 0; border-radius: 8px; transition: all 0.3s; }
+        .resource-item:hover { background: rgba(76, 175, 80, 0.2); transform: translateX(5px); }
+        .resource-item a { color: #64B5F6; text-decoration: none; font-size: 1.2em; font-weight: bold; }
+        .resource-item a:hover { color: #42A5F5; text-decoration: underline; }
+        .resource-item p { margin-top: 10px; color: #b0b0b0; font-size: 1em; line-height: 1.6; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin: 20px 0; border-radius: 8px; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 8px; }
+        .badge { display: inline-block; background: #9C27B0; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; margin-left: 10px; }
+        .badge.video { background: #f44336; }
+        .badge.doc { background: #2196F3; }
+        .badge.tool { background: #FF9800; }
+        .badge.github { background: #333; }
+        ul { margin-left: 30px; margin-top: 15px; }
+        li { margin: 10px 0; font-size: 1.1em; line-height: 1.8; }
+        .highlight-box { background: rgba(255, 193, 7, 0.1); border-left: 4px solid #FFC107; padding: 20px; margin: 20px 0; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="Unidad_02.html" class="back-link">← Volver a Unidad 02</a>
+        
+        <h1>Recursos Adicionales - Unidad 02</h1>
+        <p style="text-align: center; font-size: 1.2em; color: #b0b0b0; margin-bottom: 40px;">
+            Fundamentos de XAML y Layouts - Enlaces, videos y material complementario
+        </p>
+
+        <div class="resource-section">
+            <h2>📚 Documentación Oficial de Microsoft</h2>
+            
+            <div class="resource-item">
+                <a href="https://learn.microsoft.com/dotnet/maui/user-interface/xaml/" target="_blank">
+                    Guía de XAML en .NET MAUI <span class="badge doc">Oficial</span>
+                </a>
+                <p>Documentación completa sobre XAML en .NET MAUI, incluyendo sintaxis, propiedades, y mejores prácticas.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://learn.microsoft.com/dotnet/maui/user-interface/layouts/" target="_blank">
+                    Layouts en .NET MAUI <span class="badge doc">Oficial</span>
+                </a>
+                <p>Guía detallada sobre todos los layouts disponibles: StackLayout, Grid, FlexLayout, AbsoluteLayout, etc.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://learn.microsoft.com/dotnet/maui/user-interface/controls/" target="_blank">
+                    Controles de .NET MAUI <span class="badge doc">Referencia</span>
+                </a>
+                <p>Referencia completa de todos los controles disponibles: Label, Button, Entry, Image, etc.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>🎥 Videos Educativos</h2>
+            
+            <div class="resource-item">
+                <h3>Introducción a XAML</h3>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/FXJ7i3Dz3c8" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <p>Video tutorial sobre los fundamentos de XAML y cómo crear interfaces de usuario.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.youtube.com/watch?v=YVqJ1JqJ7YI" target="_blank">
+                    Layouts en .NET MAUI <span class="badge video">Video</span>
+                </a>
+                <p>Tutorial sobre los diferentes layouts disponibles y cuándo usar cada uno.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.youtube.com/watch?v=K2X3JjJz3lw" target="_blank">
+                    Grid Layout Tutorial <span class="badge video">Tutorial</span>
+                </a>
+                <p>Guía detallada sobre cómo usar Grid para crear layouts complejos y responsivos.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>🛠️ Herramientas Recomendadas</h2>
+            
+            <div class="resource-item">
+                <a href="https://marketplace.visualstudio.com/items?itemName=TeamXavalon.XAMLStyler" target="_blank">
+                    XAML Styler <span class="badge tool">Extensión VS</span>
+                </a>
+                <p>Extensión para Visual Studio que formatea automáticamente archivos XAML según estándares.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://marketplace.visualstudio.com/items?itemName=GorillaDevs.XamarinFormsXAMLIntellisense" target="_blank">
+                    XAML IntelliSense <span class="badge tool">Extensión</span>
+                </a>
+                <p>Mejora el IntelliSense para XAML, ayudando con autocompletado y validación.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>📖 Tutoriales y Guías</h2>
+            
+            <div class="resource-item">
+                <a href="https://learn.microsoft.com/dotnet/maui/user-interface/layouts/grid" target="_blank">
+                    Grid Layout - Guía Completa
+                </a>
+                <p>Tutorial detallado sobre Grid, incluyendo RowDefinitions, ColumnDefinitions y posicionamiento.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://learn.microsoft.com/dotnet/maui/user-interface/layouts/flexlayout" target="_blank">
+                    FlexLayout - Guía Completa
+                </a>
+                <p>Documentación sobre FlexLayout, el layout moderno basado en CSS Flexbox.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>💡 Artículos Especializados</h2>
+            
+            <div class="resource-item">
+                <a href="https://devblogs.microsoft.com/dotnet/announcing-net-maui-preview-3/" target="_blank">
+                    Mejores Prácticas de XAML
+                </a>
+                <p>Artículo sobre mejores prácticas al escribir XAML para .NET MAUI.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.jamesmontemagno.com/blog/" target="_blank">
+                    Blog de James Montemagno
+                </a>
+                <p>Blog con artículos y tutoriales sobre XAML, layouts y desarrollo MAUI en general.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>📦 Ejemplos de Código</h2>
+            
+            <div class="resource-item">
+                <a href="https://github.com/dotnet/maui-samples/tree/main/Controls/Layouts" target="_blank">
+                    Ejemplos de Layouts <span class="badge github">GitHub</span>
+                </a>
+                <p>Ejemplos de código oficiales mostrando todos los layouts en acción.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://github.com/dotnet/maui-samples/tree/main/Controls" target="_blank">
+                    Ejemplos de Controles <span class="badge github">GitHub</span>
+                </a>
+                <p>Muestras de todos los controles básicos y cómo usarlos.</p>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <h3>💡 Consejo de Estudio</h3>
+            <p>Para dominar XAML y Layouts: 1) Practica creando diferentes layouts (Grid, StackLayout, FlexLayout), 2) Experimenta con propiedades y opciones, 3) Usa Hot Reload para ver cambios en tiempo real, 4) Revisa los ejemplos oficiales en GitHub. La práctica constante es clave para entender cómo funcionan los layouts.</p>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #333;">
+            <a href="Unidad_01_Recursos.html" class="back-link">← Recursos Unidad 01</a>
+            <a href="Unidad_02.html" class="back-link" style="margin-left: 20px;">← Volver a Unidad 02</a>
+            <a href="Unidad_03_Recursos.html" class="back-link" style="margin-left: 20px;">Siguiente: Recursos Unidad 03 →</a>
+        </div>
+    </div>
+</body>
+</html>
+

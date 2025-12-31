@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 04 - Agrupación de Objetos y Operaciones</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; overflow: hidden; }
+        .presentation-container { width: 100vw; height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; }
+        .slide { display: none; width: 90vw; max-width: 1280px; height: 72vh; max-height: 720px; background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 60px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); overflow-y: auto; position: relative; }
+        .slide.active { display: block; }
+        .slide h1 { font-size: 3.5em; color: #4CAF50; margin-bottom: 30px; text-align: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        .slide h2 { font-size: 2.5em; color: #64B5F6; margin: 30px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        .slide h3 { font-size: 1.8em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .slide p, .slide li { font-size: 1.3em; line-height: 1.8; margin: 15px 0; }
+        .slide ul, .slide ol { margin-left: 40px; margin-top: 15px; }
+        .slide code { background: #1a1a1a; padding: 3px 8px; border-radius: 4px; font-family: 'Consolas', 'Monaco', monospace; color: #CE9178; font-size: 0.9em; }
+        .slide pre { background: #1a1a1a; border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; overflow-x: auto; box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3); }
+        .slide pre code { color: #D4D4D4; font-size: 1.1em; line-height: 1.6; display: block; background: none; padding: 0; }
+        .cover-slide { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .cover-slide h1 { font-size: 4em; margin-bottom: 40px; }
+        .cover-slide .subtitle { font-size: 2.5em; color: #64B5F6; margin: 20px 0; }
+        .cover-slide .author { font-size: 1.8em; color: #FFB74D; margin-top: 60px; }
+        .navigation { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
+        .nav-btn { background: #4CAF50; color: white; border: none; padding: 15px 30px; font-size: 1.2em; border-radius: 8px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); }
+        .nav-btn:hover { background: #45a049; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5); }
+        .nav-btn:disabled { background: #555; cursor: not-allowed; transform: none; }
+        .slide-counter { position: fixed; top: 30px; right: 30px; background: rgba(0, 0, 0, 0.7); padding: 10px 20px; border-radius: 8px; font-size: 1.1em; z-index: 1000; }
+        .index-btn { position: fixed; top: 30px; left: 30px; background: #64B5F6; color: white; border: none; padding: 15px 25px; font-size: 1.1em; border-radius: 8px; cursor: pointer; z-index: 1000; transition: all 0.3s; }
+        .index-btn:hover { background: #42A5F5; transform: translateY(-2px); }
+        .index-panel { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.95); z-index: 2000; padding: 60px; overflow-y: auto; }
+        .index-panel.active { display: block; }
+        .index-panel h2 { color: #4CAF50; font-size: 2.5em; margin-bottom: 30px; text-align: center; }
+        .index-panel ul { list-style: none; max-width: 800px; margin: 0 auto; }
+        .index-panel li { margin: 15px 0; }
+        .index-panel a { color: #64B5F6; text-decoration: none; font-size: 1.4em; display: block; padding: 15px; border-left: 4px solid #64B5F6; transition: all 0.3s; }
+        .index-panel a:hover { background: rgba(100, 181, 246, 0.1); padding-left: 25px; }
+        .close-index { position: absolute; top: 30px; right: 30px; background: #f44336; color: white; border: none; padding: 15px 25px; font-size: 1.2em; border-radius: 8px; cursor: pointer; }
+        .notes { display: none; background: rgba(255, 193, 7, 0.2); border-left: 4px solid #FFC107; padding: 15px; margin-top: 20px; border-radius: 4px; }
+        .notes.visible { display: block; }
+        .notes-title { color: #FFC107; font-weight: bold; margin-bottom: 10px; }
+        .highlight-box { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .practice-box { background: rgba(100, 181, 246, 0.1); border: 2px solid #64B5F6; padding: 25px; margin: 25px 0; border-radius: 8px; }
+        .practice-box h3 { color: #64B5F6; margin-top: 0; }
+        .quiz-question { background: rgba(255, 183, 77, 0.1); border-left: 4px solid #FFB74D; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .quiz-answer { background: rgba(76, 175, 80, 0.2); border-left: 4px solid #4CAF50; padding: 15px; margin: 10px 0; border-radius: 4px; }
+        .diagram-box { background: rgba(156, 39, 176, 0.1); border: 2px solid #9C27B0; padding: 25px; margin: 25px 0; border-radius: 8px; text-align: center; }
+        @media (max-width: 768px) { .slide { width: 95vw; height: 80vh; padding: 30px; } .slide h1 { font-size: 2em; } .slide h2 { font-size: 1.5em; } .slide p, .slide li { font-size: 1em; } }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <section class="slide active cover-slide">
+            <h1>Modelado de Software usando UML</h1>
+            <div class="subtitle">Unidad 04: Agrupación de Objetos y Operaciones</div>
+        </section>
+
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <h3>Resultados de Aprendizaje:</h3>
+            <ul>
+                <li>Comprender los clasificadores en UML</li>
+                <li>Definir atributos y operaciones correctamente</li>
+                <li>Aplicar visibilidad y multiplicidad</li>
+                <li>Utilizar abstracción en el modelado</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <ol style="font-size: 1.4em; line-height: 2;">
+                <li>Clasificadores</li>
+                <li>Atributos</li>
+                <li>Operaciones</li>
+                <li>Visibilidad</li>
+                <li>Multiplicidad</li>
+                <li>Abstracción</li>
+            </ol>
+        </section>
+
+        <section class="slide">
+            <h2>Clasificadores</h2>
+            <h3>Definición:</h3>
+            <p>Un clasificador es un mecanismo que describe características estructurales y de comportamiento.</p>
+            <h3>Tipos de Clasificadores:</h3>
+            <ul>
+                <li><strong>Clase:</strong> Describe un conjunto de objetos</li>
+                <li><strong>Interfaz:</strong> Define un contrato de comportamiento</li>
+                <li><strong>Tipo de Datos:</strong> Especifica un dominio de valores</li>
+                <li><strong>Componente:</strong> Parte reutilizable del sistema</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Propósito:</strong> Los clasificadores agrupan elementos relacionados y definen su estructura común.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Atributos</h2>
+            <h3>Definición:</h3>
+            <p>Un atributo es una propiedad o característica de un clasificador que describe su estado.</p>
+            <h3>Sintaxis:</h3>
+            <pre><code>[visibilidad] nombre [: tipo] [multiplicidad] [= valorInicial]</code></pre>
+            <h3>Ejemplos:</h3>
+            <ul>
+                <li><code>- id: int</code> (privado, entero)</li>
+                <li><code>+ nombre: String</code> (público, cadena)</li>
+                <li><code># saldo: double = 0.0</code> (protegido, decimal con valor inicial)</li>
+                <li><code>- telefonos: String[0..*]</code> (privado, lista de cadenas)</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Operaciones</h2>
+            <h3>Definición:</h3>
+            <p>Una operación es un comportamiento que puede ser invocado en instancias del clasificador.</p>
+            <h3>Sintaxis:</h3>
+            <pre><code>[visibilidad] nombre [(parámetros)] [: tipoRetorno]</code></pre>
+            <h3>Ejemplos:</h3>
+            <ul>
+                <li><code>+ calcularTotal(): double</code> (público, retorna decimal)</li>
+                <li><code>- validarDatos(): boolean</code> (privado, retorna booleano)</li>
+                <li><code>+ agregarProducto(codigo: String, cantidad: int): void</code> (con parámetros)</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Nota:</strong> Las operaciones definen QUÉ puede hacer un objeto, no CÓMO lo hace.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Visibilidad</h2>
+            <h3>Niveles de Visibilidad:</h3>
+            <ul>
+                <li><code>+</code> <strong>Público (Public):</strong> Accesible desde cualquier lugar</li>
+                <li><code>-</code> <strong>Privado (Private):</strong> Solo accesible dentro de la clase</li>
+                <li><code>#</code> <strong>Protegido (Protected):</strong> Accesible en la clase y subclases</li>
+                <li><code>~</code> <strong>Paquete (Package):</strong> Accesible dentro del mismo paquete</li>
+            </ul>
+            <h3>Buenas Prácticas:</h3>
+            <ul>
+                <li>Atributos generalmente privados</li>
+                <li>Operaciones públicas para la interfaz</li>
+                <li>Protegido para herencia</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Multiplicidad</h2>
+            <h3>Definición:</h3>
+            <p>Especifica cuántas instancias de un elemento pueden participar en una relación.</p>
+            <h3>Notaciones Comunes:</h3>
+            <ul>
+                <li><code>1</code> Exactamente uno</li>
+                <li><code>0..1</code> Cero o uno (opcional)</li>
+                <li><code>1..*</code> Uno o más</li>
+                <li><code>*</code> Cero o más (muchos)</li>
+                <li><code>0..*</code> Cero o más (equivalente a *)</li>
+                <li><code>2..5</code> Entre dos y cinco</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Ejemplo:</strong> Un Usuario puede tener 0 o más Prestamos: <code>Usuario 1 ---- 0..* Prestamo</code>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Abstracción</h2>
+            <h3>Definición:</h3>
+            <p>La abstracción es el proceso de identificar características esenciales y ocultar detalles irrelevantes.</p>
+            <h3>Tipos de Abstracción:</h3>
+            <ul>
+                <li><strong>Abstracción de Datos:</strong> Ocultar detalles de implementación</li>
+                <li><strong>Abstracción de Control:</strong> Ocultar detalles de flujo de control</li>
+                <li><strong>Abstracción de Proceso:</strong> Ocultar detalles algorítmicos</li>
+            </ul>
+            <h3>En UML:</h3>
+            <ul>
+                <li>Clases abstractas (nombre en cursiva)</li>
+                <li>Interfaces (contratos sin implementación)</li>
+                <li>Operaciones abstractas</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Clases Abstractas</h2>
+            <h3>Definición:</h3>
+            <p>Una clase que no puede ser instanciada directamente, solo a través de sus subclases.</p>
+            <h3>Notación:</h3>
+            <pre><code>┌──────────────────────┐
+│   <<abstract>>       │
+│   Vehiculo           │
+├──────────────────────┤
+│ + acelerar()         │
+│ + frenar()           │
+│ # calcularVelocidad()│
+└──────────────────────┘</code></pre>
+            <div class="highlight-box">
+                <strong>Uso:</strong> Útil para definir comportamientos comunes que serán implementados por subclases específicas.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Interfaces</h2>
+            <h3>Definición:</h3>
+            <p>Define un contrato de comportamiento que las clases deben implementar.</p>
+            <h3>Notación:</h3>
+            <pre><code>┌──────────────────────┐
+│   <<interface>>      │
+│   Imprimible         │
+├──────────────────────┤
+│ + imprimir()         │
+│ + obtenerFormato()   │
+└──────────────────────┘</code></pre>
+            <h3>Características:</h3>
+            <ul>
+                <li>Solo define operaciones (sin atributos)</li>
+                <li>No tiene implementación</li>
+                <li>Una clase puede implementar múltiples interfaces</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Ejemplo Completo: Clase Usuario</h2>
+            <div class="diagram-box">
+                <pre><code>┌─────────────────────────────┐
+│         Usuario             │
+├─────────────────────────────┤
+│ - id: int                   │
+│ - nombre: String            │
+│ - email: String             │
+│ - telefonos: String[0..*]   │
+│ + fechaRegistro: Date       │
+├─────────────────────────────┤
+│ + registrar(): boolean      │
+│ + autenticar(credenciales)  │
+│ - validarEmail(): boolean   │
+│ # generarToken(): String    │
+└─────────────────────────────┘</code></pre>
+            </div>
+            <p><strong>Análisis:</strong> Atributos privados para encapsulación, operaciones públicas para interfaz, protegida para herencia.</p>
+        </section>
+
+        <section class="slide">
+            <h2>Buenas Prácticas</h2>
+            <ul>
+                <li><strong>Nombres descriptivos:</strong> Usar nombres claros y significativos</li>
+                <li><strong>Encapsulación:</strong> Atributos privados, acceso a través de operaciones</li>
+                <li><strong>Cohesión:</strong> Agrupar elementos relacionados</li>
+                <li><strong>Abstracción apropiada:</strong> Ocultar detalles innecesarios</li>
+                <li><strong>Documentación:</strong> Agregar comentarios cuando sea necesario</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Principio:</strong> "Todo lo que puede ser privado, debe ser privado" - Minimizar la superficie pública de las clases.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Práctica Guiada</h2>
+            <div class="practice-box">
+                <h3>Ejercicio: Modelar una Clase Producto</h3>
+                <p>Crear una clase Producto con:</p>
+                <ul>
+                    <li>Atributos: id (privado), nombre (público), precio (privado), stock (privado)</li>
+                    <li>Operaciones: obtenerPrecio() (público), actualizarStock() (público), validarDisponibilidad() (privado)</li>
+                    <li>Aplicar visibilidad y multiplicidad apropiadas</li>
+                    <li>Considerar si necesita ser abstracta o implementar alguna interfaz</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Resumen</h2>
+            <h3>Puntos Clave:</h3>
+            <ol>
+                <li>Los clasificadores agrupan elementos relacionados</li>
+                <li>Los atributos definen el estado de los objetos</li>
+                <li>Las operaciones definen el comportamiento</li>
+                <li>La visibilidad controla el acceso a elementos</li>
+                <li>La multiplicidad especifica cuántas instancias</li>
+                <li>La abstracción simplifica modelos complejos</li>
+            </ol>
+            <div class="highlight-box">
+                <strong>Próxima Unidad:</strong> Especificaciones de Clases
+            </div>
+        </section>
+
+        <!-- Recursos Adicionales -->
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Para ampliar tu conocimiento sobre esta unidad, visita nuestra página de recursos con:</p>
+                <ul>
+                    <li>Videos sobre atributos y operaciones</li>
+                    <li>Guías de visibilidad y multiplicidad</li>
+                    <li>Conceptos de abstracción</li>
+                    <li>Ejercicios prácticos</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_04_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">
+                        Ver Recursos Adicionales →
+                    </a>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+    <div class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">15</span></div>
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul id="indexList"></ul>
+    </div>
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        document.getElementById('total-slides').textContent = totalSlides;
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            updateCounter();
+            updateNavigation();
+        }
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function previousSlide() { showSlide(currentSlide - 1); }
+        function updateCounter() { document.getElementById('current-slide').textContent = currentSlide + 1; }
+        function updateNavigation() {
+            const prevBtn = document.querySelector('.nav-btn:first-child');
+            const nextBtn = document.querySelector('.nav-btn:last-child');
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+        }
+        function toggleIndex() {
+            const panel = document.getElementById('indexPanel');
+            panel.classList.toggle('active');
+            if (panel.classList.contains('active')) buildIndex();
+        }
+        function buildIndex() {
+            const indexList = document.getElementById('indexList');
+            indexList.innerHTML = '';
+            slides.forEach((slide, index) => {
+                const title = slide.querySelector('h1, h2')?.textContent || `Diapositiva ${index + 1}`;
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = title;
+                a.onclick = (e) => { e.preventDefault(); showSlide(index); toggleIndex(); };
+                li.appendChild(a);
+                indexList.appendChild(li);
+            });
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); previousSlide(); }
+        });
+        updateNavigation();
+        buildIndex();
+    </script>
+</body>
+</html>
+

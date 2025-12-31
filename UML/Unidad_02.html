@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 02 - Diagramas Estructurales</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; overflow: hidden; }
+        .presentation-container { width: 100vw; height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; }
+        .slide { display: none; width: 90vw; max-width: 1280px; height: 72vh; max-height: 720px; background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 60px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); overflow-y: auto; position: relative; }
+        .slide.active { display: block; }
+        .slide h1 { font-size: 3.5em; color: #4CAF50; margin-bottom: 30px; text-align: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        .slide h2 { font-size: 2.5em; color: #64B5F6; margin: 30px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        .slide h3 { font-size: 1.8em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .slide p, .slide li { font-size: 1.3em; line-height: 1.8; margin: 15px 0; }
+        .slide ul, .slide ol { margin-left: 40px; margin-top: 15px; }
+        .slide code { background: #1a1a1a; padding: 3px 8px; border-radius: 4px; font-family: 'Consolas', 'Monaco', monospace; color: #CE9178; font-size: 0.9em; }
+        .slide pre { background: #1a1a1a; border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; overflow-x: auto; box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3); }
+        .slide pre code { color: #D4D4D4; font-size: 1.1em; line-height: 1.6; display: block; background: none; padding: 0; }
+        .cover-slide { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .cover-slide h1 { font-size: 4em; margin-bottom: 40px; }
+        .cover-slide .subtitle { font-size: 2.5em; color: #64B5F6; margin: 20px 0; }
+        .cover-slide .author { font-size: 1.8em; color: #FFB74D; margin-top: 60px; }
+        .navigation { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
+        .nav-btn { background: #4CAF50; color: white; border: none; padding: 15px 30px; font-size: 1.2em; border-radius: 8px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); }
+        .nav-btn:hover { background: #45a049; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5); }
+        .nav-btn:disabled { background: #555; cursor: not-allowed; transform: none; }
+        .slide-counter { position: fixed; top: 30px; right: 30px; background: rgba(0, 0, 0, 0.7); padding: 10px 20px; border-radius: 8px; font-size: 1.1em; z-index: 1000; }
+        .index-btn { position: fixed; top: 30px; left: 30px; background: #64B5F6; color: white; border: none; padding: 15px 25px; font-size: 1.1em; border-radius: 8px; cursor: pointer; z-index: 1000; transition: all 0.3s; }
+        .index-btn:hover { background: #42A5F5; transform: translateY(-2px); }
+        .index-panel { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.95); z-index: 2000; padding: 60px; overflow-y: auto; }
+        .index-panel.active { display: block; }
+        .index-panel h2 { color: #4CAF50; font-size: 2.5em; margin-bottom: 30px; text-align: center; }
+        .index-panel ul { list-style: none; max-width: 800px; margin: 0 auto; }
+        .index-panel li { margin: 15px 0; }
+        .index-panel a { color: #64B5F6; text-decoration: none; font-size: 1.4em; display: block; padding: 15px; border-left: 4px solid #64B5F6; transition: all 0.3s; }
+        .index-panel a:hover { background: rgba(100, 181, 246, 0.1); padding-left: 25px; }
+        .close-index { position: absolute; top: 30px; right: 30px; background: #f44336; color: white; border: none; padding: 15px 25px; font-size: 1.2em; border-radius: 8px; cursor: pointer; }
+        .notes { display: none; background: rgba(255, 193, 7, 0.2); border-left: 4px solid #FFC107; padding: 15px; margin-top: 20px; border-radius: 4px; }
+        .notes.visible { display: block; }
+        .notes-title { color: #FFC107; font-weight: bold; margin-bottom: 10px; }
+        .highlight-box { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .practice-box { background: rgba(100, 181, 246, 0.1); border: 2px solid #64B5F6; padding: 25px; margin: 25px 0; border-radius: 8px; }
+        .practice-box h3 { color: #64B5F6; margin-top: 0; }
+        .quiz-question { background: rgba(255, 183, 77, 0.1); border-left: 4px solid #FFB74D; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .quiz-answer { background: rgba(76, 175, 80, 0.2); border-left: 4px solid #4CAF50; padding: 15px; margin: 10px 0; border-radius: 4px; }
+        .diagram-box { background: rgba(156, 39, 176, 0.1); border: 2px solid #9C27B0; padding: 25px; margin: 25px 0; border-radius: 8px; text-align: center; }
+        @media (max-width: 768px) { .slide { width: 95vw; height: 80vh; padding: 30px; } .slide h1 { font-size: 2em; } .slide h2 { font-size: 1.5em; } .slide p, .slide li { font-size: 1em; } }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <section class="slide active cover-slide">
+            <h1>Modelado de Software usando UML</h1>
+            <div class="subtitle">Unidad 02: Diagramas Estructurales</div>
+        </section>
+
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <h3>Competencia Específica:</h3>
+            <p><strong>CE15:</strong> Gestionar estrategias de mantenimiento de software, aplicando los planes de mejora de éste de manera adecuada.</p>
+            <h3>Resultados de Aprendizaje:</h3>
+            <ul>
+                <li>Comprender los diagramas de clases y su notación</li>
+                <li>Crear diagramas de objetos para instancias específicas</li>
+                <li>Organizar sistemas usando diagramas de paquetes</li>
+                <li>Aplicar diagramas estructurales en proyectos reales</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <ol style="font-size: 1.4em; line-height: 2;">
+                <li>Introducción a Diagramas Estructurales</li>
+                <li>Diagramas de Clases</li>
+                <li>Diagramas de Objetos</li>
+                <li>Diagramas de Paquetes</li>
+                <li>Relaciones entre elementos</li>
+                <li>Ejemplos prácticos</li>
+                <li>Práctica guiada</li>
+            </ol>
+        </section>
+
+        <section class="slide">
+            <h2>Introducción a Diagramas Estructurales</h2>
+            <p>Los diagramas estructurales representan la <strong>estructura estática</strong> del sistema: qué elementos existen y cómo se relacionan.</p>
+            <h3>Características:</h3>
+            <ul>
+                <li>Muestran la organización del sistema</li>
+                <li>Representan elementos y sus relaciones</li>
+                <li>No muestran comportamiento dinámico</li>
+                <li>Son como "fotografías" del sistema</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Tipos principales:</strong> Diagramas de Clases, Objetos y Paquetes son los más utilizados en el desarrollo de software.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Diagramas de Clases</h2>
+            <h3>Definición:</h3>
+            <p>Muestran las clases del sistema, sus atributos, operaciones y las relaciones entre ellas.</p>
+            <h3>Componentes principales:</h3>
+            <ul>
+                <li><strong>Clase:</strong> Representada como un rectángulo con tres secciones (nombre, atributos, operaciones)</li>
+                <li><strong>Atributos:</strong> Propiedades o características de la clase</li>
+                <li><strong>Operaciones:</strong> Métodos o comportamientos de la clase</li>
+                <li><strong>Relaciones:</strong> Asociación, herencia, dependencia, etc.</li>
+            </ul>
+            <div class="diagram-box">
+                <pre><code>┌─────────────────┐
+│   NombreClase   │
+├─────────────────┤
+│ + atributo1     │
+│ - atributo2     │
+├─────────────────┤
+│ + operacion1()  │
+│ - operacion2()  │
+└─────────────────┘</code></pre>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Notación de Clases</h2>
+            <h3>Visibilidad:</h3>
+            <ul>
+                <li><code>+</code> Público (public)</li>
+                <li><code>-</code> Privado (private)</li>
+                <li><code>#</code> Protegido (protected)</li>
+                <li><code>~</code> Paquete (package)</li>
+            </ul>
+            <h3>Ejemplo:</h3>
+            <pre><code>┌──────────────────────┐
+│      Usuario         │
+├──────────────────────┤
+│ - id: int           │
+│ - nombre: String    │
+│ - email: String     │
+│ + fechaRegistro     │
+├──────────────────────┤
+│ + registrar()       │
+│ + autenticar()      │
+│ - validarEmail()    │
+└──────────────────────┘</code></pre>
+        </section>
+
+        <section class="slide">
+            <h2>Diagramas de Objetos</h2>
+            <h3>Definición:</h3>
+            <p>Muestran instancias específicas de clases en un momento dado del sistema.</p>
+            <h3>Diferencia con Diagramas de Clases:</h3>
+            <ul>
+                <li><strong>Clases:</strong> Plantillas o moldes (qué puede existir)</li>
+                <li><strong>Objetos:</strong> Instancias específicas (qué existe ahora)</li>
+            </ul>
+            <h3>Notación:</h3>
+            <pre><code>┌──────────────────────┐
+│   :Usuario           │
+│   nombre="Juan"      │
+│   email="j@mail.com" │
+└──────────────────────┘</code></pre>
+            <div class="highlight-box">
+                <strong>Uso:</strong> Útiles para mostrar ejemplos concretos y validar el diseño de clases.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Diagramas de Paquetes</h2>
+            <h3>Definición:</h3>
+            <p>Organizan y agrupan elementos relacionados del sistema en paquetes lógicos.</p>
+            <h3>Propósito:</h3>
+            <ul>
+                <li>Organizar grandes sistemas en módulos</li>
+                <li>Mostrar dependencias entre módulos</li>
+                <li>Facilitar la comprensión de la arquitectura</li>
+                <li>Gestionar la complejidad</li>
+            </ul>
+            <h3>Notación:</h3>
+            <pre><code>┌─────────────────┐
+│   Modelo        │
+│                 │
+│  ┌───────────┐  │
+│  │ Usuario   │  │
+│  │ Producto  │  │
+│  └───────────┘  │
+└─────────────────┘</code></pre>
+        </section>
+
+        <section class="slide">
+            <h2>Relaciones en Diagramas Estructurales</h2>
+            <h3>Tipos de Relaciones:</h3>
+            <ul>
+                <li><strong>Asociación:</strong> Relación entre clases (línea simple)</li>
+                <li><strong>Herencia/Generalización:</strong> Relación "es-un" (triángulo)</li>
+                <li><strong>Dependencia:</strong> Una clase usa a otra (línea punteada con flecha)</li>
+                <li><strong>Agregación:</strong> Relación "tiene-un" (diamante vacío)</li>
+                <li><strong>Composición:</strong> Relación "parte-de" (diamante lleno)</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Multiplicidad:</strong> Indica cuántas instancias participan en la relación (1, *, 0..1, 1..*, etc.)
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Ejemplo: Sistema de Biblioteca</h2>
+            <div class="diagram-box">
+                <pre><code>┌─────────────┐      ┌──────────────┐
+│  Usuario    │      │   Libro      │
+├─────────────┤      ├──────────────┤
+│ - id        │      │ - isbn       │
+│ - nombre    │      │ - titulo     │
+└──────┬──────┘      │ - autor      │
+       │             └──────┬───────┘
+       │                    │
+       │         ┌──────────▼──────────┐
+       └────────►│   Prestamo         │
+                 ├────────────────────┤
+                 │ - fechaInicio     │
+                 │ - fechaFin        │
+                 └────────────────────┘</code></pre>
+            </div>
+            <p><strong>Relaciones:</strong> Usuario y Libro están asociados a través de Prestamo (relación de asociación con clase intermedia).</p>
+        </section>
+
+        <section class="slide">
+            <h2>Buenas Prácticas</h2>
+            <ul>
+                <li><strong>Simplicidad:</strong> No más de 7-9 clases por diagrama</li>
+                <li><strong>Nombres claros:</strong> Usar nombres descriptivos y consistentes</li>
+                <li><strong>Agrupación:</strong> Usar paquetes para organizar grandes sistemas</li>
+                <li><strong>Relaciones:</strong> Mostrar solo las relaciones relevantes</li>
+                <li><strong>Documentación:</strong> Agregar notas cuando sea necesario</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Principio:</strong> Un diagrama debe comunicar una idea clara. Si es demasiado complejo, divídelo.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Práctica Guiada</h2>
+            <div class="practice-box">
+                <h3>Ejercicio 1: Diagrama de Clases</h3>
+                <p>Crear un diagrama de clases para un sistema de gestión de estudiantes que incluya:</p>
+                <ul>
+                    <li>Clase Estudiante (id, nombre, email)</li>
+                    <li>Clase Curso (codigo, nombre, creditos)</li>
+                    <li>Clase Inscripcion (fecha, calificacion)</li>
+                    <li>Relaciones apropiadas entre las clases</li>
+                </ul>
+            </div>
+            <div class="practice-box">
+                <h3>Ejercicio 2: Diagrama de Paquetes</h3>
+                <p>Organizar el sistema anterior en paquetes lógicos (Modelo, Vista, Controlador).</p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Resumen</h2>
+            <h3>Puntos Clave:</h3>
+            <ol>
+                <li>Los diagramas estructurales muestran la organización estática del sistema</li>
+                <li>Los diagramas de clases son los más utilizados en UML</li>
+                <li>Los diagramas de objetos muestran instancias específicas</li>
+                <li>Los diagramas de paquetes organizan sistemas grandes</li>
+                <li>Las relaciones definen cómo se conectan los elementos</li>
+            </ol>
+            <div class="highlight-box">
+                <strong>Próxima Unidad:</strong> Diagramas de Comportamiento e Interacción
+            </div>
+        </section>
+
+        <!-- Recursos Adicionales -->
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Para ampliar tu conocimiento sobre esta unidad, visita nuestra página de recursos con:</p>
+                <ul>
+                    <li>Videos tutoriales sobre diagramas estructurales</li>
+                    <li>Ejemplos prácticos</li>
+                    <li>Herramientas para crear diagramas</li>
+                    <li>Ejercicios adicionales</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_02_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">
+                        Ver Recursos Adicionales →
+                    </a>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+    <div class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">13</span></div>
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul id="indexList"></ul>
+    </div>
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        document.getElementById('total-slides').textContent = totalSlides;
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            updateCounter();
+            updateNavigation();
+        }
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function previousSlide() { showSlide(currentSlide - 1); }
+        function updateCounter() { document.getElementById('current-slide').textContent = currentSlide + 1; }
+        function updateNavigation() {
+            const prevBtn = document.querySelector('.nav-btn:first-child');
+            const nextBtn = document.querySelector('.nav-btn:last-child');
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+        }
+        function toggleIndex() {
+            const panel = document.getElementById('indexPanel');
+            panel.classList.toggle('active');
+            if (panel.classList.contains('active')) buildIndex();
+        }
+        function buildIndex() {
+            const indexList = document.getElementById('indexList');
+            indexList.innerHTML = '';
+            slides.forEach((slide, index) => {
+                const title = slide.querySelector('h1, h2')?.textContent || `Diapositiva ${index + 1}`;
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = title;
+                a.onclick = (e) => { e.preventDefault(); showSlide(index); toggleIndex(); };
+                li.appendChild(a);
+                indexList.appendChild(li);
+            });
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); previousSlide(); }
+        });
+        updateNavigation();
+        buildIndex();
+    </script>
+</body>
+</html>
+

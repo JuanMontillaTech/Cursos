@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad IV - Cobertura de pruebas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 60px;
+            background: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide h1 {
+            font-size: 3.5em;
+            color: #667eea;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .slide h2 {
+            font-size: 2.5em;
+            color: #764ba2;
+            margin-bottom: 25px;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .slide h3 {
+            font-size: 2em;
+            color: #555;
+            margin: 20px 0 15px 0;
+        }
+
+        .slide p {
+            font-size: 1.4em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .slide ul, .slide ol {
+            font-size: 1.3em;
+            line-height: 2;
+            color: #333;
+            margin-left: 40px;
+            margin-bottom: 20px;
+        }
+
+        .slide li {
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 25px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .code-block code {
+            color: #f8f8f2;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(118, 75, 162, 0.5);
+        }
+
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            z-index: 1000;
+        }
+
+        .index-btn {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            padding: 12px 25px;
+            background: #764ba2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+        }
+
+        .index-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            padding: 60px;
+            overflow-y: auto;
+        }
+
+        .index-panel.active {
+            display: block;
+        }
+
+        .index-panel h2 {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .index-list {
+            list-style: none;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .index-list li {
+            margin: 15px 0;
+        }
+
+        .index-list a {
+            color: white;
+            font-size: 1.5em;
+            text-decoration: none;
+            display: block;
+            padding: 15px 20px;
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            transition: all 0.3s;
+            border-left: 4px solid #667eea;
+        }
+
+        .index-list a:hover {
+            background: rgba(102, 126, 234, 0.6);
+            transform: translateX(10px);
+        }
+
+        .close-index {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        .notes {
+            display: none;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #856404;
+        }
+
+        .notes.active {
+            display: block;
+        }
+
+        .title-slide {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .title-slide h1 {
+            color: white;
+            font-size: 4em;
+            margin-bottom: 30px;
+        }
+
+        .title-slide h2 {
+            color: white;
+            border: none;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .title-slide p {
+            font-size: 1.8em;
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            width: 100%;
+        }
+
+        .practice-box {
+            background: #e8f4f8;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .practice-box h3 {
+            color: #667eea;
+            margin-top: 0;
+        }
+
+        .quiz-question {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .quiz-option {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quiz-option:hover {
+            background: #e8f4f8;
+        }
+
+        .summary-list {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .coverage-high {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .coverage-low {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .coverage-medium {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px 20px;
+            }
+            .slide h1 {
+                font-size: 2em;
+            }
+            .slide h2 {
+                font-size: 1.8em;
+            }
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Portada -->
+        <section class="slide active title-slide">
+            <h1>Desarrollo Basado en Pruebas (TDD)</h1>
+            <h2>Unidad IV: Cobertura de pruebas</h2>
+            <aside class="notes">Bienvenidos a la cuarta unidad. Hoy aprenderemos sobre la importancia de la cobertura de pruebas en TDD.</aside>
+        </section>
+
+        <!-- Competencias y Resultados de Aprendizaje -->
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <div class="summary-list">
+                <h3>Competencia Específica CE13</h3>
+                <p>Especificar y ejecutar pruebas de calidad de los prototipos (diseño), simulaciones y los componentes de software desarrollados para garantizar su fidelidad y precisión en todos los niveles (Test units) y garantizando una asertiva aceptación de los usuarios (UCT).</p>
+                
+                <h3 style="margin-top: 30px;">Resultados de Aprendizaje</h3>
+                <ul>
+                    <li>Comprender la importancia de la cobertura de pruebas en TDD</li>
+                    <li>Medir la cobertura de pruebas usando herramientas</li>
+                    <li>Aplicar estrategias para lograr cobertura apropiada</li>
+                    <li>Interpretar métricas de cobertura</li>
+                    <li>Equilibrar cobertura con mantenibilidad</li>
+                </ul>
+            </div>
+            <aside class="notes">La cobertura de pruebas es fundamental para garantizar la calidad del código.</aside>
+        </section>
+
+        <!-- Agenda -->
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <div class="summary-list">
+                <ol>
+                    <li><strong>Importancia de la cobertura de pruebas en TDD</strong>
+                        <ul>
+                            <li>¿Qué es la cobertura de pruebas?</li>
+                            <li>Por qué es importante</li>
+                            <li>Beneficios de una buena cobertura</li>
+                        </ul>
+                    </li>
+                    <li><strong>Métodos para medir la cobertura de pruebas</strong>
+                        <ul>
+                            <li>Tipos de cobertura (líneas, ramas, funciones)</li>
+                            <li>Herramientas de medición</li>
+                            <li>Interpretación de reportes</li>
+                        </ul>
+                    </li>
+                    <li><strong>Estrategias para una apropiada cobertura de pruebas</strong>
+                        <ul>
+                            <li>Niveles de cobertura recomendados</li>
+                            <li>Equilibrio entre cobertura y mantenibilidad</li>
+                            <li>Áreas críticas vs áreas menos críticas</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+            <aside class="notes">Esta agenda cubre todos los aspectos de la cobertura de pruebas en TDD.</aside>
+        </section>
+
+        <!-- ¿Qué es la cobertura de pruebas? -->
+        <section class="slide">
+            <h2>¿Qué es la Cobertura de Pruebas?</h2>
+            <div class="summary-list">
+                <h3>Definición:</h3>
+                <p>La <strong>cobertura de pruebas</strong> es una métrica que indica qué porcentaje del código fuente ha sido ejecutado durante la ejecución de las pruebas automatizadas.</p>
+
+                <h3 style="margin-top: 30px;">Objetivo:</h3>
+                <p>Identificar qué partes del código están siendo probadas y cuáles no, ayudando a detectar áreas sin pruebas adecuadas.</p>
+
+                <h3>Tipos de Cobertura:</h3>
+                <ul>
+                    <li><strong>Cobertura de líneas:</strong> Porcentaje de líneas ejecutadas</li>
+                    <li><strong>Cobertura de ramas:</strong> Porcentaje de ramas condicionales probadas</li>
+                    <li><strong>Cobertura de funciones:</strong> Porcentaje de funciones llamadas</li>
+                    <li><strong>Cobertura de sentencias:</strong> Porcentaje de sentencias ejecutadas</li>
+                </ul>
+            </div>
+            <aside class="notes">La cobertura de pruebas nos ayuda a identificar qué código está siendo probado.</aside>
+        </section>
+
+        <!-- Importancia de la cobertura -->
+        <section class="slide">
+            <h2>Importancia de la Cobertura de Pruebas en TDD</h2>
+            <div class="two-column">
+                <div>
+                    <div class="coverage-high">
+                        <h3>Beneficios:</h3>
+                        <ul>
+                            <li><strong>Confianza:</strong> Mayor confianza en que el código funciona correctamente</li>
+                            <li><strong>Detección temprana:</strong> Encuentra bugs antes de producción</li>
+                            <li><strong>Documentación:</strong> Las pruebas documentan el comportamiento esperado</li>
+                            <li><strong>Refactorización segura:</strong> Facilita cambiar código sin temor</li>
+                            <li><strong>Calidad:</strong> Mejora la calidad general del código</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div class="coverage-low">
+                        <h3>Riesgos de baja cobertura:</h3>
+                        <ul>
+                            <li><strong>Bugs ocultos:</strong> Errores no detectados hasta producción</li>
+                            <li><strong>Regresiones:</strong> Cambios rompen funcionalidad existente</li>
+                            <li><strong>Incertidumbre:</strong> No se sabe qué código realmente funciona</li>
+                            <li><strong>Mantenimiento:</strong> Difícil mantener código sin pruebas</li>
+                            <li><strong>Costos:</strong> Bugs en producción son más costosos</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <aside class="notes">La cobertura adecuada es fundamental para proyectos de calidad.</aside>
+        </section>
+
+        <!-- Tipos de cobertura -->
+        <section class="slide">
+            <h2>Tipos de Cobertura de Pruebas</h2>
+            <div class="summary-list">
+                <h3>1. Cobertura de Líneas (Line Coverage)</h3>
+                <p>Mide el porcentaje de líneas de código ejecutadas al menos una vez durante las pruebas.</p>
+                <div class="code-block" style="font-size: 0.95em;">
+<code>function calcularDescuento(monto) {
+    if (monto > 100) {        // ← Línea 1 (ejecutada si monto > 100)
+        return monto * 0.1;   // ← Línea 2 (ejecutada si monto > 100)
+    }
+    return 0;                 // ← Línea 3 (ejecutada si monto <= 100)
+}
+
+// Si solo probamos con monto = 150:
+// Cobertura de líneas: 2/3 = 66.7% (líneas 1 y 2)</code>
+                </div>
+
+                <h3 style="margin-top: 30px;">2. Cobertura de Ramas (Branch Coverage)</h3>
+                <p>Mide el porcentaje de ramas condicionales (if/else, switch) probadas.</p>
+                <p><strong>En el ejemplo anterior:</strong> Para 100% de cobertura de ramas, necesitamos probar tanto el caso <code>monto > 100</code> como <code>monto <= 100</code>.</p>
+            </div>
+            <aside class="notes">La cobertura de ramas es más estricta que la cobertura de líneas.</aside>
+        </section>
+
+        <!-- Más tipos de cobertura -->
+        <section class="slide">
+            <h2>Más Tipos de Cobertura</h2>
+            <div class="summary-list">
+                <h3>3. Cobertura de Funciones (Function Coverage)</h3>
+                <p>Mide el porcentaje de funciones llamadas al menos una vez durante las pruebas.</p>
+                <div class="code-block" style="font-size: 0.95em;">
+<code>function procesarUsuario(usuario) {
+    validarUsuario(usuario);      // ← Función 1
+    guardarUsuario(usuario);      // ← Función 2
+    enviarNotificacion(usuario);  // ← Función 3
+}
+
+// Si solo probamos validarUsuario:
+// Cobertura de funciones: 1/3 = 33.3%</code>
+                </div>
+
+                <h3 style="margin-top: 30px;">4. Cobertura de Sentencias (Statement Coverage)</h3>
+                <p>Similar a cobertura de líneas, pero mide sentencias ejecutadas (una línea puede tener múltiples sentencias).</p>
+
+                <h3 style="margin-top: 30px;">5. Cobertura de Condiciones (Condition Coverage)</h3>
+                <p>Evalúa todas las combinaciones posibles de condiciones booleanas.</p>
+                <div class="code-block" style="font-size: 0.95em;">
+<code>if (a > 0 && b < 10) {
+    // Para 100% de cobertura de condiciones:
+    // - a > 0 AND b < 10 (true, true)
+    // - a > 0 AND b >= 10 (true, false)
+    // - a <= 0 AND b < 10 (false, true)
+    // - a <= 0 AND b >= 10 (false, false)
+}</code>
+                </div>
+            </div>
+            <aside class="notes">Cada tipo de cobertura tiene su propósito y nivel de detalle.</aside>
+        </section>
+
+        <!-- En la vida real -->
+        <section class="slide">
+            <h2>En la Vida Real: Cobertura de Pruebas</h2>
+            <div class="summary-list">
+                <h3>Escenario Real:</h3>
+                <p>Una empresa de e-commerce tiene un sistema de cálculo de descuentos para clientes VIP. El código tiene 1000 líneas relacionadas con descuentos.</p>
+
+                <div class="two-column" style="margin-top: 30px;">
+                    <div class="coverage-low">
+                        <h3>Sin medir cobertura:</h3>
+                        <ul>
+                            <li>Se escriben pruebas "a ojo"</li>
+                            <li>Se asume que todo está probado</li>
+                            <li>Un bug en producción afecta a 500 clientes</li>
+                            <li>El costo de reparación: $10,000</li>
+                        </ul>
+                    </div>
+                    <div class="coverage-high">
+                        <h3>Con cobertura medida:</h3>
+                        <ul>
+                            <li>Se identifica que solo 60% está probado</li>
+                            <li>Se escriben pruebas para el 40% faltante</li>
+                            <li>Se detectan 3 bugs antes de producción</li>
+                            <li>El costo de prevención: $500</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight" style="margin-top: 20px; padding: 15px;">
+                    <strong>Conclusión:</strong> Medir la cobertura ayuda a identificar áreas críticas sin pruebas y prevenir bugs costosos en producción.
+                </div>
+            </div>
+            <aside class="notes">Este ejemplo muestra el valor real de medir la cobertura.</aside>
+        </section>
+
+        <!-- Herramientas de medición -->
+        <section class="slide">
+            <h2>Herramientas para Medir Cobertura</h2>
+            <div class="summary-list">
+                <h3>Herramientas Populares:</h3>
+                <ul>
+                    <li><strong>Istanbul (JavaScript/Node.js):</strong> 
+                        <div class="code-block" style="font-size: 0.9em; margin-top: 10px;">
+<code>npm install --save-dev nyc
+nyc npm test
+// Genera reporte HTML con cobertura</code>
+                        </div>
+                    </li>
+                    <li><strong>Jest (JavaScript/React):</strong> Incluye cobertura integrada
+                        <div class="code-block" style="font-size: 0.9em; margin-top: 10px;">
+<code>npm test -- --coverage
+// Genera reporte automáticamente</code>
+                        </div>
+                    </li>
+                    <li><strong>Coverlet (.NET):</strong> Para proyectos .NET
+                        <div class="code-block" style="font-size: 0.9em; margin-top: 10px;">
+<code>dotnet test /p:CollectCoverage=true
+// Genera reporte de cobertura</code>
+                        </div>
+                    </li>
+                    <li><strong>JaCoCo (Java):</strong> Para proyectos Java</li>
+                    <li><strong>Coverage.py (Python):</strong> Para proyectos Python</li>
+                </ul>
+            </div>
+            <aside class="notes">Hay herramientas para cada lenguaje y tecnología.</aside>
+        </section>
+
+        <!-- Ejemplo de reporte -->
+        <section class="slide">
+            <h2>Ejemplo de Reporte de Cobertura</h2>
+            <div class="summary-list">
+                <h3>Reporte generado por Jest:</h3>
+                <div class="code-block" style="font-size: 0.95em;">
+<code>File              | % Stmts | % Branch | % Funcs | % Lines
+-------------------|---------|----------|---------|--------
+calculadora.js     |   85.71 |     75   |   100   |   85.71
+  Calcular         |   85.71 |     75   |   100   |   85.71
+    sumar          |     100 |     100  |   100   |     100
+    restar         |     100 |     100  |   100   |     100
+    multiplicar    |     100 |     100  |   100   |     100
+    dividir        |      50 |       0  |   100   |      50
+      │ dividir por cero│  0  │     0  │        │     0
+usuario.js         |   66.67 |     50   |    66.67|   66.67
+-------------------|---------|----------|---------|--------
+TOTAL              |   76.19 |     62.5 |   83.33 |   76.19</code>
+                </div>
+
+                <div class="highlight" style="margin-top: 20px; padding: 15px;">
+                    <strong>Análisis:</strong>
+                    <ul style="margin-top: 10px;">
+                        <li>✅ <code>sumar</code>, <code>restar</code>, <code>multiplicar</code> tienen 100% de cobertura</li>
+                        <li>⚠️ <code>dividir</code> solo tiene 50% - falta probar división por cero</li>
+                        <li>⚠️ <code>usuario.js</code> tiene baja cobertura (66.67%)</li>
+                    </ul>
+                </div>
+            </div>
+            <aside class="notes">Los reportes muestran exactamente dónde necesitamos más pruebas.</aside>
+        </section>
+
+        <!-- Niveles de cobertura recomendados -->
+        <section class="slide">
+            <h2>Niveles de Cobertura Recomendados</h2>
+            <div class="summary-list">
+                <h3>Guías Generales:</h3>
+                
+                <div class="coverage-high" style="margin-top: 20px;">
+                    <h3>80% - 90% Cobertura (Recomendado)</h3>
+                    <p><strong>Excelente:</strong> Balance entre calidad y esfuerzo</p>
+                    <ul>
+                        <li>Proyectos comerciales estándar</li>
+                        <li>Mayoría de código crítico probado</li>
+                        <li>Buen balance costo-beneficio</li>
+                    </ul>
+                </div>
+
+                <div class="coverage-medium" style="margin-top: 20px;">
+                    <h3>70% - 80% Cobertura (Aceptable)</h3>
+                    <p><strong>Bueno:</strong> Cobertura adecuada para proyectos normales</p>
+                    <ul>
+                        <li>Proyectos internos no críticos</li>
+                        <li>Proyectos en desarrollo temprano</li>
+                        <li>Áreas críticas deben tener 90%+</li>
+                    </ul>
+                </div>
+
+                <div class="coverage-low" style="margin-top: 20px;">
+                    <h3>&lt; 70% Cobertura (Inadecuado)</h3>
+                    <p><strong>Insuficiente:</strong> Necesita mejorar</p>
+                    <ul>
+                        <li>Muchas áreas sin probar</li>
+                        <li>Alto riesgo de bugs</li>
+                        <li>Se requiere aumentar cobertura</li>
+                    </ul>
+                </div>
+
+                <div class="coverage-high" style="margin-top: 20px;">
+                    <h3>100% Cobertura (Ideal pero no siempre práctico)</h3>
+                    <p><strong>Perfecto:</strong> Todo el código probado, pero puede ser costoso</p>
+                    <ul>
+                        <li>Sistemas críticos (médicos, financieros)</li>
+                        <li>Alto costo de mantenimiento</li>
+                        <li>Puede no ser necesario para todo el código</li>
+                    </ul>
+                </div>
+            </div>
+            <aside class="notes">80-90% es un buen objetivo para la mayoría de proyectos.</aside>
+        </section>
+
+        <!-- Estrategias para mejorar cobertura -->
+        <section class="slide">
+            <h2>Estrategias para Mejorar la Cobertura</h2>
+            <div class="summary-list">
+                <h3>1. Priorizar Áreas Críticas</h3>
+                <p>Enfocarse primero en código crítico para el negocio:</p>
+                <ul>
+                    <li>Cálculos financieros</li>
+                    <li>Validaciones de seguridad</li>
+                    <li>Procesamiento de pagos</li>
+                    <li>Lógica de negocio compleja</li>
+                </ul>
+
+                <h3 style="margin-top: 30px;">2. Identificar Código sin Cobertura</h3>
+                <p>Usar herramientas para identificar líneas específicas sin cobertura:</p>
+                <div class="code-block" style="font-size: 0.95em;">
+<code>// Ejemplo: Reporte muestra línea 45 sin cobertura
+function procesarPago(monto) {
+    if (monto > 0) {
+        // Línea 45: No probada - caso monto <= 0
+        return calcularDescuento(monto);
+    }
+    return 0;
+}
+
+// Solución: Agregar prueba para monto <= 0
+test('debe retornar 0 cuando monto es negativo', () => {
+    expect(procesarPago(-10)).toBe(0);
+});</code>
+                </div>
+
+                <h3 style="margin-top: 30px;">3. Cubrir Casos Edge</h3>
+                <p>Probar casos límite y excepcionales:</p>
+                <ul>
+                    <li>Valores nulos o undefined</li>
+                    <li>Valores en los límites</li>
+                    <li>Arrays vacíos</li>
+                    <li>Strings vacíos</li>
+                </ul>
+            </div>
+            <aside class="notes">Las estrategias ayudan a mejorar la cobertura de manera eficiente.</aside>
+        </section>
+
+        <!-- Equilibrio cobertura-mantenibilidad -->
+        <section class="slide">
+            <h2>Equilibrio: Cobertura vs Mantenibilidad</h2>
+            <div class="two-column">
+                <div>
+                    <div class="coverage-high">
+                        <h3>✅ Buen Equilibrio:</h3>
+                        <ul>
+                            <li>80-90% cobertura general</li>
+                            <li>100% en código crítico</li>
+                            <li>Pruebas mantenibles y claras</li>
+                            <li>No probar código trivial</li>
+                            <li>Enfoque en comportamiento, no implementación</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div class="coverage-low">
+                        <h3>❌ Mal Equilibrio:</h3>
+                        <ul>
+                            <li>Buscar 100% a toda costa</li>
+                            <li>Pruebas complejas y difíciles de mantener</li>
+                            <li>Probar código trivial innecesariamente</li>
+                            <li>Ignorar código crítico</li>
+                            <li>Pruebas que duplican lógica</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-list" style="margin-top: 30px;">
+                <h3>Regla de Oro:</h3>
+                <p><strong>"No todo código necesita el mismo nivel de cobertura. Prioriza calidad sobre cantidad."</strong></p>
+                <ul>
+                    <li>✅ <strong>Código crítico:</strong> Alta cobertura (90-100%)</li>
+                    <li>✅ <strong>Código estándar:</strong> Cobertura media (70-90%)</li>
+                    <li>✅ <strong>Código trivial:</strong> Cobertura baja aceptable (50-70%)</li>
+                    <li>✅ <strong>Código legacy:</strong> Mejorar gradualmente</li>
+                </ul>
+            </div>
+            <aside class="notes">El equilibrio es clave para proyectos sostenibles.</aside>
+        </section>
+
+        <!-- Errores comunes -->
+        <section class="slide">
+            <h2>Errores Comunes en Cobertura de Pruebas</h2>
+            <div class="summary-list">
+                <h3>1. Obsesión con el 100%</h3>
+                <p><strong>❌ Error:</strong> Intentar alcanzar 100% de cobertura sin importar el costo.</p>
+                <p><strong>✅ Correcto:</strong> Buscar 80-90% con enfoque en código crítico.</p>
+
+                <h3 style="margin-top: 30px;">2. Ignorar la Cobertura</h3>
+                <p><strong>❌ Error:</strong> No medir la cobertura porque "sabemos que funciona".</p>
+                <p><strong>✅ Correcto:</strong> Medir constantemente y usar métricas para guiar las pruebas.</p>
+
+                <h3 style="margin-top: 30px;">3. Cobertura Falsa</h3>
+                <p><strong>❌ Error:</strong> Escribir pruebas que ejecutan código pero no verifican comportamiento.</p>
+                <div class="code-block" style="font-size: 0.9em;">
+<code>// ❌ Prueba que ejecuta código pero no verifica nada
+test('ejecutar calcular', () => {
+    calcularDescuento(100); // Solo ejecuta, no verifica resultado
+});
+
+// ✅ Prueba que verifica comportamiento
+test('debe calcular 10% de descuento para $100', () => {
+    expect(calcularDescuento(100)).toBe(10);
+});</code>
+                </div>
+
+                <h3 style="margin-top: 30px;">4. Ignorar Áreas Críticas</h3>
+                <p><strong>❌ Error:</strong> Tener alta cobertura en código simple pero baja en código crítico.</p>
+                <p><strong>✅ Correcto:</strong> Priorizar código crítico incluso si baja la cobertura general.</p>
+            </div>
+            <aside class="notes">Estos errores son muy comunes. Estén atentos para evitarlos.</aside>
+        </section>
+
+        <!-- Buenas prácticas -->
+        <section class="slide">
+            <h2>Buenas Prácticas en Cobertura de Pruebas</h2>
+            <div class="summary-list">
+                <h3>1. Medir Regularmente</h3>
+                <p>Ejecutar reportes de cobertura en cada commit o al menos diariamente.</p>
+
+                <h3>2. Establecer Umbrales</h3>
+                <p>Definir mínimos aceptables y hacer que el build falle si no se alcanzan:</p>
+                <div class="code-block" style="font-size: 0.95em;">
+<code>// jest.config.js
+module.exports = {
+    coverageThresholds: {
+        global: {
+            branches: 80,
+            functions: 80,
+            lines: 80,
+            statements: 80
+        },
+        './src/critical/': {
+            branches: 95,
+            functions: 95,
+            lines: 95,
+            statements: 95
+        }
+    }
+};</code>
+                </div>
+
+                <h3 style="margin-top: 30px;">3. Revisar Reportes</h3>
+                <p>No solo mirar el porcentaje, sino identificar qué código falta probar.</p>
+
+                <h3>4. Integrar en CI/CD</h3>
+                <p>Hacer que la cobertura sea parte del proceso de integración continua.</p>
+
+                <h3>5. Priorizar Calidad sobre Cantidad</h3>
+                <p>Mejor tener 80% de cobertura con buenas pruebas que 100% con pruebas malas.</p>
+
+                <h3>6. Revisar Código sin Cobertura</h3>
+                <p>Si hay código sin cobertura, preguntarse: ¿Es necesario? ¿Debe eliminarse?</p>
+            </div>
+            <aside class="notes">Estas prácticas hacen que la cobertura sea útil y sostenible.</aside>
+        </section>
+
+        <!-- Práctica Guiada 1 -->
+        <section class="slide">
+            <h2>Práctica Guiada #1: Mejorar Cobertura</h2>
+            <div class="practice-box">
+                <h3>Objetivo:</h3>
+                <p>Identificar y mejorar la cobertura de pruebas en un módulo existente.</p>
+
+                <h3>Código a probar:</h3>
+                <div class="code-block" style="font-size: 0.9em;">
+<code>// calculadora.js
+function calcularDescuento(monto, esVIP) {
+    if (monto > 100) {
+        if (esVIP) {
+            return monto * 0.15;
+        }
+        return monto * 0.10;
+    }
+    return 0;
+}
+
+// Pruebas actuales (cobertura: 33%)
+test('debe calcular descuento VIP', () => {
+    expect(calcularDescuento(150, true)).toBe(22.5);
+});</code>
+                </div>
+
+                <h3>Tareas:</h3>
+                <ol>
+                    <li>Ejecutar reporte de cobertura</li>
+                    <li>Identificar líneas sin cobertura</li>
+                    <li>Agregar pruebas para cubrir todos los casos</li>
+                    <li>Verificar que la cobertura aumente a 100%</li>
+                </ol>
+            </div>
+            <aside class="notes">Vamos paso a paso mejorando la cobertura.</aside>
+        </section>
+
+        <!-- Práctica Guiada 1 - Solución -->
+        <section class="slide">
+            <h2>Práctica Guiada #1: Solución</h2>
+            <div class="practice-box">
+                <h3>Pruebas completas para 100% cobertura:</h3>
+                <div class="code-block" style="font-size: 0.9em;">
+<code>describe('calcularDescuento', () => {
+    test('debe calcular descuento VIP del 15% para montos mayores a $100', () => {
+        expect(calcularDescuento(150, true)).toBe(22.5);
+    });
+
+    test('debe calcular descuento estándar del 10% para montos mayores a $100', () => {
+        expect(calcularDescuento(150, false)).toBe(15);
+    });
+
+    test('debe retornar 0 para montos menores o iguales a $100 (VIP)', () => {
+        expect(calcularDescuento(100, true)).toBe(0);
+    });
+
+    test('debe retornar 0 para montos menores o iguales a $100 (estándar)', () => {
+        expect(calcularDescuento(50, false)).toBe(0);
+    });
+});</code>
+                </div>
+
+                <h3>Análisis:</h3>
+                <ul>
+                    <li>✅ Cobertura de líneas: 100% (todas las líneas ejecutadas)</li>
+                    <li>✅ Cobertura de ramas: 100% (todas las ramas if/else probadas)</li>
+                    <li>✅ Cobertura de funciones: 100% (función probada)</li>
+                    <li>✅ Casos edge cubiertos (monto = 100, monto < 100)</li>
+                </ul>
+            </div>
+            <aside class="notes">Ahora tenemos 100% de cobertura con pruebas bien diseñadas.</aside>
+        </section>
+
+        <!-- Práctica Guiada 2 -->
+        <section class="slide">
+            <h2>Práctica Guiada #2: Interpretar Reporte</h2>
+            <div class="practice-box">
+                <h3>Objetivo:</h3>
+                <p>Interpretar un reporte de cobertura y crear un plan de acción.</p>
+
+                <h3>Reporte de cobertura:</h3>
+                <div class="code-block" style="font-size: 0.9em;">
+<code>File              | % Stmts | % Branch | % Funcs | % Lines
+-------------------|---------|----------|---------|--------
+auth.js            |   45.45 |     25   |   66.67 |   45.45
+  validarUsuario   |     100 |     100  |   100   |     100
+  hashPassword     |     100 |     100  |   100   |     100
+  verificarToken   |       0 |       0  |     0   |       0
+payment.js         |   83.33 |     75   |   100   |   83.33
+  procesarPago     |     100 |     100  |   100   |     100
+  calcularImpuesto |      50 |       0  |   100   |      50
+-------------------|---------|----------|---------|--------
+TOTAL              |   64.29 |     50   |   83.33 |   64.29</code>
+                </div>
+
+                <h3>Tareas:</h3>
+                <ol>
+                    <li>Identificar módulos con baja cobertura</li>
+                    <li>Priorizar qué mejorar primero</li>
+                    <li>Crear plan de acción con pruebas específicas</li>
+                    <li>Establecer objetivo de cobertura</li>
+                </ol>
+            </div>
+            <aside class="notes">Practiquen interpretar reportes y crear planes de acción.</aside>
+        </section>
+
+        <!-- Práctica Guiada 2 - Solución -->
+        <section class="slide">
+            <h2>Práctica Guiada #2: Solución</h2>
+            <div class="practice-box">
+                <h3>Análisis del Reporte:</h3>
+                
+                <div class="coverage-low" style="margin-bottom: 20px;">
+                    <h3>🔴 Crítico - auth.js (45.45% cobertura)</h3>
+                    <ul>
+                        <li><strong>verificarToken:</strong> 0% - ¡Ninguna prueba! (CRÍTICO para seguridad)</li>
+                        <li><strong>Prioridad:</strong> ALTA - Código de seguridad debe tener 100%</li>
+                        <li><strong>Acción:</strong> Escribir pruebas para verificarToken inmediatamente</li>
+                    </ul>
+                </div>
+
+                <div class="coverage-medium" style="margin-bottom: 20px;">
+                    <h3>🟡 Medio - payment.js (83.33% cobertura)</h3>
+                    <ul>
+                        <li><strong>calcularImpuesto:</strong> 50% - Falta probar alguna rama</li>
+                        <li><strong>Prioridad:</strong> MEDIA - Código financiero importante</li>
+                        <li><strong>Acción:</strong> Identificar rama faltante y agregar prueba</li>
+                    </ul>
+                </div>
+
+                <div class="coverage-high">
+                    <h3>✅ Bueno - Funciones individuales</h3>
+                    <ul>
+                        <li><strong>validarUsuario, hashPassword, procesarPago:</strong> 100%</li>
+                        <li>Mantenimiento: Continuar con este nivel</li>
+                    </ul>
+                </div>
+
+                <h3 style="margin-top: 30px;">Plan de Acción:</h3>
+                <ol>
+                    <li><strong>Día 1:</strong> Escribir pruebas para verificarToken (aumentar auth.js a 100%)</li>
+                    <li><strong>Día 2:</strong> Completar pruebas para calcularImpuesto (aumentar payment.js a 100%)</li>
+                    <li><strong>Objetivo:</strong> Alcanzar 85%+ cobertura general</li>
+                </ol>
+            </div>
+            <aside class="notes">Este tipo de análisis ayuda a priorizar el trabajo de pruebas.</aside>
+        </section>
+
+        <!-- Práctica Evaluada -->
+        <section class="slide">
+            <h2>Práctica Evaluada</h2>
+            <div class="practice-box">
+                <h3>Enunciado:</h3>
+                <p>Analiza un proyecto existente y mejora su cobertura de pruebas siguiendo las mejores prácticas:</p>
+                
+                <ol>
+                    <li>Ejecuta reporte de cobertura en un proyecto real</li>
+                    <li>Identifica módulos con cobertura menor a 80%</li>
+                    <li>Prioriza módulos críticos</li>
+                    <li>Escribe pruebas para aumentar la cobertura</li>
+                    <li>Documenta el análisis y las mejoras realizadas</li>
+                    <li>Establece umbrales de cobertura mínimos</li>
+                </ol>
+
+                <h3>Criterios de Evaluación:</h3>
+                <ul>
+                    <li><strong>Análisis (30%):</strong> Identificación correcta de áreas con baja cobertura, priorización adecuada</li>
+                    <li><strong>Mejoras (40%):</strong> Pruebas bien diseñadas que aumentan cobertura, principios FIRST aplicados</li>
+                    <li><strong>Documentación (20%):</strong> Reporte claro del antes/después, explicación de decisiones</li>
+                    <li><strong>Umbrales (10%):</strong> Configuración de umbrales apropiados</li>
+                </ul>
+
+                <h3>Rúbrica:</h3>
+                <ul>
+                    <li><strong>Excelente (90-100):</strong> Análisis completo, cobertura mejorada significativamente, documentación excelente</li>
+                    <li><strong>Bueno (75-89):</strong> Análisis correcto, cobertura mejorada, documentación adecuada</li>
+                    <li><strong>Satisfactorio (60-74):</strong> Análisis básico, algunas mejoras, documentación básica</li>
+                    <li><strong>Necesita mejorar (<60):</strong> Análisis incompleto, pocas mejoras, documentación insuficiente</li>
+                </ul>
+            </div>
+            <aside class="notes">Esta práctica evalúa el dominio completo de la cobertura de pruebas.</aside>
+        </section>
+
+        <!-- Mini-Quiz -->
+        <section class="slide">
+            <h2>Mini-Quiz</h2>
+            <div class="quiz-question">
+                <h3>1. ¿Qué mide la cobertura de líneas?</h3>
+                <div class="quiz-option">a) Porcentaje de funciones probadas</div>
+                <div class="quiz-option">b) Porcentaje de líneas de código ejecutadas</div>
+                <div class="quiz-option">c) Porcentaje de pruebas que pasan</div>
+                <div class="quiz-option">d) Porcentaje de bugs encontrados</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>2. ¿Cuál es un nivel de cobertura recomendado para proyectos comerciales?</h3>
+                <div class="quiz-option">a) 50-60%</div>
+                <div class="quiz-option">b) 80-90%</div>
+                <div class="quiz-option">c) 100% siempre</div>
+                <div class="quiz-option">d) No importa la cobertura</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>3. ¿Qué es más importante en cobertura de pruebas?</h3>
+                <div class="quiz-option">a) Alcanzar 100% sin importar cómo</div>
+                <div class="quiz-option">b) Equilibrar cobertura con mantenibilidad y priorizar código crítico</div>
+                <div class="quiz-option">c) Solo probar código simple</div>
+                <div class="quiz-option">d) Ignorar la cobertura</div>
+            </div>
+        </section>
+
+        <!-- Mini-Quiz Continuación -->
+        <section class="slide">
+            <h2>Mini-Quiz (Continuación)</h2>
+            <div class="quiz-question">
+                <h3>4. ¿Cuál es la diferencia entre cobertura de líneas y cobertura de ramas?</h3>
+                <div class="quiz-option">a) No hay diferencia</div>
+                <div class="quiz-option">b) Cobertura de ramas es más estricta y requiere probar todas las condiciones</div>
+                <div class="quiz-option">c) Cobertura de líneas es más difícil</div>
+                <div class="quiz-option">d) Son sinónimos</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>5. Verdadero o Falso: 100% de cobertura garantiza que no hay bugs.</h3>
+                <div class="quiz-option">Verdadero</div>
+                <div class="quiz-option">Falso - La cobertura solo indica qué código se ejecutó, no garantiza corrección</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>6. ¿Qué debe tener prioridad en cobertura de pruebas?</h3>
+                <div class="quiz-option">a) Código simple y trivial</div>
+                <div class="quiz-option">b) Código crítico del negocio</div>
+                <div class="quiz-option">c) Código que nunca se usa</div>
+                <div class="quiz-option">d) Solo código nuevo</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>7. ¿Qué herramienta es común para medir cobertura en JavaScript?</h3>
+                <div class="quiz-option">a) Jest con flag --coverage</div>
+                <div class="quiz-option">b) npm test</div>
+                <div class="quiz-option">c) console.log</div>
+                <div class="quiz-option">d) No hay herramientas</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>8. ¿Cuál es un error común en cobertura de pruebas?</h3>
+                <div class="quiz-option">a) Medir la cobertura regularmente</div>
+                <div class="quiz-option">b) Obsesionarse con 100% sin considerar el costo</div>
+                <div class="quiz-option">c) Priorizar código crítico</div>
+                <div class="quiz-option">d) Usar herramientas de medición</div>
+            </div>
+        </section>
+
+        <!-- Respuestas del Quiz -->
+        <section class="slide">
+            <h2>Respuestas del Mini-Quiz</h2>
+            <div class="summary-list">
+                <ol>
+                    <li><strong>b) Porcentaje de líneas de código ejecutadas</strong> - Cobertura de líneas mide líneas ejecutadas</li>
+                    <li><strong>b) 80-90%</strong> - Nivel recomendado para mayoría de proyectos</li>
+                    <li><strong>b) Equilibrar cobertura con mantenibilidad y priorizar código crítico</strong> - El equilibrio es clave</li>
+                    <li><strong>b) Cobertura de ramas es más estricta y requiere probar todas las condiciones</strong> - Ramas es más completo</li>
+                    <li><strong>Falso</strong> - La cobertura solo indica ejecución, no garantiza corrección</li>
+                    <li><strong>b) Código crítico del negocio</strong> - Prioridad en código crítico</li>
+                    <li><strong>a) Jest con flag --coverage</strong> - Jest incluye cobertura integrada</li>
+                    <li><strong>b) Obsesionarse con 100% sin considerar el costo</strong> - Error común</li>
+                </ol>
+            </div>
+            <aside class="notes">Si tuvieron dudas, revisen esos conceptos antes de continuar.</aside>
+        </section>
+
+        <!-- Resumen -->
+        <section class="slide">
+            <h2>Resumen de la Unidad</h2>
+            <div class="summary-list">
+                <h3>Puntos Clave:</h3>
+                <ul>
+                    <li>La <strong>cobertura de pruebas</strong> mide qué porcentaje del código se ejecuta durante las pruebas</li>
+                    <li>Los <strong>tipos principales</strong> son: líneas, ramas, funciones y sentencias</li>
+                    <li>Un nivel de <strong>80-90%</strong> es recomendado para la mayoría de proyectos</li>
+                    <li>Es importante <strong>priorizar código crítico</strong> sobre código trivial</li>
+                    <li>Las <strong>herramientas</strong> como Jest, Istanbul, Coverlet ayudan a medir cobertura</li>
+                    <li>El <strong>equilibrio</strong> entre cobertura y mantenibilidad es fundamental</li>
+                    <li>100% de cobertura <strong>no garantiza</strong> código sin bugs</li>
+                    <li>Debemos <strong>medir regularmente</strong> y usar métricas para guiar mejoras</li>
+                </ul>
+            </div>
+            <aside class="notes">Este resumen cubre los conceptos fundamentales de cobertura de pruebas.</aside>
+        </section>
+
+        <!-- Tarea -->
+        <section class="slide">
+            <h2>Tarea para Casa</h2>
+            <div class="practice-box">
+                <h3>Actividad:</h3>
+                <p>Mejora la cobertura de pruebas de un proyecto existente aplicando todas las técnicas aprendidas:</p>
+                
+                <ol>
+                    <li>Selecciona un proyecto con código existente</li>
+                    <li>Instala y configura herramientas de cobertura</li>
+                    <li>Ejecuta reporte de cobertura inicial</li>
+                    <li>Analiza el reporte e identifica áreas de mejora</li>
+                    <li>Prioriza módulos críticos</li>
+                    <li>Escribe pruebas para aumentar la cobertura</li>
+                    <li>Ejecuta reporte final y compara</li>
+                    <li>Configura umbrales mínimos de cobertura</li>
+                </ol>
+
+                <h3>Entregables:</h3>
+                <ul>
+                    <li>Reporte de cobertura inicial (captura de pantalla)</li>
+                    <li>Análisis escrito identificando áreas de mejora</li>
+                    <li>Código de pruebas agregadas</li>
+                    <li>Reporte de cobertura final (captura de pantalla)</li>
+                    <li>Documento explicando:
+                        <ul>
+                            <li>Metodología utilizada</li>
+                            <li>Decisiones de priorización</li>
+                            <li>Mejoras realizadas (antes/después)</li>
+                            <li>Umbrales configurados y justificación</li>
+                        </ul>
+                    </li>
+                    <li>Configuración de herramientas de cobertura</li>
+                </ul>
+
+                <h3>Fecha de entrega:</h3>
+                <p>Una semana después de esta clase</p>
+            </div>
+            <aside class="notes">Esta tarea les permitirá practicar la cobertura de pruebas en un proyecto real.</aside>
+        </section>
+
+        <!-- Recursos Adicionales -->
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Para ampliar tu conocimiento sobre esta unidad, visita nuestra página de recursos con:</p>
+                <ul>
+                    <li>Videos sobre cobertura de código</li>
+                    <li>Herramientas de análisis de cobertura</li>
+                    <li>Métricas y reportes</li>
+                    <li>Mejores prácticas de cobertura</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_04_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">
+                        Ver Recursos Adicionales →
+                    </a>
+                </p>
+            </div>
+        </section>
+
+        <!-- Diapositiva Final -->
+        <section class="slide title-slide">
+            <h1>¡Gracias!</h1>
+            <h2>Unidad IV: Cobertura de pruebas</h2>
+            <p style="margin-top: 50px; font-size: 1.5em;">Próxima clase: Unidad V - Integración continua</p>
+            <p style="font-size: 1.2em; margin-top: 30px;">Preguntas y dudas</p>
+            <aside class="notes">Sigan midiendo y mejorando la cobertura de pruebas regularmente.</aside>
+        </section>
+    </div>
+
+    <!-- Controles -->
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">21</span>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul class="index-list" id="indexList"></ul>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        // Generar índice
+        const indexList = document.getElementById('indexList');
+        slides.forEach((slide, index) => {
+            const title = slide.querySelector('h1, h2');
+            if (title && !slide.classList.contains('title-slide')) {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = `${index + 1}. ${title.textContent}`;
+                a.onclick = (e) => {
+                    e.preventDefault();
+                    goToSlide(index);
+                    toggleIndex();
+                };
+                li.appendChild(a);
+                indexList.appendChild(li);
+            }
+        });
+
+        function showSlide(n) {
+            if (n >= totalSlides) n = 0;
+            if (n < 0) n = totalSlides - 1;
+            
+            slides[currentSlide].classList.remove('active');
+            currentSlide = n;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            // Actualizar botones
+            document.querySelector('.nav-btn:first-child').disabled = currentSlide === 0;
+            document.querySelector('.nav-btn:last-child').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function goToSlide(n) {
+            showSlide(n);
+        }
+
+        function toggleIndex() {
+            document.getElementById('indexPanel').classList.toggle('active');
+        }
+
+        // Navegación con teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            } else if (e.key === 'n' || e.key === 'N') {
+                e.preventDefault();
+                const notes = slides[currentSlide].querySelector('.notes');
+                if (notes) {
+                    notes.classList.toggle('active');
+                }
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                goToSlide(0);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                goToSlide(totalSlides - 1);
+            }
+        });
+
+        // Inicializar
+        showSlide(0);
+    </script>
+</body>
+</html>
+

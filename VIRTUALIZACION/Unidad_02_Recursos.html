@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 02 - Recursos Adicionales</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        h1 { font-size: 3em; color: #4CAF50; margin-bottom: 20px; text-align: center; }
+        h2 { font-size: 2.2em; color: #64B5F6; margin: 40px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        h3 { font-size: 1.6em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .back-link { display: inline-block; background: #64B5F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-bottom: 30px; transition: all 0.3s; }
+        .back-link:hover { background: #42A5F5; transform: translateY(-2px); }
+        .resource-section { background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 30px; margin: 25px 0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+        .resource-item { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 15px 0; border-radius: 8px; transition: all 0.3s; }
+        .resource-item:hover { background: rgba(76, 175, 80, 0.2); transform: translateX(5px); }
+        .resource-item a { color: #64B5F6; text-decoration: none; font-size: 1.2em; font-weight: bold; }
+        .resource-item a:hover { color: #42A5F5; text-decoration: underline; }
+        .resource-item p { margin-top: 10px; color: #b0b0b0; font-size: 1em; line-height: 1.6; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin: 20px 0; border-radius: 8px; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 8px; }
+        .badge { display: inline-block; background: #9C27B0; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; margin-left: 10px; }
+        .badge.video { background: #f44336; }
+        .badge.doc { background: #2196F3; }
+        .badge.tool { background: #FF9800; }
+        ul { margin-left: 30px; margin-top: 15px; }
+        li { margin: 10px 0; font-size: 1.1em; line-height: 1.8; }
+        .highlight-box { background: rgba(255, 193, 7, 0.1); border-left: 4px solid #FFC107; padding: 20px; margin: 20px 0; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="Unidad_02.html" class="back-link">← Volver a Unidad 02</a>
+        
+        <h1>Recursos Adicionales - Unidad 02</h1>
+        <p style="text-align: center; font-size: 1.2em; color: #b0b0b0; margin-bottom: 40px;">
+            Tecnologías de Virtualización de Aplicaciones - Enlaces, videos y material complementario
+        </p>
+
+        <div class="resource-section">
+            <h2>📚 Documentación Oficial</h2>
+            
+            <div class="resource-item">
+                <a href="https://docs.microsoft.com/en-us/windows/application-management/app-v/app-v-getting-started" target="_blank">
+                    Microsoft App-V Documentation <span class="badge doc">Oficial</span>
+                </a>
+                <p>Documentación completa de Microsoft Application Virtualization, incluyendo guías de secuenciación y despliegue.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://docs.vmware.com/en/VMware-ThinApp/index.html" target="_blank">
+                    VMware ThinApp Documentation <span class="badge doc">Oficial</span>
+                </a>
+                <p>Guías oficiales de VMware ThinApp para empaquetado y despliegue de aplicaciones.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://docs.citrix.com/en-us/xenapp-and-xendesktop" target="_blank">
+                    Citrix XenApp/XenDesktop Documentation <span class="badge doc">Oficial</span>
+                </a>
+                <p>Documentación técnica completa de Citrix para entrega de aplicaciones y escritorios virtuales.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>🎥 Videos Educativos</h2>
+            
+            <div class="resource-item">
+                <h3>Microsoft App-V: Secuenciación de Aplicaciones</h3>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/8QZf8wqZ7Ck" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <p>Tutorial sobre cómo secuenciar aplicaciones usando Microsoft App-V Sequencer.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.youtube.com/watch?v=example" target="_blank">
+                    VMware ThinApp Setup Capture <span class="badge video">Video</span>
+                </a>
+                <p>Guía paso a paso para crear paquetes ThinApp usando Setup Capture.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.youtube.com/watch?v=example" target="_blank">
+                    Citrix XenApp: Publicación de Aplicaciones <span class="badge video">Video</span>
+                </a>
+                <p>Video tutorial sobre cómo publicar aplicaciones remotas con Citrix XenApp.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>🛠️ Herramientas</h2>
+            
+            <div class="resource-item">
+                <a href="https://www.microsoft.com/en-us/download/details.aspx?id=41186" target="_blank">
+                    Microsoft App-V Sequencer <span class="badge tool">Gratis</span>
+                </a>
+                <p>Herramienta oficial de Microsoft para secuenciar aplicaciones y crear paquetes App-V.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.vmware.com/products/thinapp.html" target="_blank">
+                    VMware ThinApp <span class="badge tool">Comercial</span>
+                </a>
+                <p>Herramienta de empaquetado de aplicaciones de VMware, con versión trial disponible.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>📖 Guías y Tutoriales</h2>
+            
+            <div class="resource-item">
+                <a href="https://www.techrepublic.com/article/how-to-virtualize-applications-with-microsoft-app-v/" target="_blank">
+                    TechRepublic: Guía App-V
+                </a>
+                <p>Guía práctica sobre virtualización de aplicaciones con Microsoft App-V.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.vmware.com/learning.html" target="_blank">
+                    VMware Learning - Application Virtualization
+                </a>
+                <p>Recursos de aprendizaje sobre virtualización de aplicaciones de VMware.</p>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <h3>💡 Consejo de Estudio</h3>
+            <p>Para dominar estas tecnologías, te recomendamos: 1) Ver los videos tutoriales de secuenciación/empaquetado, 2) Descargar las herramientas (App-V Sequencer o ThinApp trial), 3) Practicar empaquetando una aplicación simple, 4) Revisar la documentación oficial para casos avanzados. La práctica es clave.</p>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #333;">
+            <a href="Unidad_01_Recursos.html" class="back-link">← Anterior: Recursos Unidad 01</a>
+            <a href="Unidad_02.html" class="back-link" style="margin-left: 20px;">← Volver a Unidad 02</a>
+            <a href="Unidad_03_Recursos.html" class="back-link" style="margin-left: 20px;">Siguiente: Recursos Unidad 03 →</a>
+        </div>
+    </div>
+</body>
+</html>
+

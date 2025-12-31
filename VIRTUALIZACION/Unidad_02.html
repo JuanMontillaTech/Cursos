@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 02 - Tecnologías de Virtualización de Aplicaciones</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; overflow: hidden; }
+        .presentation-container { width: 100vw; height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; }
+        .slide { display: none; width: 90vw; max-width: 1280px; height: 72vh; max-height: 720px; background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 60px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); overflow-y: auto; position: relative; }
+        .slide.active { display: block; }
+        .slide h1 { font-size: 3.5em; color: #4CAF50; margin-bottom: 30px; text-align: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        .slide h2 { font-size: 2.5em; color: #64B5F6; margin: 30px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        .slide h3 { font-size: 1.8em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .slide p, .slide li { font-size: 1.3em; line-height: 1.8; margin: 15px 0; }
+        .slide ul, .slide ol { margin-left: 40px; margin-top: 15px; }
+        .slide code { background: #1a1a1a; padding: 3px 8px; border-radius: 4px; font-family: 'Consolas', 'Monaco', monospace; color: #CE9178; font-size: 0.9em; }
+        .slide pre { background: #1a1a1a; border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; overflow-x: auto; box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3); }
+        .slide pre code { color: #D4D4D4; font-size: 1.1em; line-height: 1.6; display: block; background: none; padding: 0; }
+        .cover-slide { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .cover-slide h1 { font-size: 4em; margin-bottom: 40px; }
+        .cover-slide .subtitle { font-size: 2.5em; color: #64B5F6; margin: 20px 0; }
+        .cover-slide .code { font-size: 1.8em; color: #FFB74D; margin-top: 30px; }
+        .navigation { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
+        .nav-btn { background: #4CAF50; color: white; border: none; padding: 15px 30px; font-size: 1.2em; border-radius: 8px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); }
+        .nav-btn:hover { background: #45a049; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5); }
+        .nav-btn:disabled { background: #555; cursor: not-allowed; transform: none; }
+        .slide-counter { position: fixed; top: 30px; right: 30px; background: rgba(0, 0, 0, 0.7); padding: 10px 20px; border-radius: 8px; font-size: 1.1em; z-index: 1000; }
+        .index-btn { position: fixed; top: 30px; left: 30px; background: #64B5F6; color: white; border: none; padding: 15px 25px; font-size: 1.1em; border-radius: 8px; cursor: pointer; z-index: 1000; transition: all 0.3s; }
+        .index-btn:hover { background: #42A5F5; transform: translateY(-2px); }
+        .index-panel { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.95); z-index: 2000; padding: 60px; overflow-y: auto; }
+        .index-panel.active { display: block; }
+        .index-panel h2 { color: #4CAF50; font-size: 2.5em; margin-bottom: 30px; text-align: center; }
+        .index-panel ul { list-style: none; max-width: 800px; margin: 0 auto; }
+        .index-panel li { margin: 15px 0; }
+        .index-panel a { color: #64B5F6; text-decoration: none; font-size: 1.4em; display: block; padding: 15px; border-left: 4px solid #64B5F6; transition: all 0.3s; }
+        .index-panel a:hover { background: rgba(100, 181, 246, 0.1); padding-left: 25px; }
+        .close-index { position: absolute; top: 30px; right: 30px; background: #f44336; color: white; border: none; padding: 15px 25px; font-size: 1.2em; border-radius: 8px; cursor: pointer; }
+        .notes { display: none; background: rgba(255, 193, 7, 0.2); border-left: 4px solid #FFC107; padding: 15px; margin-top: 20px; border-radius: 4px; }
+        .notes.visible { display: block; }
+        .notes-title { color: #FFC107; font-weight: bold; margin-bottom: 10px; }
+        .highlight-box { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .practice-box { background: rgba(100, 181, 246, 0.1); border: 2px solid #64B5F6; padding: 25px; margin: 25px 0; border-radius: 8px; }
+        .practice-box h3 { color: #64B5F6; margin-top: 0; }
+        .quiz-question { background: rgba(255, 183, 77, 0.1); border-left: 4px solid #FFB74D; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .quiz-answer { background: rgba(76, 175, 80, 0.2); border-left: 4px solid #4CAF50; padding: 15px; margin: 10px 0; border-radius: 4px; }
+        .diagram-box { background: rgba(156, 39, 176, 0.1); border: 2px solid #9C27B0; padding: 25px; margin: 25px 0; border-radius: 8px; text-align: center; }
+        @media (max-width: 768px) { .slide { width: 95vw; height: 80vh; padding: 30px; } .slide h1 { font-size: 2em; } .slide h2 { font-size: 1.5em; } .slide p, .slide li { font-size: 1em; } }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <section class="slide active cover-slide">
+            <h1>Virtualización de Aplicaciones</h1>
+            <div class="subtitle">Unidad 02: Tecnologías de Virtualización de Aplicaciones</div>
+            <aside class="notes"><div class="notes-title">Notas del Presentador:</div>Esta unidad se enfoca en las tecnologías específicas para virtualizar aplicaciones. Los estudiantes aprenderán sobre Microsoft App-V, VMware ThinApp, y otras soluciones del mercado.</aside>
+        </section>
+
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <h3>Resultados de Aprendizaje:</h3>
+            <ul>
+                <li>Conocer las principales tecnologías de virtualización de aplicaciones</li>
+                <li>Comprender el funcionamiento de Microsoft App-V</li>
+                <li>Entender VMware ThinApp y sus características</li>
+                <li>Analizar otras soluciones del mercado (Citrix, Docker)</li>
+                <li>Evaluar cuándo usar cada tecnología según el caso de uso</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <ol style="font-size: 1.4em; line-height: 2;">
+                <li>Introducción a tecnologías de virtualización de apps</li>
+                <li>Microsoft Application Virtualization (App-V)</li>
+                <li>VMware ThinApp</li>
+                <li>Citrix XenApp y XenDesktop</li>
+                <li>Comparación de tecnologías</li>
+                <li>Casos de uso específicos</li>
+                <li>Práctica guiada</li>
+                <li>Resumen y evaluación</li>
+            </ol>
+            <aside class="notes"><div class="notes-title">Notas del Presentador:</div>Duración: 4 horas. Teoría (2.5h), Práctica (1h), Evaluación (0.5h).</aside>
+        </section>
+
+        <section class="slide">
+            <h2>Introducción a Tecnologías de Virtualización de Apps</h2>
+            <h3>¿Por qué virtualizar aplicaciones?</h3>
+            <ul>
+                <li><strong>Conflictos de versiones:</strong> Múltiples versiones de la misma app</li>
+                <li><strong>Compatibilidad:</strong> Apps antiguas en sistemas modernos</li>
+                <li><strong>Seguridad:</strong> Aislamiento de aplicaciones</li>
+                <li><strong>Portabilidad:</strong> Ejecutar apps sin instalación</li>
+                <li><strong>Gestión centralizada:</strong> Actualizaciones desde servidor</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Tipos de Virtualización de Apps:</strong> Streaming, Empaquetado, Contenedores, Remote Desktop Services
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Microsoft Application Virtualization (App-V)</h2>
+            <h3>Características Principales:</h3>
+            <ul>
+                <li><strong>Streaming de aplicaciones:</strong> Descarga bajo demanda</li>
+                <li><strong>Secuenciación:</strong> Empaquetado de aplicaciones</li>
+                <li><strong>Integración con Windows:</strong> Soporte nativo en Windows 10/11</li>
+                <li><strong>Gestión centralizada:</strong> SCCM y Intune</li>
+            </ul>
+            <h3>Arquitectura:</h3>
+            <div class="diagram-box">
+                <pre style="text-align: left; background: transparent; border: none;">
+App-V Server
+    ↓ (Streaming)
+Cliente App-V
+    ↓ (Cache local)
+Aplicación Virtualizada
+                </pre>
+            </div>
+            <div class="highlight-box">
+                <strong>Ventajas:</strong> Sin conflictos de DLL, actualizaciones centralizadas, fácil despliegue
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Microsoft App-V: Secuenciación</h2>
+            <h3>Proceso de Secuenciación:</h3>
+            <ol>
+                <li><strong>Preparar entorno:</strong> VM limpia con Windows</li>
+                <li><strong>Iniciar secuenciador:</strong> App-V Sequencer</li>
+                <li><strong>Instalar aplicación:</strong> Durante el monitoreo</li>
+                <li><strong>Configurar aplicación:</strong> Personalizar según necesidades</li>
+                <li><strong>Finalizar secuenciación:</strong> Generar paquete .appv</li>
+            </ol>
+            <h3>Componentes del Paquete:</h3>
+            <ul>
+                <li>Archivos de la aplicación</li>
+                <li>Registro de Windows (virtualizado)</li>
+                <li>Variables de entorno</li>
+                <li>Configuración de streaming</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>VMware ThinApp</h2>
+            <h3>Características:</h3>
+            <ul>
+                <li><strong>Empaquetado portátil:</strong> Un solo archivo ejecutable</li>
+                <li><strong>Sin agente:</strong> No requiere software adicional</li>
+                <li><strong>Multiplataforma:</strong> Windows principalmente</li>
+                <li><strong>Sandboxing:</strong> Aislamiento completo</li>
+            </ul>
+            <h3>Arquitectura:</h3>
+            <div class="diagram-box">
+                <pre style="text-align: left; background: transparent; border: none;">
+Aplicación Original
+    ↓ (ThinApp Setup Capture)
+Paquete ThinApp (.exe)
+    ↓ (Ejecución)
+Aplicación Virtualizada
+                </pre>
+            </div>
+            <div class="highlight-box">
+                <strong>Uso típico:</strong> Aplicaciones legacy, USB portables, entornos sin administración centralizada
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>VMware ThinApp: Proceso de Empaquetado</h2>
+            <h3>Setup Capture:</h3>
+            <ol>
+                <li><strong>Pre-scan:</strong> Capturar estado inicial del sistema</li>
+                <li><strong>Instalación:</strong> Instalar aplicación normalmente</li>
+                <li><strong>Post-scan:</strong> Comparar cambios</li>
+                <li><strong>Configuración:</strong> Definir inclusiones/exclusiones</li>
+                <li><strong>Build:</strong> Generar ejecutable portátil</li>
+            </ol>
+            <h3>Ventajas de ThinApp:</h3>
+            <ul>
+                <li>No requiere servidor de streaming</li>
+                <li>Fácil distribución (USB, red, email)</li>
+                <li>Ejecución inmediata sin instalación</li>
+                <li>Múltiples versiones simultáneas</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Citrix XenApp y XenDesktop</h2>
+            <h3>XenApp (Application Delivery):</h3>
+            <ul>
+                <li><strong>Publicación de aplicaciones:</strong> Apps remotas</li>
+                <li><strong>HDX Protocol:</strong> Optimización de rendimiento</li>
+                <li><strong>Multi-tenancy:</strong> Múltiples organizaciones</li>
+                <li><strong>App Layering:</strong> Capas de aplicaciones</li>
+            </ul>
+            <h3>XenDesktop (VDI):</h3>
+            <ul>
+                <li>Escritorios virtuales completos</li>
+                <li>Persistent y non-persistent desktops</li>
+                <li>Integración con Hyper-V, vSphere, XenServer</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Casos de uso:</strong> Trabajo remoto, BYOD, aplicaciones centralizadas, seguridad mejorada
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Otras Tecnologías</h2>
+            <h3>Docker (Contenedores de Apps):</h3>
+            <ul>
+                <li>Empaquetado de aplicaciones en contenedores</li>
+                <li>Portabilidad entre sistemas</li>
+                <li>Popular en desarrollo y producción</li>
+            </ul>
+            <h3>Snap y Flatpak (Linux):</h3>
+            <ul>
+                <li>Empaquetado universal de aplicaciones</li>
+                <li>Sandboxing automático</li>
+                <li>Actualizaciones automáticas</li>
+            </ul>
+            <h3>RemoteApp (Microsoft):</h3>
+            <ul>
+                <li>Publicación de aplicaciones remotas</li>
+                <li>Integrado con RDS</li>
+                <li>Acceso desde cualquier dispositivo</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Comparación de Tecnologías</h2>
+            <div class="highlight-box">
+                <h3>Microsoft App-V vs. VMware ThinApp:</h3>
+                <ul>
+                    <li><strong>App-V:</strong> Requiere servidor, mejor para entornos empresariales grandes</li>
+                    <li><strong>ThinApp:</strong> Portátil, mejor para despliegues simples</li>
+                    <li><strong>App-V:</strong> Integración con Microsoft ecosystem</li>
+                    <li><strong>ThinApp:</strong> Independiente, funciona en cualquier Windows</li>
+                </ul>
+            </div>
+            <div class="highlight-box">
+                <h3>Cuándo usar cada tecnología:</h3>
+                <ul>
+                    <li><strong>App-V:</strong> Grandes organizaciones, gestión centralizada</li>
+                    <li><strong>ThinApp:</strong> Aplicaciones portátiles, sin infraestructura</li>
+                    <li><strong>Citrix:</strong> Trabajo remoto, aplicaciones remotas</li>
+                    <li><strong>Docker:</strong> Desarrollo moderno, microservicios</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Casos de Uso Específicos</h2>
+            <h3>Caso 1: Migración de Windows 7 a Windows 10</h3>
+            <p>Usar App-V o ThinApp para virtualizar aplicaciones legacy incompatibles.</p>
+            
+            <h3>Caso 2: Múltiples Versiones de Office</h3>
+            <p>Ejecutar Office 2010, 2016 y 365 simultáneamente usando virtualización.</p>
+            
+            <h3>Caso 3: Aplicaciones Portátiles</h3>
+            <p>Crear versiones portátiles de aplicaciones para USB usando ThinApp.</p>
+            
+            <h3>Caso 4: Trabajo Remoto</h3>
+            <p>Publicar aplicaciones remotas usando Citrix XenApp para acceso desde casa.</p>
+        </section>
+
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Práctica Guiada #2: Análisis de Tecnologías</h2>
+                <h3>Objetivo:</h3>
+                <p>Comparar y evaluar diferentes tecnologías de virtualización de aplicaciones.</p>
+                
+                <h3>Actividad:</h3>
+                <ol>
+                    <li>Investigar Microsoft App-V: características, requisitos, costos</li>
+                    <li>Investigar VMware ThinApp: características, requisitos, costos</li>
+                    <li>Crear tabla comparativa con: precio, complejidad, casos de uso, ventajas/desventajas</li>
+                    <li>Seleccionar un escenario empresarial y recomendar la mejor tecnología</li>
+                    <li>Presentar conclusiones en 10 minutos</li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Mini-Quiz</h2>
+            <div class="quiz-question">
+                <h3>Pregunta 1:</h3>
+                <p>¿Cuál es la principal diferencia entre App-V y ThinApp?</p>
+                <div class="quiz-answer">
+                    <strong>Respuesta:</strong> App-V requiere servidor de streaming y gestión centralizada, mientras que ThinApp genera ejecutables portátiles independientes.
+                </div>
+            </div>
+            <div class="quiz-question">
+                <h3>Pregunta 2:</h3>
+                <p>¿Qué tecnología usarías para publicar aplicaciones remotas a usuarios?</p>
+                <div class="quiz-answer">
+                    <strong>Respuesta:</strong> Citrix XenApp o Microsoft RemoteApp, dependiendo del ecosistema existente.
+                </div>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Resumen de la Unidad</h2>
+            <h3>Puntos Clave:</h3>
+            <ul>
+                <li>Microsoft App-V: streaming, gestión centralizada, integración Windows</li>
+                <li>VMware ThinApp: portátil, sin servidor, fácil distribución</li>
+                <li>Citrix: aplicaciones remotas, VDI, trabajo remoto</li>
+                <li>Cada tecnología tiene casos de uso específicos</li>
+                <li>La elección depende de requisitos, infraestructura y presupuesto</li>
+            </ul>
+            <div class="highlight-box">
+                <h3>Conexión con la Siguiente Unidad:</h3>
+                <p>En la Unidad 3 exploraremos contenedores y Docker, una tecnología moderna de virtualización de aplicaciones muy popular en la actualidad.</p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Tarea para Casa</h2>
+            <div class="practice-box">
+                <h3>Actividades:</h3>
+                <ol>
+                    <li><strong>Investigación (50 puntos):</strong> Profundizar en Microsoft App-V: arquitectura, secuenciación, despliegue. Documento 3-4 páginas.</li>
+                    <li><strong>Práctica (30 puntos):</strong> Si es posible, descargar y probar VMware ThinApp (versión trial) o App-V Sequencer. Documentar el proceso.</li>
+                    <li><strong>Análisis (20 puntos):</strong> Comparar App-V vs ThinApp para un escenario específico (definido por el instructor).</li>
+                </ol>
+                <h3>Entregables:</h3>
+                <p>Documento Word/PDF con portada, formato Arial 12.</p>
+                <h3>Fecha de Entrega:</h3>
+                <p>Una semana después de esta clase.</p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Visita nuestra página de recursos para:</p>
+                <ul>
+                    <li>Documentación oficial de App-V y ThinApp</li>
+                    <li>Videos tutoriales de secuenciación</li>
+                    <li>Guías de implementación</li>
+                    <li>Casos de estudio reales</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_02_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">Ver Recursos Adicionales →</a>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+    <div class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">16</span></div>
+    <div style="position: fixed; bottom: 100px; right: 30px; z-index: 1000;">
+        <a href="Unidad_01.html" style="background: #64B5F6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-size: 0.9em; margin-right: 10px;">← Unidad 01</a>
+        <a href="Unidad_03.html" style="background: #64B5F6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-size: 0.9em;">Unidad 03 →</a>
+    </div>
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul id="indexList"></ul>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let notesVisible = false;
+        document.getElementById('total-slides').textContent = totalSlides;
+        function showSlide(n) { slides[currentSlide].classList.remove('active'); currentSlide = (n + totalSlides) % totalSlides; slides[currentSlide].classList.add('active'); updateCounter(); updateNavigation(); }
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function previousSlide() { showSlide(currentSlide - 1); }
+        function updateCounter() { document.getElementById('current-slide').textContent = currentSlide + 1; }
+        function updateNavigation() { const prevBtn = document.querySelector('.nav-btn:first-child'); const nextBtn = document.querySelector('.nav-btn:last-child'); prevBtn.disabled = currentSlide === 0; nextBtn.disabled = currentSlide === totalSlides - 1; }
+        function toggleIndex() { const panel = document.getElementById('indexPanel'); panel.classList.toggle('active'); if (panel.classList.contains('active')) { buildIndex(); } }
+        function buildIndex() { const indexList = document.getElementById('indexList'); indexList.innerHTML = ''; slides.forEach((slide, index) => { const title = slide.querySelector('h1, h2')?.textContent || `Diapositiva ${index + 1}`; const li = document.createElement('li'); const a = document.createElement('a'); a.href = '#'; a.textContent = title; a.onclick = (e) => { e.preventDefault(); showSlide(index); toggleIndex(); }; li.appendChild(a); indexList.appendChild(li); }); }
+        function toggleNotes() { notesVisible = !notesVisible; const notes = document.querySelectorAll('.notes'); notes.forEach(note => { if (notesVisible) { note.classList.add('visible'); } else { note.classList.remove('visible'); } }); }
+        document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); } else if (e.key === 'ArrowLeft') { e.preventDefault(); previousSlide(); } else if (e.key === 'PageDown') { e.preventDefault(); nextSlide(); } else if (e.key === 'PageUp') { e.preventDefault(); previousSlide(); } else if (e.key === 'n' || e.key === 'N') { toggleNotes(); } });
+        updateNavigation();
+        buildIndex();
+    </script>
+</body>
+</html>
+

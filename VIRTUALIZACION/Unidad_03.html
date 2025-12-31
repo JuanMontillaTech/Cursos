@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 03 - Contenedores y Docker</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; overflow: hidden; }
+        .presentation-container { width: 100vw; height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; }
+        .slide { display: none; width: 90vw; max-width: 1280px; height: 72vh; max-height: 720px; background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 60px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); overflow-y: auto; position: relative; }
+        .slide.active { display: block; }
+        .slide h1 { font-size: 3.5em; color: #4CAF50; margin-bottom: 30px; text-align: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        .slide h2 { font-size: 2.5em; color: #64B5F6; margin: 30px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        .slide h3 { font-size: 1.8em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .slide p, .slide li { font-size: 1.3em; line-height: 1.8; margin: 15px 0; }
+        .slide ul, .slide ol { margin-left: 40px; margin-top: 15px; }
+        .slide code { background: #1a1a1a; padding: 3px 8px; border-radius: 4px; font-family: 'Consolas', 'Monaco', monospace; color: #CE9178; font-size: 0.9em; }
+        .slide pre { background: #1a1a1a; border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; overflow-x: auto; box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3); }
+        .slide pre code { color: #D4D4D4; font-size: 1.1em; line-height: 1.6; display: block; background: none; padding: 0; }
+        .cover-slide { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .cover-slide h1 { font-size: 4em; margin-bottom: 40px; }
+        .cover-slide .subtitle { font-size: 2.5em; color: #64B5F6; margin: 20px 0; }
+        .cover-slide .code { font-size: 1.8em; color: #FFB74D; margin-top: 30px; }
+        .navigation { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
+        .nav-btn { background: #4CAF50; color: white; border: none; padding: 15px 30px; font-size: 1.2em; border-radius: 8px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); }
+        .nav-btn:hover { background: #45a049; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5); }
+        .nav-btn:disabled { background: #555; cursor: not-allowed; transform: none; }
+        .slide-counter { position: fixed; top: 30px; right: 30px; background: rgba(0, 0, 0, 0.7); padding: 10px 20px; border-radius: 8px; font-size: 1.1em; z-index: 1000; }
+        .index-btn { position: fixed; top: 30px; left: 30px; background: #64B5F6; color: white; border: none; padding: 15px 25px; font-size: 1.1em; border-radius: 8px; cursor: pointer; z-index: 1000; transition: all 0.3s; }
+        .index-btn:hover { background: #42A5F5; transform: translateY(-2px); }
+        .index-panel { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.95); z-index: 2000; padding: 60px; overflow-y: auto; }
+        .index-panel.active { display: block; }
+        .index-panel h2 { color: #4CAF50; font-size: 2.5em; margin-bottom: 30px; text-align: center; }
+        .index-panel ul { list-style: none; max-width: 800px; margin: 0 auto; }
+        .index-panel li { margin: 15px 0; }
+        .index-panel a { color: #64B5F6; text-decoration: none; font-size: 1.4em; display: block; padding: 15px; border-left: 4px solid #64B5F6; transition: all 0.3s; }
+        .index-panel a:hover { background: rgba(100, 181, 246, 0.1); padding-left: 25px; }
+        .close-index { position: absolute; top: 30px; right: 30px; background: #f44336; color: white; border: none; padding: 15px 25px; font-size: 1.2em; border-radius: 8px; cursor: pointer; }
+        .notes { display: none; background: rgba(255, 193, 7, 0.2); border-left: 4px solid #FFC107; padding: 15px; margin-top: 20px; border-radius: 4px; }
+        .notes.visible { display: block; }
+        .notes-title { color: #FFC107; font-weight: bold; margin-bottom: 10px; }
+        .highlight-box { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .practice-box { background: rgba(100, 181, 246, 0.1); border: 2px solid #64B5F6; padding: 25px; margin: 25px 0; border-radius: 8px; }
+        .practice-box h3 { color: #64B5F6; margin-top: 0; }
+        .quiz-question { background: rgba(255, 183, 77, 0.1); border-left: 4px solid #FFB74D; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .quiz-answer { background: rgba(76, 175, 80, 0.2); border-left: 4px solid #4CAF50; padding: 15px; margin: 10px 0; border-radius: 4px; }
+        .diagram-box { background: rgba(156, 39, 176, 0.1); border: 2px solid #9C27B0; padding: 25px; margin: 25px 0; border-radius: 8px; text-align: center; }
+        @media (max-width: 768px) { .slide { width: 95vw; height: 80vh; padding: 30px; } .slide h1 { font-size: 2em; } .slide h2 { font-size: 1.5em; } .slide p, .slide li { font-size: 1em; } }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <section class="slide active cover-slide">
+            <h1>Virtualización de Aplicaciones</h1>
+            <div class="subtitle">Unidad 03: Contenedores y Docker</div>
+            <aside class="notes"><div class="notes-title">Notas del Presentador:</div>Esta unidad introduce contenedores y Docker, tecnología fundamental en la virtualización moderna de aplicaciones. Los estudiantes aprenderán conceptos, comandos básicos y casos de uso prácticos.</aside>
+        </section>
+
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <h3>Resultados de Aprendizaje:</h3>
+            <ul>
+                <li>Comprender qué son los contenedores y cómo funcionan</li>
+                <li>Conocer Docker y su arquitectura</li>
+                <li>Crear y gestionar contenedores Docker</li>
+                <li>Escribir Dockerfiles para empaquetar aplicaciones</li>
+                <li>Entender Docker Compose para aplicaciones multi-contenedor</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <ol style="font-size: 1.4em; line-height: 2;">
+                <li>¿Qué son los contenedores?</li>
+                <li>Docker: Introducción y arquitectura</li>
+                <li>Instalación de Docker</li>
+                <li>Comandos básicos de Docker</li>
+                <li>Dockerfile: Crear imágenes personalizadas</li>
+                <li>Docker Compose</li>
+                <li>Casos de uso prácticos</li>
+                <li>Práctica guiada</li>
+                <li>Resumen y evaluación</li>
+            </ol>
+            <aside class="notes"><div class="notes-title">Notas del Presentador:</div>Duración: 4 horas. Teoría (2h), Práctica (1.5h), Evaluación (0.5h).</aside>
+        </section>
+
+        <section class="slide">
+            <h2>¿Qué son los Contenedores?</h2>
+            <div class="highlight-box">
+                <p><strong>Definición:</strong> Los contenedores son unidades ligeras y portátiles que empaquetan una aplicación con todas sus dependencias, permitiendo ejecutarla de manera consistente en cualquier entorno.</p>
+            </div>
+            <h3>Características Principales:</h3>
+            <ul>
+                <li><strong>Ligeros:</strong> Comparten el kernel del OS host</li>
+                <li><strong>Portables:</strong> Funcionan igual en dev, test y producción</li>
+                <li><strong>Aislados:</strong> Cada contenedor tiene su propio espacio</li>
+                <li><strong>Eficientes:</strong> Menor overhead que VMs</li>
+                <li><strong>Escalables:</strong> Fácil crear múltiples instancias</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Analogía:</strong> Como contenedores de transporte: el mismo contenedor funciona en barco, tren o camión sin modificar su contenido.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Contenedores vs. Máquinas Virtuales</h2>
+            <div class="diagram-box">
+                <h3>Arquitectura VM:</h3>
+                <pre style="text-align: left; background: transparent; border: none;">
+Hardware
+├── Hipervisor
+    ├── VM 1 (OS completo + App)
+    ├── VM 2 (OS completo + App)
+    └── VM 3 (OS completo + App)
+                </pre>
+            </div>
+            <div class="diagram-box">
+                <h3>Arquitectura Contenedores:</h3>
+                <pre style="text-align: left; background: transparent; border: none;">
+Hardware
+├── OS Host
+    ├── Docker Engine
+        ├── Contenedor 1 (Solo App)
+        ├── Contenedor 2 (Solo App)
+        └── Contenedor 3 (Solo App)
+                </pre>
+            </div>
+            <div class="highlight-box">
+                <strong>Ventaja:</strong> Los contenedores son más ligeros porque comparten el kernel del OS host, mientras que las VMs necesitan un OS completo cada una.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Docker: Introducción</h2>
+            <h3>¿Qué es Docker?</h3>
+            <p>Docker es una plataforma open-source que automatiza el despliegue de aplicaciones dentro de contenedores, proporcionando una capa adicional de abstracción y automatización.</p>
+            <h3>Historia:</h3>
+            <ul>
+                <li><strong>2013:</strong> Docker lanzado por dotCloud</li>
+                <li><strong>2014:</strong> Se convierte en proyecto open-source</li>
+                <li><strong>2017:</strong> Docker Enterprise Edition</li>
+                <li><strong>Actualidad:</strong> Estándar de facto para contenedores</li>
+            </ul>
+            <h3>Componentes Principales:</h3>
+            <ul>
+                <li><strong>Docker Engine:</strong> Runtime para contenedores</li>
+                <li><strong>Docker Hub:</strong> Repositorio de imágenes</li>
+                <li><strong>Dockerfile:</strong> Script para construir imágenes</li>
+                <li><strong>Docker Compose:</strong> Orquestación multi-contenedor</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Arquitectura de Docker</h2>
+            <h3>Componentes:</h3>
+            <ul>
+                <li><strong>Docker Daemon:</strong> Proceso en segundo plano que gestiona contenedores</li>
+                <li><strong>Docker Client:</strong> CLI para interactuar con el daemon</li>
+                <li><strong>Docker Images:</strong> Plantillas de solo lectura para crear contenedores</li>
+                <li><strong>Docker Containers:</strong> Instancias ejecutables de imágenes</li>
+                <li><strong>Docker Registry:</strong> Almacén de imágenes (Docker Hub, privados)</li>
+            </ul>
+            <div class="diagram-box">
+                <pre style="text-align: left; background: transparent; border: none;">
+Docker Client
+    ↓ (comandos)
+Docker Daemon
+    ↓ (crea/gestiona)
+Contenedores (desde Imágenes)
+                </pre>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Instalación de Docker</h2>
+            <h3>Windows:</h3>
+            <ol>
+                <li>Descargar Docker Desktop desde docker.com</li>
+                <li>Instalar (requiere WSL 2)</li>
+                <li>Reiniciar y verificar: <code>docker --version</code></li>
+            </ol>
+            <h3>Linux:</h3>
+            <pre><code># Ubuntu/Debian
+sudo apt update
+sudo apt install docker.io
+sudo systemctl start docker
+sudo systemctl enable docker</code></pre>
+            <h3>macOS:</h3>
+            <ol>
+                <li>Descargar Docker Desktop para Mac</li>
+                <li>Instalar y ejecutar</li>
+                <li>Verificar instalación</li>
+            </ol>
+            <div class="highlight-box">
+                <strong>Verificación:</strong> Ejecutar <code>docker run hello-world</code> para probar la instalación.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Comandos Básicos de Docker</h2>
+            <h3>Gestión de Imágenes:</h3>
+            <pre><code>docker pull nginx          # Descargar imagen
+docker images              # Listar imágenes
+docker rmi imagen          # Eliminar imagen
+docker build -t nombre .   # Construir imagen</code></pre>
+            <h3>Gestión de Contenedores:</h3>
+            <pre><code>docker run nginx           # Crear y ejecutar contenedor
+docker ps                  # Listar contenedores activos
+docker ps -a               # Listar todos los contenedores
+docker stop contenedor     # Detener contenedor
+docker start contenedor    # Iniciar contenedor
+docker rm contenedor       # Eliminar contenedor</code></pre>
+            <h3>Información:</h3>
+            <pre><code>docker logs contenedor     # Ver logs
+docker exec -it contenedor bash  # Entrar al contenedor</code></pre>
+        </section>
+
+        <section class="slide">
+            <h2>Dockerfile: Crear Imágenes Personalizadas</h2>
+            <h3>¿Qué es un Dockerfile?</h3>
+            <p>Un archivo de texto con instrucciones para construir una imagen Docker personalizada.</p>
+            <h3>Ejemplo Básico:</h3>
+            <pre><code># Dockerfile
+FROM ubuntu:20.04
+RUN apt-get update && apt-get install -y python3
+COPY app.py /app/
+WORKDIR /app
+CMD ["python3", "app.py"]</code></pre>
+            <h3>Instrucciones Comunes:</h3>
+            <ul>
+                <li><code>FROM</code>: Imagen base</li>
+                <li><code>RUN</code>: Ejecutar comandos durante build</li>
+                <li><code>COPY</code>: Copiar archivos al contenedor</li>
+                <li><code>WORKDIR</code>: Establecer directorio de trabajo</li>
+                <li><code>CMD</code>: Comando por defecto al ejecutar</li>
+                <li><code>EXPOSE</code>: Declarar puertos</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Ejemplo Práctico: Dockerfile para Aplicación Web</h2>
+            <pre><code># Dockerfile para aplicación Node.js
+FROM node:16-alpine
+
+# Crear directorio de trabajo
+WORKDIR /app
+
+# Copiar archivos de dependencias
+COPY package*.json ./
+
+# Instalar dependencias
+RUN npm install
+
+# Copiar código de la aplicación
+COPY . .
+
+# Exponer puerto
+EXPOSE 3000
+
+# Comando para iniciar la app
+CMD ["node", "index.js"]</code></pre>
+            <h3>Construir y Ejecutar:</h3>
+            <pre><code>docker build -t mi-app .
+docker run -p 3000:3000 mi-app</code></pre>
+            <div class="highlight-box">
+                <strong>Nota:</strong> El flag <code>-p 3000:3000</code> mapea el puerto del contenedor al puerto del host.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Docker Compose</h2>
+            <h3>¿Qué es Docker Compose?</h3>
+            <p>Herramienta para definir y ejecutar aplicaciones Docker multi-contenedor usando un archivo YAML.</p>
+            <h3>Ejemplo: docker-compose.yml</h3>
+            <pre><code>version: '3.8'
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+  database:
+    image: postgres:13
+    environment:
+      POSTGRES_PASSWORD: password
+  redis:
+    image: redis:alpine</code></pre>
+            <h3>Comandos:</h3>
+            <pre><code>docker-compose up        # Iniciar servicios
+docker-compose down      # Detener servicios
+docker-compose ps        # Ver servicios activos</code></pre>
+            <div class="highlight-box">
+                <strong>Ventaja:</strong> Define toda la aplicación (web, BD, cache) en un solo archivo.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Casos de Uso de Docker</h2>
+            <h3>1. Desarrollo:</h3>
+            <ul>
+                <li>Entornos de desarrollo consistentes</li>
+                <li>Fácil onboarding de nuevos desarrolladores</li>
+                <li>Aislamiento de dependencias</li>
+            </ul>
+            <h3>2. CI/CD:</h3>
+            <ul>
+                <li>Automatización de builds y tests</li>
+                <li>Entornos de prueba reproducibles</li>
+            </ul>
+            <h3>3. Microservicios:</h3>
+            <ul>
+                <li>Empaquetar cada servicio en contenedor</li>
+                <li>Despliegue independiente</li>
+                <li>Escalado granular</li>
+            </ul>
+            <h3>4. Aplicaciones Legacy:</h3>
+            <ul>
+                <li>Modernizar aplicaciones antiguas</li>
+                <li>Facilitar migración a la nube</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Ventajas y Desventajas de Docker</h2>
+            <h3>Ventajas:</h3>
+            <ul>
+                <li><strong>Portabilidad:</strong> Funciona igual en cualquier entorno</li>
+                <li><strong>Eficiencia:</strong> Menor uso de recursos que VMs</li>
+                <li><strong>Rapidez:</strong> Inicio en segundos</li>
+                <li><strong>Escalabilidad:</strong> Fácil crear múltiples instancias</li>
+                <li><strong>Versionado:</strong> Control de versiones de imágenes</li>
+            </ul>
+            <h3>Desventajas:</h3>
+            <ul>
+                <li><strong>Seguridad:</strong> Compartir kernel puede ser riesgo</li>
+                <li><strong>Complejidad:</strong> Curva de aprendizaje</li>
+                <li><strong>Persistencia:</strong> Datos volátiles por defecto</li>
+                <li><strong>Windows:</strong> Limitaciones en contenedores Windows</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Práctica Guiada #3: Crear Contenedor Docker</h2>
+                <h3>Objetivo:</h3>
+                <p>Crear y ejecutar un contenedor Docker básico.</p>
+                
+                <h3>Actividad Paso a Paso:</h3>
+                <ol>
+                    <li>Instalar Docker Desktop (si no está instalado)</li>
+                    <li>Verificar instalación: <code>docker --version</code></li>
+                    <li>Descargar imagen: <code>docker pull nginx</code></li>
+                    <li>Ejecutar contenedor: <code>docker run -d -p 8080:80 nginx</code></li>
+                    <li>Abrir navegador en localhost:8080</li>
+                    <li>Ver contenedores: <code>docker ps</code></li>
+                    <li>Ver logs: <code>docker logs [container-id]</code></li>
+                    <li>Detener contenedor: <code>docker stop [container-id]</code></li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Mini-Quiz</h2>
+            <div class="quiz-question">
+                <h3>Pregunta 1:</h3>
+                <p>¿Cuál es la principal diferencia entre contenedores y máquinas virtuales?</p>
+                <div class="quiz-answer">
+                    <strong>Respuesta:</strong> Los contenedores comparten el kernel del OS host y son más ligeros, mientras que las VMs incluyen un OS completo y son más pesadas.
+                </div>
+            </div>
+            <div class="quiz-question">
+                <h3>Pregunta 2:</h3>
+                <p>¿Qué comando usarías para construir una imagen desde un Dockerfile?</p>
+                <div class="quiz-answer">
+                    <strong>Respuesta:</strong> <code>docker build -t nombre-imagen .</code>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Resumen de la Unidad</h2>
+            <h3>Puntos Clave:</h3>
+            <ul>
+                <li>Contenedores: unidades ligeras y portátiles para aplicaciones</li>
+                <li>Docker: plataforma estándar para contenedores</li>
+                <li>Dockerfile: define cómo construir imágenes</li>
+                <li>Docker Compose: orquesta aplicaciones multi-contenedor</li>
+                <li>Ventajas: portabilidad, eficiencia, escalabilidad</li>
+                <li>Casos de uso: desarrollo, CI/CD, microservicios</li>
+            </ul>
+            <div class="highlight-box">
+                <h3>Conexión con la Siguiente Unidad:</h3>
+                <p>En la Unidad 4 exploraremos la virtualización en la nube, donde Docker y contenedores juegan un papel fundamental.</p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Tarea para Casa</h2>
+            <div class="practice-box">
+                <h3>Actividades:</h3>
+                <ol>
+                    <li><strong>Instalación (20 puntos):</strong> Instalar Docker Desktop y verificar funcionamiento.</li>
+                    <li><strong>Práctica (40 puntos):</strong> Crear un Dockerfile para una aplicación simple (puede ser un servidor web básico). Documentar el proceso.</li>
+                    <li><strong>Docker Compose (30 puntos):</strong> Crear un docker-compose.yml con al menos 2 servicios (ej: web + base de datos).</li>
+                    <li><strong>Reflexión (10 puntos):</strong> Escribir sobre ventajas de usar Docker en un proyecto real.</li>
+                </ol>
+                <h3>Entregables:</h3>
+                <p>Documento con capturas de pantalla, código de Dockerfile y docker-compose.yml, y reflexión.</p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Visita nuestra página de recursos para:</p>
+                <ul>
+                    <li>Documentación oficial de Docker</li>
+                    <li>Tutoriales interactivos</li>
+                    <li>Ejemplos de Dockerfiles</li>
+                    <li>Mejores prácticas</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_03_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">Ver Recursos Adicionales →</a>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+    <div class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">17</span></div>
+    <div style="position: fixed; bottom: 100px; right: 30px; z-index: 1000;">
+        <a href="Unidad_02.html" style="background: #64B5F6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-size: 0.9em; margin-right: 10px;">← Unidad 02</a>
+        <a href="Unidad_04.html" style="background: #64B5F6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-size: 0.9em;">Unidad 04 →</a>
+    </div>
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul id="indexList"></ul>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let notesVisible = false;
+        document.getElementById('total-slides').textContent = totalSlides;
+        function showSlide(n) { slides[currentSlide].classList.remove('active'); currentSlide = (n + totalSlides) % totalSlides; slides[currentSlide].classList.add('active'); updateCounter(); updateNavigation(); }
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function previousSlide() { showSlide(currentSlide - 1); }
+        function updateCounter() { document.getElementById('current-slide').textContent = currentSlide + 1; }
+        function updateNavigation() { const prevBtn = document.querySelector('.nav-btn:first-child'); const nextBtn = document.querySelector('.nav-btn:last-child'); prevBtn.disabled = currentSlide === 0; nextBtn.disabled = currentSlide === totalSlides - 1; }
+        function toggleIndex() { const panel = document.getElementById('indexPanel'); panel.classList.toggle('active'); if (panel.classList.contains('active')) { buildIndex(); } }
+        function buildIndex() { const indexList = document.getElementById('indexList'); indexList.innerHTML = ''; slides.forEach((slide, index) => { const title = slide.querySelector('h1, h2')?.textContent || `Diapositiva ${index + 1}`; const li = document.createElement('li'); const a = document.createElement('a'); a.href = '#'; a.textContent = title; a.onclick = (e) => { e.preventDefault(); showSlide(index); toggleIndex(); }; li.appendChild(a); indexList.appendChild(li); }); }
+        function toggleNotes() { notesVisible = !notesVisible; const notes = document.querySelectorAll('.notes'); notes.forEach(note => { if (notesVisible) { note.classList.add('visible'); } else { note.classList.remove('visible'); } }); }
+        document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); } else if (e.key === 'ArrowLeft') { e.preventDefault(); previousSlide(); } else if (e.key === 'PageDown') { e.preventDefault(); nextSlide(); } else if (e.key === 'PageUp') { e.preventDefault(); previousSlide(); } else if (e.key === 'n' || e.key === 'N') { toggleNotes(); } });
+        updateNavigation();
+        buildIndex();
+    </script>
+</body>
+</html>
+

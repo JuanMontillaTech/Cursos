@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad V - Integración continua</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 60px;
+            background: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide h1 {
+            font-size: 3.5em;
+            color: #667eea;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .slide h2 {
+            font-size: 2.5em;
+            color: #764ba2;
+            margin-bottom: 25px;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .slide h3 {
+            font-size: 2em;
+            color: #555;
+            margin: 20px 0 15px 0;
+        }
+
+        .slide p {
+            font-size: 1.4em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .slide ul, .slide ol {
+            font-size: 1.3em;
+            line-height: 2;
+            color: #333;
+            margin-left: 40px;
+            margin-bottom: 20px;
+        }
+
+        .slide li {
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 25px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .code-block code {
+            color: #f8f8f2;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(118, 75, 162, 0.5);
+        }
+
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            z-index: 1000;
+        }
+
+        .index-btn {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            padding: 12px 25px;
+            background: #764ba2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+        }
+
+        .index-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            padding: 60px;
+            overflow-y: auto;
+        }
+
+        .index-panel.active {
+            display: block;
+        }
+
+        .index-panel h2 {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .index-list {
+            list-style: none;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .index-list li {
+            margin: 15px 0;
+        }
+
+        .index-list a {
+            color: white;
+            font-size: 1.5em;
+            text-decoration: none;
+            display: block;
+            padding: 15px 20px;
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            transition: all 0.3s;
+            border-left: 4px solid #667eea;
+        }
+
+        .index-list a:hover {
+            background: rgba(102, 126, 234, 0.6);
+            transform: translateX(10px);
+        }
+
+        .close-index {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        .notes {
+            display: none;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #856404;
+        }
+
+        .notes.active {
+            display: block;
+        }
+
+        .title-slide {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .title-slide h1 {
+            color: white;
+            font-size: 4em;
+            margin-bottom: 30px;
+        }
+
+        .title-slide h2 {
+            color: white;
+            border: none;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .title-slide p {
+            font-size: 1.8em;
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            width: 100%;
+        }
+
+        .practice-box {
+            background: #e8f4f8;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .practice-box h3 {
+            color: #667eea;
+            margin-top: 0;
+        }
+
+        .quiz-question {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .quiz-option {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quiz-option:hover {
+            background: #e8f4f8;
+        }
+
+        .summary-list {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .ci-success {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .ci-error {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .ci-info {
+            background: #d1ecf1;
+            border-left: 5px solid #17a2b8;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px 20px;
+            }
+            .slide h1 {
+                font-size: 2em;
+            }
+            .slide h2 {
+                font-size: 1.8em;
+            }
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Portada -->
+        <section class="slide active title-slide">
+            <h1>Desarrollo Basado en Pruebas (TDD)</h1>
+            <h2>Unidad V: Integración continua</h2>
+            <aside class="notes">Bienvenidos a la quinta unidad. Hoy aprenderemos cómo integrar TDD con prácticas de integración continua.</aside>
+        </section>
+
+        <!-- Competencias y Resultados de Aprendizaje -->
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <div class="summary-list">
+                <h3>Competencia Específica CE13</h3>
+                <p>Especificar y ejecutar pruebas de calidad de los prototipos (diseño), simulaciones y los componentes de software desarrollados para garantizar su fidelidad y precisión en todos los niveles (Test units) y garantizando una asertiva aceptación de los usuarios (UCT).</p>
+                
+                <h3 style="margin-top: 30px;">Resultados de Aprendizaje</h3>
+                <ul>
+                    <li>Integrar TDD con prácticas de integración continua</li>
+                    <li>Automatizar pruebas y ejecución continua</li>
+                    <li>Comprender los beneficios de la integración continua</li>
+                    <li>Configurar pipelines de CI/CD con TDD</li>
+                    <li>Gestionar pruebas en entornos de integración continua</li>
+                </ul>
+            </div>
+            <aside class="notes">La integración continua es fundamental para proyectos modernos de software.</aside>
+        </section>
+
+        <!-- Agenda -->
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <div class="summary-list">
+                <ol>
+                    <li><strong>Integración de TDD con prácticas de integración continua</strong>
+                        <ul>
+                            <li>¿Qué es CI/CD?</li>
+                            <li>Cómo TDD se integra con CI/CD</li>
+                            <li>Flujo de trabajo con TDD y CI</li>
+                        </ul>
+                    </li>
+                    <li><strong>Automatización de pruebas y ejecución continua</strong>
+                        <ul>
+                            <li>Configuración de pipelines</li>
+                            <li>Ejecución automática de pruebas</li>
+                            <li>Reportes y notificaciones</li>
+                        </ul>
+                    </li>
+                    <li><strong>Beneficios de la integración continua en el desarrollo de software</strong>
+                        <ul>
+                            <li>Detección temprana de problemas</li>
+                            <li>Mejora en la calidad</li>
+                            <li>Reducción de riesgos</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+            <aside class="notes">Esta agenda cubre todos los aspectos de la integración continua con TDD.</aside>
+        </section>
+
+        <!-- ¿Qué es CI/CD? -->
+        <section class="slide">
+            <h2>¿Qué es CI/CD?</h2>
+            <div class="summary-list">
+                <h3>CI - Continuous Integration (Integración Continua):</h3>
+                <p>Práctica de desarrollo donde los desarrolladores integran código frecuentemente (varias veces al día) en un repositorio compartido. Cada integración es verificada automáticamente mediante pruebas automatizadas.</p>
+
+                <h3 style="margin-top: 30px;">CD - Continuous Deployment/Delivery:</h3>
+                <ul>
+                    <li><strong>Continuous Delivery:</strong> Código siempre listo para desplegarse a producción</li>
+                    <li><strong>Continuous Deployment:</strong> Despliegue automático a producción después de pasar pruebas</li>
+                </ul>
+
+                <h3 style="margin-top: 30px;">Pipeline CI/CD:</h3>
+                <p>Serie de pasos automatizados que ejecutan cuando se hace commit:</p>
+                <ol>
+                    <li>Build (compilar código)</li>
+                    <li>Test (ejecutar pruebas)</li>
+                    <li>Deploy (desplegar si todo pasa)</li>
+                </ol>
+            </div>
+            <aside class="notes">CI/CD es fundamental para desarrollo moderno de software.</aside>
+        </section>
+
+        <!-- TDD y CI/CD -->
+        <section class="slide">
+            <h2>TDD y CI/CD: Integración Perfecta</h2>
+            <div class="two-column">
+                <div>
+                    <div class="ci-success">
+                        <h3>✅ Cómo TDD se integra con CI/CD:</h3>
+                        <ul>
+                            <li><strong>Pruebas primero:</strong> TDD crea pruebas antes del código</li>
+                            <li><strong>CI ejecuta pruebas:</strong> Cada commit ejecuta todas las pruebas</li>
+                            <li><strong>Feedback inmediato:</strong> Si pruebas fallan, CI lo detecta</li>
+                            <li><strong>Confianza:</strong> Código siempre probado antes de integrar</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div class="ci-info">
+                        <h3>Flujo TDD + CI/CD:</h3>
+                        <ol>
+                            <li>Desarrollador escribe prueba (RED)</li>
+                            <li>Implementa código (GREEN)</li>
+                            <li>Refactoriza</li>
+                            <li>Hace commit</li>
+                            <li>CI ejecuta todas las pruebas</li>
+                            <li>Si pasa → merge/despliegue</li>
+                            <li>Si falla → notificación al desarrollador</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            <aside class="notes">TDD y CI/CD trabajan juntos perfectamente.</aside>
+        </section>
+
+        <!-- Beneficios de CI -->
+        <section class="slide">
+            <h2>Beneficios de la Integración Continua</h2>
+            <div class="summary-list">
+                <h3>1. Detección Temprana de Problemas</h3>
+                <p>Los bugs se detectan minutos después de introducirse, no días o semanas después.</p>
+
+                <h3 style="margin-top: 30px;">2. Reducción de Riesgos</h3>
+                <p>Integraciones pequeñas y frecuentes reducen el riesgo de conflictos grandes.</p>
+
+                <h3 style="margin-top: 30px;">3. Mejora en la Calidad</h3>
+                <p>El código siempre está probado y listo para producción.</p>
+
+                <h3 style="margin-top: 30px;">4. Feedback Rápido</h3>
+                <p>Los desarrolladores saben inmediatamente si su código funciona correctamente.</p>
+
+                <h3 style="margin-top: 30px;">5. Confianza en el Código</h3>
+                <p>Saber que todas las pruebas pasan da confianza para hacer cambios.</p>
+
+                <h3 style="margin-top: 30px;">6. Automatización</h3>
+                <p>Reduce trabajo manual y errores humanos.</p>
+            </div>
+            <aside class="notes">Los beneficios de CI son enormes para proyectos de software.</aside>
+        </section>
+
+        <!-- Herramientas CI/CD -->
+        <section class="slide">
+            <h2>Herramientas de CI/CD</h2>
+            <div class="summary-list">
+                <h3>Plataformas Populares:</h3>
+                <ul>
+                    <li><strong>GitHub Actions:</strong> Integrado con GitHub, fácil de usar</li>
+                    <li><strong>GitLab CI:</strong> Integrado con GitLab, muy completo</li>
+                    <li><strong>Jenkins:</strong> Open source, muy flexible y configurable</li>
+                    <li><strong>Azure DevOps:</strong> Microsoft, integrado con herramientas Azure</li>
+                    <li><strong>CircleCI:</strong> Cloud-based, fácil configuración</li>
+                    <li><strong>Travis CI:</strong> Popular para proyectos open source</li>
+                </ul>
+
+                <h3 style="margin-top: 30px;">Ejemplo: GitHub Actions</h3>
+                <div class="code-block" style="font-size: 0.95em;">
+<code># .github/workflows/test.yml
+name: Tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - run: npm install
+      - run: npm test
+      - run: npm run coverage</code>
+                </div>
+            </div>
+            <aside class="notes">Hay muchas herramientas disponibles, elijan la que mejor se adapte a su proyecto.</aside>
+        </section>
+
+        <!-- Pipeline básico -->
+        <section class="slide">
+            <h2>Pipeline CI/CD Básico con TDD</h2>
+            <div class="summary-list">
+                <h3>Pasos del Pipeline:</h3>
+                <ol>
+                    <li><strong>Checkout:</strong> Obtener código del repositorio</li>
+                    <li><strong>Setup:</strong> Instalar dependencias y herramientas</li>
+                    <li><strong>Build:</strong> Compilar el proyecto</li>
+                    <li><strong>Test:</strong> Ejecutar todas las pruebas (TDD)</li>
+                    <li><strong>Coverage:</strong> Generar reporte de cobertura</li>
+                    <li><strong>Lint:</strong> Verificar calidad de código</li>
+                    <li><strong>Deploy:</strong> Desplegar si todo pasa (opcional)</li>
+                </ol>
+
+                <h3 style="margin-top: 30px;">Ejemplo Completo:</h3>
+                <div class="code-block" style="font-size: 0.9em;">
+<code># .github/workflows/ci.yml
+name: CI Pipeline
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run tests
+        run: npm test
+      
+      - name: Generate coverage
+        run: npm run test:coverage
+      
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3</code>
+                </div>
+            </div>
+            <aside class="notes">Este es un pipeline básico que ejecuta pruebas en cada commit.</aside>
+        </section>
+
+        <!-- En la vida real -->
+        <section class="slide">
+            <h2>En la Vida Real: CI/CD con TDD</h2>
+            <div class="summary-list">
+                <h3>Escenario Real:</h3>
+                <p>Un equipo de 5 desarrolladores trabajando en una aplicación web. Cada desarrollador hace commits varias veces al día.</p>
+
+                <div class="two-column" style="margin-top: 30px;">
+                    <div class="ci-error">
+                        <h3>❌ Sin CI/CD:</h3>
+                        <ul>
+                            <li>Desarrollador A hace commit con bug</li>
+                            <li>Desarrollador B integra código 2 días después</li>
+                            <li>Bug descubierto durante integración manual</li>
+                            <li>Tiempo perdido: 4 horas buscando el problema</li>
+                            <li>Costo: $500 en tiempo de desarrollo</li>
+                        </ul>
+                    </div>
+                    <div class="ci-success">
+                        <h3>✅ Con CI/CD:</h3>
+                        <ul>
+                            <li>Desarrollador A hace commit con bug</li>
+                            <li>CI ejecuta pruebas automáticamente</li>
+                            <li>Bug detectado en 2 minutos</li>
+                            <li>Notificación inmediata al desarrollador</li>
+                            <li>Tiempo perdido: 5 minutos</li>
+                            <li>Costo: $10 en tiempo de desarrollo</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight" style="margin-top: 20px; padding: 15px;">
+                    <strong>Ahorro:</strong> 50x más rápido en detectar problemas, 50x más económico.
+                </div>
+            </div>
+            <aside class="notes">Este ejemplo muestra el valor real de CI/CD.</aside>
+        </section>
+
+        <!-- Configuración práctica -->
+        <section class="slide">
+            <h2>Configuración Práctica: GitHub Actions</h2>
+            <div class="practice-box">
+                <h3>Paso 1: Crear archivo de workflow</h3>
+                <p>Crear <code>.github/workflows/test.yml</code> en el repositorio:</p>
+                <div class="code-block" style="font-size: 0.95em;">
+<code>name: Test Suite
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x, 20.x]
+    
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm ci
+    - run: npm test
+    - run: npm run test:coverage</code>
+                </div>
+
+                <h3 style="margin-top: 30px;">Paso 2: Configurar package.json</h3>
+                <div class="code-block" style="font-size: 0.95em;">
+<code>{
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch"
+  }
+}</code>
+                </div>
+            </div>
+            <aside class="notes">Esta configuración ejecuta pruebas en cada push y pull request.</aside>
+        </section>
+
+        <!-- Badges y estado -->
+        <section class="slide">
+            <h2>Badges y Estado del Build</h2>
+            <div class="summary-list">
+                <h3>Badges de Estado:</h3>
+                <p>Los badges muestran el estado del build en el README del proyecto:</p>
+                <div class="code-block" style="font-size: 0.95em;">
+<code># README.md
+[![Tests](https://github.com/usuario/proyecto/workflows/Tests/badge.svg)](https://github.com/usuario/proyecto/actions)
+[![Coverage](https://codecov.io/gh/usuario/proyecto/branch/main/graph/badge.svg)](https://codecov.io/gh/usuario/proyecto)</code>
+                </div>
+
+                <h3 style="margin-top: 30px;">Estados del Build:</h3>
+                <ul>
+                    <li><strong>✅ Passing (Verde):</strong> Todas las pruebas pasan</li>
+                    <li><strong>❌ Failing (Rojo):</strong> Alguna prueba falla</li>
+                    <li><strong>🟡 Pending (Amarillo):</strong> Build en progreso</li>
+                    <li><strong>⚪ Not Run (Gris):</strong> Build no ejecutado</li>
+                </ul>
+
+                <h3 style="margin-top: 30px;">Beneficios:</h3>
+                <ul>
+                    <li>Visibilidad inmediata del estado del proyecto</li>
+                    <li>Confianza para contribuidores</li>
+                    <li>Identificación rápida de problemas</li>
+                </ul>
+            </div>
+            <aside class="notes">Los badges proporcionan visibilidad del estado del proyecto.</aside>
+        </section>
+
+        <!-- Pruebas en CI -->
+        <section class="slide">
+            <h2>Gestionar Pruebas en CI</h2>
+            <div class="summary-list">
+                <h3>Mejores Prácticas:</h3>
+                
+                <div class="ci-success" style="margin-top: 20px;">
+                    <h3>1. Pruebas Rápidas</h3>
+                    <p>Las pruebas deben ejecutarse rápidamente. Si tardan mucho, dividirlas en suites paralelas.</p>
+                </div>
+
+                <div class="ci-success">
+                    <h3>2. Pruebas Determinísticas</h3>
+                    <p>Las pruebas deben dar el mismo resultado siempre. Evitar dependencias de tiempo o estado aleatorio.</p>
+                </div>
+
+                <div class="ci-success">
+                    <h3>3. Aislar Pruebas</h3>
+                    <p>Cada prueba debe ser independiente y poder ejecutarse en cualquier orden.</p>
+                </div>
+
+                <div class="ci-success">
+                    <h3>4. Limpiar Después</h3>
+                    <p>Limpiar recursos después de cada prueba (archivos temporales, base de datos, etc.).</p>
+                </div>
+
+                <div class="ci-success">
+                    <h3>5. Reportes Claros</h3>
+                    <p>Generar reportes claros que muestren qué pruebas fallaron y por qué.</p>
+                </div>
+            </div>
+            <aside class="notes">Estas prácticas hacen que las pruebas funcionen bien en CI.</aside>
+        </section>
+
+        <!-- Errores comunes -->
+        <section class="slide">
+            <h2>Errores Comunes en CI/CD</h2>
+            <div class="summary-list">
+                <h3>1. Pruebas que Solo Funcionan Localmente</h3>
+                <p><strong>❌ Error:</strong> Pruebas que pasan en tu máquina pero fallan en CI.</p>
+                <p><strong>✅ Solución:</strong> Usar contenedores Docker o entornos consistentes.</p>
+
+                <h3 style="margin-top: 30px;">2. Dependencias Externas</h3>
+                <p><strong>❌ Error:</strong> Pruebas que dependen de servicios externos que pueden estar caídos.</p>
+                <p><strong>✅ Solución:</strong> Usar mocks o stubs para dependencias externas.</p>
+
+                <h3 style="margin-top: 30px;">3. Pruebas Lentas</h3>
+                <p><strong>❌ Error:</strong> Pipeline que tarda horas en ejecutarse.</p>
+                <p><strong>✅ Solución:</strong> Paralelizar pruebas, ejecutar solo pruebas relevantes.</p>
+
+                <h3 style="margin-top: 30px;">4. Ignorar Fallos</h3>
+                <p><strong>❌ Error:</strong> Permitir que el build pase aunque las pruebas fallen.</p>
+                <p><strong>✅ Solución:</strong> Hacer que el build falle si las pruebas fallan.</p>
+
+                <h3 style="margin-top: 30px;">5. No Limpiar Recursos</h3>
+                <p><strong>❌ Error:</strong> Dejar archivos temporales o procesos ejecutándose.</p>
+                <p><strong>✅ Solución:</strong> Siempre limpiar después de las pruebas.</p>
+            </div>
+            <aside class="notes">Estos errores son muy comunes. Estén atentos para evitarlos.</aside>
+        </section>
+
+        <!-- Buenas prácticas -->
+        <section class="slide">
+            <h2>Buenas Prácticas en CI/CD con TDD</h2>
+            <div class="summary-list">
+                <h3>1. Ejecutar Pruebas en Cada Commit</h3>
+                <p>Todos los commits deben ejecutar el pipeline completo de pruebas.</p>
+
+                <h3>2. Falla Rápida</h3>
+                <p>Si una prueba falla, el build debe fallar inmediatamente y notificar al desarrollador.</p>
+
+                <h3>3. Mantener Builds Rápidos</h3>
+                <p>Los builds deben completarse en menos de 10 minutos idealmente.</p>
+
+                <h3>4. Paralelizar Pruebas</h3>
+                <p>Ejecutar pruebas en paralelo para reducir tiempo total.</p>
+
+                <h3>5. Caché de Dependencias</h3>
+                <p>Usar caché para dependencias y builds anteriores.</p>
+
+                <h3>6. Notificaciones</h3>
+                <p>Notificar al desarrollador cuando el build falla o pasa.</p>
+
+                <h3>7. Ambientes Separados</h3>
+                <p>Usar ambientes separados para desarrollo, staging y producción.</p>
+            </div>
+            <aside class="notes">Estas prácticas hacen que CI/CD sea efectivo y útil.</aside>
+        </section>
+
+        <!-- Práctica Guiada 1 -->
+        <section class="slide">
+            <h2>Práctica Guiada #1: Configurar CI Básico</h2>
+            <div class="practice-box">
+                <h3>Objetivo:</h3>
+                <p>Configurar un pipeline CI básico que ejecute pruebas automáticamente.</p>
+
+                <h3>Tareas:</h3>
+                <ol>
+                    <li>Crear repositorio en GitHub (o GitLab)</li>
+                    <li>Crear archivo de workflow CI</li>
+                    <li>Configurar ejecución de pruebas</li>
+                    <li>Hacer commit y verificar que CI ejecuta</li>
+                    <li>Agregar badge de estado al README</li>
+                </ol>
+
+                <h3>Archivo a crear:</h3>
+                <p><code>.github/workflows/test.yml</code></p>
+
+                <h3>Resultado esperado:</h3>
+                <p>Al hacer push, CI debe ejecutar automáticamente las pruebas y mostrar el estado.</p>
+            </div>
+            <aside class="notes">Vamos paso a paso configurando CI básico.</aside>
+        </section>
+
+        <!-- Práctica Guiada 1 - Solución -->
+        <section class="slide">
+            <h2>Práctica Guiada #1: Solución</h2>
+            <div class="practice-box">
+                <h3>Archivo .github/workflows/test.yml:</h3>
+                <div class="code-block" style="font-size: 0.9em;">
+<code>name: Run Tests
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run tests
+        run: npm test
+      
+      - name: Generate coverage report
+        run: npm run test:coverage
+        continue-on-error: true</code>
+                </div>
+
+                <h3 style="margin-top: 30px;">README.md con badge:</h3>
+                <div class="code-block" style="font-size: 0.9em;">
+<code># Mi Proyecto
+
+[![Tests](https://github.com/usuario/proyecto/workflows/Run%20Tests/badge.svg)](https://github.com/usuario/proyecto/actions)
+
+## Instalación
+npm install
+
+## Pruebas
+npm test</code>
+                </div>
+
+                <h3 style="margin-top: 30px;">Verificación:</h3>
+                <ul>
+                    <li>✅ Hacer push al repositorio</li>
+                    <li>✅ Ir a la pestaña "Actions" en GitHub</li>
+                    <li>✅ Verificar que el workflow se ejecuta</li>
+                    <li>✅ Verificar que las pruebas pasan</li>
+                </ul>
+            </div>
+            <aside class="notes">Esta configuración básica ejecuta pruebas en cada push.</aside>
+        </section>
+
+        <!-- Práctica Guiada 2 -->
+        <section class="slide">
+            <h2>Práctica Guiada #2: Pipeline Avanzado</h2>
+            <div class="practice-box">
+                <h3>Objetivo:</h3>
+                <p>Configurar un pipeline avanzado con múltiples jobs y reportes.</p>
+
+                <h3>Requisitos:</h3>
+                <ul>
+                    <li>Ejecutar pruebas en múltiples versiones de Node.js</li>
+                    <li>Generar reporte de cobertura</li>
+                    <li>Ejecutar linter</li>
+                    <li>Subir reporte de cobertura a Codecov</li>
+                    <li>Notificar en Slack si falla (opcional)</li>
+                </ul>
+
+                <h3>Tarea:</h3>
+                <p>Crear un pipeline que incluya todos estos pasos y verificar que funciona correctamente.</p>
+            </div>
+            <aside class="notes">Practiquen configurando pipelines más avanzados.</aside>
+        </section>
+
+        <!-- Práctica Guiada 2 - Solución -->
+        <section class="slide">
+            <h2>Práctica Guiada #2: Solución</h2>
+            <div class="practice-box">
+                <h3>Pipeline avanzado:</h3>
+                <div class="code-block" style="font-size: 0.85em;">
+<code>name: CI Pipeline
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm ci
+      - run: npm run lint
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x, 20.x]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test
+      - run: npm run test:coverage
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  build:
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm ci
+      - run: npm run build</code>
+                </div>
+
+                <h3 style="margin-top: 30px;">Características:</h3>
+                <ul>
+                    <li>✅ Job de lint separado</li>
+                    <li>✅ Pruebas en múltiples versiones de Node.js</li>
+                    <li>✅ Reporte de cobertura subido a Codecov</li>
+                    <li>✅ Build solo si lint y test pasan</li>
+                    <li>✅ Paralelización de jobs</li>
+                </ul>
+            </div>
+            <aside class="notes">Este pipeline avanzado incluye múltiples jobs y reportes.</aside>
+        </section>
+
+        <!-- Práctica Evaluada -->
+        <section class="slide">
+            <h2>Práctica Evaluada</h2>
+            <div class="practice-box">
+                <h3>Enunciado:</h3>
+                <p>Configura un pipeline CI/CD completo para un proyecto existente aplicando todas las mejores prácticas:</p>
+                
+                <ol>
+                    <li>Configura CI/CD en un proyecto real</li>
+                    <li>Ejecuta pruebas automáticamente en cada commit</li>
+                    <li>Genera reportes de cobertura</li>
+                    <li>Configura notificaciones</li>
+                    <li>Agrega badges al README</li>
+                    <li>Documenta el proceso</li>
+                </ol>
+
+                <h3>Criterios de Evaluación:</h3>
+                <ul>
+                    <li><strong>Configuración (40%):</strong> Pipeline correctamente configurado, ejecuta pruebas automáticamente</li>
+                    <li><strong>Funcionalidad (30%):</strong> Pruebas ejecutan correctamente, reportes generados</li>
+                    <li><strong>Mejores Prácticas (20%):</strong> Uso de caché, paralelización, limpieza</li>
+                    <li><strong>Documentación (10%):</strong> README actualizado, proceso documentado</li>
+                </ul>
+
+                <h3>Rúbrica:</h3>
+                <ul>
+                    <li><strong>Excelente (90-100):</strong> Pipeline completo y funcional, todas las mejores prácticas aplicadas</li>
+                    <li><strong>Bueno (75-89):</strong> Pipeline funcional, mayoría de mejores prácticas aplicadas</li>
+                    <li><strong>Satisfactorio (60-74):</strong> Pipeline básico funcional</li>
+                    <li><strong>Necesita mejorar (<60):</strong> Pipeline incompleto o no funcional</li>
+                </ul>
+            </div>
+            <aside class="notes">Esta práctica evalúa el dominio completo de CI/CD con TDD.</aside>
+        </section>
+
+        <!-- Mini-Quiz -->
+        <section class="slide">
+            <h2>Mini-Quiz</h2>
+            <div class="quiz-question">
+                <h3>1. ¿Qué significa CI?</h3>
+                <div class="quiz-option">a) Continuous Integration</div>
+                <div class="quiz-option">b) Code Integration</div>
+                <div class="quiz-option">c) Continuous Improvement</div>
+                <div class="quiz-option">d) Code Inspection</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>2. ¿Cuándo debe ejecutarse el pipeline CI?</h3>
+                <div class="quiz-option">a) Solo al final del proyecto</div>
+                <div class="quiz-option">b) En cada commit o pull request</div>
+                <div class="quiz-option">c) Solo una vez al día</div>
+                <div class="quiz-option">d) Manualmente cuando se necesite</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>3. ¿Cuál es un beneficio principal de CI/CD?</h3>
+                <div class="quiz-option">a) Detección temprana de problemas</div>
+                <div class="quiz-option">b) Más trabajo manual</div>
+                <div class="quiz-option">c) Menos pruebas</div>
+                <div class="quiz-option">d) Código más complejo</div>
+            </div>
+        </section>
+
+        <!-- Mini-Quiz Continuación -->
+        <section class="slide">
+            <h2>Mini-Quiz (Continuación)</h2>
+            <div class="quiz-question">
+                <h3>4. ¿Qué herramienta es popular para CI/CD?</h3>
+                <div class="quiz-option">a) GitHub Actions</div>
+                <div class="quiz-option">b) Jenkins</div>
+                <div class="quiz-option">c) GitLab CI</div>
+                <div class="quiz-option">d) Todas las anteriores</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>5. Verdadero o Falso: TDD y CI/CD trabajan bien juntos.</h3>
+                <div class="quiz-option">Verdadero</div>
+                <div class="quiz-option">Falso</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>6. ¿Qué debe hacer el pipeline si las pruebas fallan?</h3>
+                <div class="quiz-option">a) Continuar de todas formas</div>
+                <div class="quiz-option">b) Fallar y notificar al desarrollador</div>
+                <div class="quiz-option">c) Ignorar los errores</div>
+                <div class="quiz-option">d) Ejecutar solo algunas pruebas</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>7. ¿Cuál es un error común en CI/CD?</h3>
+                <div class="quiz-option">a) Ejecutar pruebas en cada commit</div>
+                <div class="quiz-option">b) Pruebas que solo funcionan localmente</div>
+                <div class="quiz-option">c) Notificar cuando falla</div>
+                <div class="quiz-option">d) Usar caché de dependencias</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>8. ¿Qué muestra un badge de estado verde?</h3>
+                <div class="quiz-option">a) El build está fallando</div>
+                <div class="quiz-option">b) Todas las pruebas pasan</div>
+                <div class="quiz-option">c) El build no se ha ejecutado</div>
+                <div class="quiz-option">d) Hay errores de compilación</div>
+            </div>
+        </section>
+
+        <!-- Respuestas del Quiz -->
+        <section class="slide">
+            <h2>Respuestas del Mini-Quiz</h2>
+            <div class="summary-list">
+                <ol>
+                    <li><strong>a) Continuous Integration</strong> - Integración Continua</li>
+                    <li><strong>b) En cada commit o pull request</strong> - Ejecución automática frecuente</li>
+                    <li><strong>a) Detección temprana de problemas</strong> - Beneficio principal</li>
+                    <li><strong>d) Todas las anteriores</strong> - Todas son populares</li>
+                    <li><strong>Verdadero</strong> - TDD y CI/CD trabajan perfectamente juntos</li>
+                    <li><strong>b) Fallar y notificar al desarrollador</strong> - Feedback inmediato</li>
+                    <li><strong>b) Pruebas que solo funcionan localmente</strong> - Error común</li>
+                    <li><strong>b) Todas las pruebas pasan</strong> - Estado exitoso</li>
+                </ol>
+            </div>
+            <aside class="notes">Si tuvieron dudas, revisen esos conceptos antes de continuar.</aside>
+        </section>
+
+        <!-- Resumen -->
+        <section class="slide">
+            <h2>Resumen de la Unidad</h2>
+            <div class="summary-list">
+                <h3>Puntos Clave:</h3>
+                <ul>
+                    <li><strong>CI/CD</strong> automatiza la integración y despliegue de código</li>
+                    <li><strong>TDD y CI/CD</strong> trabajan perfectamente juntos</li>
+                    <li>Los <strong>pipelines</strong> ejecutan pruebas automáticamente en cada commit</li>
+                    <li>La <strong>detección temprana</strong> de problemas es el beneficio principal</li>
+                    <li>Hay muchas <strong>herramientas</strong> disponibles (GitHub Actions, Jenkins, GitLab CI)</li>
+                    <li>Las <strong>pruebas deben ser rápidas</strong> y determinísticas para CI</li>
+                    <li>Los <strong>badges</strong> proporcionan visibilidad del estado del proyecto</li>
+                    <li>Las <strong>mejores prácticas</strong> incluyen paralelización y caché</li>
+                </ul>
+            </div>
+            <aside class="notes">Este resumen cubre los conceptos fundamentales de CI/CD con TDD.</aside>
+        </section>
+
+        <!-- Tarea -->
+        <section class="slide">
+            <h2>Tarea para Casa</h2>
+            <div class="practice-box">
+                <h3>Actividad:</h3>
+                <p>Configura un pipeline CI/CD completo para un proyecto aplicando todas las técnicas aprendidas:</p>
+                
+                <ol>
+                    <li>Selecciona un proyecto existente o crea uno nuevo</li>
+                    <li>Configura CI/CD usando GitHub Actions, GitLab CI u otra herramienta</li>
+                    <li>Configura ejecución automática de pruebas</li>
+                    <li>Agrega generación de reportes de cobertura</li>
+                    <li>Configura notificaciones (email, Slack, etc.)</li>
+                    <li>Agrega badges al README</li>
+                    <li>Optimiza el pipeline (caché, paralelización)</li>
+                    <li>Documenta el proceso</li>
+                </ol>
+
+                <h3>Entregables:</h3>
+                <ul>
+                    <li>Archivo de configuración del pipeline (YAML)</li>
+                    <li>README actualizado con badges</li>
+                    <li>Capturas de pantalla del pipeline ejecutándose</li>
+                    <li>Documento explicando:
+                        <ul>
+                            <li>Herramienta elegida y por qué</li>
+                            <li>Configuración del pipeline</li>
+                            <li>Optimizaciones aplicadas</li>
+                            <li>Problemas encontrados y soluciones</li>
+                        </ul>
+                    </li>
+                    <li>URL del repositorio con CI/CD funcionando</li>
+                </ul>
+
+                <h3>Fecha de entrega:</h3>
+                <p>Una semana después de esta clase</p>
+            </div>
+            <aside class="notes">Esta tarea les permitirá practicar CI/CD en un proyecto real.</aside>
+        </section>
+
+        <!-- Recursos Adicionales -->
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Para ampliar tu conocimiento sobre esta unidad, visita nuestra página de recursos con:</p>
+                <ul>
+                    <li>Videos sobre CI/CD con TDD</li>
+                    <li>Configuración de pipelines</li>
+                    <li>Integración continua</li>
+                    <li>Herramientas de CI/CD</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_05_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">
+                        Ver Recursos Adicionales →
+                    </a>
+                </p>
+            </div>
+        </section>
+
+        <!-- Diapositiva Final -->
+        <section class="slide title-slide">
+            <h1>¡Gracias!</h1>
+            <h2>Unidad V: Integración continua</h2>
+            <p style="margin-top: 50px; font-size: 1.5em;">Próxima clase: Unidad VI - Técnicas avanzadas en TDD</p>
+            <p style="font-size: 1.2em; margin-top: 30px;">Preguntas y dudas</p>
+            <aside class="notes">Sigan practicando CI/CD hasta que sea natural en sus proyectos.</aside>
+        </section>
+    </div>
+
+    <!-- Controles -->
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">20</span>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul class="index-list" id="indexList"></ul>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        // Generar índice
+        const indexList = document.getElementById('indexList');
+        slides.forEach((slide, index) => {
+            const title = slide.querySelector('h1, h2');
+            if (title && !slide.classList.contains('title-slide')) {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = `${index + 1}. ${title.textContent}`;
+                a.onclick = (e) => {
+                    e.preventDefault();
+                    goToSlide(index);
+                    toggleIndex();
+                };
+                li.appendChild(a);
+                indexList.appendChild(li);
+            }
+        });
+
+        function showSlide(n) {
+            if (n >= totalSlides) n = 0;
+            if (n < 0) n = totalSlides - 1;
+            
+            slides[currentSlide].classList.remove('active');
+            currentSlide = n;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            // Actualizar botones
+            document.querySelector('.nav-btn:first-child').disabled = currentSlide === 0;
+            document.querySelector('.nav-btn:last-child').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function goToSlide(n) {
+            showSlide(n);
+        }
+
+        function toggleIndex() {
+            document.getElementById('indexPanel').classList.toggle('active');
+        }
+
+        // Navegación con teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            } else if (e.key === 'n' || e.key === 'N') {
+                e.preventDefault();
+                const notes = slides[currentSlide].querySelector('.notes');
+                if (notes) {
+                    notes.classList.toggle('active');
+                }
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                goToSlide(0);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                goToSlide(totalSlides - 1);
+            }
+        });
+
+        // Inicializar
+        showSlide(0);
+    </script>
+</body>
+</html>
+

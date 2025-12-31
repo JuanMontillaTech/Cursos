@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad VI - Técnicas avanzadas en TDD</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 60px;
+            background: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide h1 {
+            font-size: 3.5em;
+            color: #667eea;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .slide h2 {
+            font-size: 2.5em;
+            color: #764ba2;
+            margin-bottom: 25px;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .slide h3 {
+            font-size: 2em;
+            color: #555;
+            margin: 20px 0 15px 0;
+        }
+
+        .slide p {
+            font-size: 1.4em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .slide ul, .slide ol {
+            font-size: 1.3em;
+            line-height: 2;
+            color: #333;
+            margin-left: 40px;
+            margin-bottom: 20px;
+        }
+
+        .slide li {
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 25px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .code-block code {
+            color: #f8f8f2;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(118, 75, 162, 0.5);
+        }
+
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            z-index: 1000;
+        }
+
+        .index-btn {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            padding: 12px 25px;
+            background: #764ba2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+        }
+
+        .index-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            padding: 60px;
+            overflow-y: auto;
+        }
+
+        .index-panel.active {
+            display: block;
+        }
+
+        .index-panel h2 {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .index-list {
+            list-style: none;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .index-list li {
+            margin: 15px 0;
+        }
+
+        .index-list a {
+            color: white;
+            font-size: 1.5em;
+            text-decoration: none;
+            display: block;
+            padding: 15px 20px;
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            transition: all 0.3s;
+            border-left: 4px solid #667eea;
+        }
+
+        .index-list a:hover {
+            background: rgba(102, 126, 234, 0.6);
+            transform: translateX(10px);
+        }
+
+        .close-index {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        .notes {
+            display: none;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #856404;
+        }
+
+        .notes.active {
+            display: block;
+        }
+
+        .title-slide {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .title-slide h1 {
+            color: white;
+            font-size: 4em;
+            margin-bottom: 30px;
+        }
+
+        .title-slide h2 {
+            color: white;
+            border: none;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .title-slide p {
+            font-size: 1.8em;
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            width: 100%;
+        }
+
+        .practice-box {
+            background: #e8f4f8;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .practice-box h3 {
+            color: #667eea;
+            margin-top: 0;
+        }
+
+        .quiz-question {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .quiz-option {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quiz-option:hover {
+            background: #e8f4f8;
+        }
+
+        .summary-list {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .advanced-technique {
+            background: #d1ecf1;
+            border-left: 5px solid #17a2b8;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .mock-example {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px 20px;
+            }
+            .slide h1 {
+                font-size: 2em;
+            }
+            .slide h2 {
+                font-size: 1.8em;
+            }
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Portada -->
+        <section class="slide active title-slide">
+            <h1>Desarrollo Basado en Pruebas (TDD)</h1>
+            <h2>Unidad VI: Técnicas avanzadas en TDD</h2>
+            <aside class="notes">Bienvenidos a la última unidad. Hoy exploraremos técnicas avanzadas que llevan TDD al siguiente nivel.</aside>
+        </section>
+
+        <!-- Competencias y Resultados de Aprendizaje -->
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <div class="summary-list">
+                <h3>Competencia Específica CE13</h3>
+                <p>Especificar y ejecutar pruebas de calidad de los prototipos (diseño), simulaciones y los componentes de software desarrollados para garantizar su fidelidad y precisión en todos los niveles (Test units) y garantizando una asertiva aceptación de los usuarios (UCT).</p>
+                
+                <h3 style="margin-top: 30px;">Resultados de Aprendizaje</h3>
+                <ul>
+                    <li>Utilizar dobles de prueba (mocks, stubs) efectivamente</li>
+                    <li>Aplicar TDD orientado a objetos</li>
+                    <li>Implementar pruebas de regresión en TDD</li>
+                    <li>Dominar técnicas avanzadas de testing</li>
+                    <li>Resolver problemas complejos usando TDD avanzado</li>
+                </ul>
+            </div>
+            <aside class="notes">Las técnicas avanzadas permiten manejar casos complejos en TDD.</aside>
+        </section>
+
+        <!-- Agenda -->
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <div class="summary-list">
+                <ol>
+                    <li><strong>Utilización de dobles de prueba (mocks, stubs)</strong>
+                        <ul>
+                            <li>¿Qué son mocks y stubs?</li>
+                            <li>Cuándo usar cada uno</li>
+                            <li>Ejemplos prácticos</li>
+                        </ul>
+                    </li>
+                    <li><strong>TDD orientado a objetos</strong>
+                        <ul>
+                            <li>Pruebas de clases y objetos</li>
+                            <li>Herencia y polimorfismo</li>
+                            <li>Diseño orientado a pruebas</li>
+                        </ul>
+                    </li>
+                    <li><strong>Pruebas de regresión en TDD</strong>
+                        <ul>
+                            <li>¿Qué son pruebas de regresión?</li>
+                            <li>Cómo prevenir regresiones</li>
+                            <li>Mantenimiento de suites de regresión</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+            <aside class="notes">Esta agenda cubre técnicas avanzadas esenciales en TDD.</aside>
+        </section>
+
+        <!-- Dobles de prueba -->
+        <section class="slide">
+            <h2>Dobles de Prueba: Mocks y Stubs</h2>
+            <div class="summary-list">
+                <h3>¿Qué son los Dobles de Prueba?</h3>
+                <p>Objetos que reemplazan dependencias reales durante las pruebas para aislar el código que se está probando.</p>
+
+                <h3 style="margin-top: 30px;">Tipos de Dobles:</h3>
+                <ul>
+                    <li><strong>Stub:</strong> Proporciona respuestas predefinidas a llamadas</li>
+                    <li><strong>Mock:</strong> Verifica que se llamaron métodos específicos</li>
+                    <li><strong>Spy:</strong> Registra llamadas pero delega al objeto real</li>
+                    <li><strong>Fake:</strong> Implementación simplificada pero funcional</li>
+                </ul>
+
+                <h3 style="margin-top: 30px;">¿Por qué usar Dobles?</h3>
+                <ul>
+                    <li>Aislar código bajo prueba</li>
+                    <li>Evitar dependencias externas (BD, APIs, archivos)</li>
+                    <li>Hacer pruebas más rápidas</li>
+                    <li>Controlar comportamiento de dependencias</li>
+                </ul>
+            </div>
+            <aside class="notes">Los dobles de prueba son fundamentales para pruebas aisladas.</aside>
+        </section>
+
+        <!-- Stubs -->
+        <section class="slide">
+            <h2>Stubs: Respuestas Predefinidas</h2>
+            <div class="summary-list">
+                <h3>¿Qué es un Stub?</h3>
+                <p>Un <strong>stub</strong> es un objeto que proporciona respuestas predefinidas a las llamadas durante las pruebas. No verifica cómo se llama, solo devuelve valores.</p>
+
+                <h3 style="margin-top: 30px;">Ejemplo: Stub de Servicio de Email</h3>
+                <div class="code-block" style="font-size: 0.95em;">
+<code>// Servicio real (lento, requiere conexión)
+class EmailService {
+    enviarEmail(destinatario, mensaje) {
+        // Conexión real a servidor SMTP
+        // Tarda segundos
+    }
+}
+
+// Stub para pruebas
+class EmailServiceStub {
+    enviarEmail(destinatario, mensaje) {
+        // Respuesta inmediata, sin conexión real
+        return { exito: true, id: '12345' };
+    }
+}
+
+// Prueba usando stub
+test('debe enviar email de bienvenida', () => {
+    const emailStub = new EmailServiceStub();
+    const usuario = new Usuario(emailStub);
+    
+    usuario.registrar('juan@email.com');
+    
+    // Prueba rápida sin conexión real
+    expect(usuario.emailEnviado).toBe(true);
+});</code>
+                </div>
+            </div>
+            <aside class="notes">Los stubs proporcionan respuestas rápidas sin dependencias reales.</aside>
+        </section>
+
+        <!-- Mocks -->
+        <section class="slide">
+            <h2>Mocks: Verificación de Comportamiento</h2>
+            <div class="summary-list">
+                <h3>¿Qué es un Mock?</h3>
+                <p>Un <strong>mock</strong> es un objeto que verifica que se llamaron métodos específicos con parámetros específicos. Se enfoca en el comportamiento, no solo en el resultado.</p>
+
+                <h3 style="margin-top: 30px;">Ejemplo: Mock con Jest</h3>
+                <div class="code-block" style="font-size: 0.95em;">
+<code>// Código a probar
+class ProcesadorPagos {
+    constructor(servicioPago) {
+        this.servicioPago = servicioPago;
+    }
+    
+    procesar(monto) {
+        if (monto > 0) {
+            return this.servicioPago.cobrar(monto);
+        }
+        throw new Error('Monto inválido');
+    }
+}
+
+// Prueba con mock
+test('debe llamar servicioPago.cobrar con monto correcto', () => {
+    // Crear mock
+    const mockServicioPago = {
+        cobrar: jest.fn().mockReturnValue({ exito: true })
+    };
+    
+    const procesador = new ProcesadorPagos(mockServicioPago);
+    
+    // Act
+    procesador.procesar(100);
+    
+    // Assert: Verificar que se llamó el método
+    expect(mockServicioPago.cobrar).toHaveBeenCalled();
+    expect(mockServicioPago.cobrar).toHaveBeenCalledWith(100);
+    expect(mockServicioPago.cobrar).toHaveBeenCalledTimes(1);
+});</code>
+                </div>
+            </div>
+            <aside class="notes">Los mocks verifican comportamiento, no solo resultados.</aside>
+        </section>
+
+        <!-- Cuándo usar cada uno -->
+        <section class="slide">
+            <h2>Cuándo Usar Stubs vs Mocks</h2>
+            <div class="two-column">
+                <div>
+                    <div class="mock-example">
+                        <h3>✅ Usar Stub cuando:</h3>
+                        <ul>
+                            <li>Necesitas respuesta rápida</li>
+                            <li>No te importa cómo se llama</li>
+                            <li>Solo necesitas un valor de retorno</li>
+                            <li>Quieres simular dependencias lentas</li>
+                            <li>Ejemplo: Servicio de base de datos</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div class="advanced-technique">
+                        <h3>✅ Usar Mock cuando:</h3>
+                        <ul>
+                            <li>Necesitas verificar comportamiento</li>
+                            <li>Quieres asegurar que se llamó un método</li>
+                            <li>Necesitas verificar parámetros</li>
+                            <li>Quieres contar llamadas</li>
+                            <li>Ejemplo: Servicio de logging</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="warning-box" style="margin-top: 30px;">
+                <h3>⚠️ Regla de Oro:</h3>
+                <p><strong>"Usa el doble más simple que cumpla tu necesidad. Prefiere stubs sobre mocks cuando sea posible."</strong></p>
+            </div>
+            <aside class="notes">Elegir el doble correcto es importante para pruebas claras.</aside>
+        </section>
+
+        <!-- Ejemplo práctico -->
+        <section class="slide">
+            <h2>Ejemplo Práctico: Stub vs Mock</h2>
+            <div class="summary-list">
+                <h3>Escenario: Sistema de Notificaciones</h3>
+                <div class="code-block" style="font-size: 0.9em;">
+<code>// Código a probar
+class GestorNotificaciones {
+    constructor(servicioEmail, logger) {
+        this.servicioEmail = servicioEmail;
+        this.logger = logger;
+    }
+    
+    notificarUsuario(email, mensaje) {
+        this.logger.info(`Enviando notificación a ${email}`);
+        const resultado = this.servicioEmail.enviar(email, mensaje);
+        this.logger.info(`Notificación enviada: ${resultado.exito}`);
+        return resultado;
+    }
+}
+
+// Prueba usando Stub y Mock
+test('debe enviar email y registrar en log', () => {
+    // Stub: Solo necesitamos respuesta
+    const emailStub = {
+        enviar: jest.fn().mockReturnValue({ exito: true })
+    };
+    
+    // Mock: Necesitamos verificar que se llamó
+    const loggerMock = {
+        info: jest.fn()
+    };
+    
+    const gestor = new GestorNotificaciones(emailStub, loggerMock);
+    gestor.notificarUsuario('juan@email.com', 'Hola');
+    
+    // Verificar stub fue llamado
+    expect(emailStub.enviar).toHaveBeenCalledWith('juan@email.com', 'Hola');
+    
+    // Verificar mock fue llamado correctamente
+    expect(loggerMock.info).toHaveBeenCalledTimes(2);
+    expect(loggerMock.info).toHaveBeenCalledWith('Enviando notificación a juan@email.com');
+});</code>
+                </div>
+            </div>
+            <aside class="notes">Este ejemplo muestra cuándo usar cada tipo de doble.</aside>
+        </section>
+
+        <!-- TDD Orientado a Objetos -->
+        <section class="slide">
+            <h2>TDD Orientado a Objetos</h2>
+            <div class="summary-list">
+                <h3>Pruebas de Clases y Objetos:</h3>
+                <p>En TDD orientado a objetos, probamos el comportamiento de clases y objetos, no solo funciones.</p>
+
+                <h3 style="margin-top: 30px;">Ejemplo: Prueba de Clase</h3>
+                <div class="code-block" style="font-size: 0.95em;">
+<code>// Prueba primero (RED)
+describe('Calculadora', () => {
+    test('debe sumar dos números', () => {
+        const calc = new Calculadora();
+        expect(calc.sumar(2, 3)).toBe(5);
+    });
+    
+    test('debe mantener historial de operaciones', () => {
+        const calc = new Calculadora();
+        calc.sumar(2, 3);
+        expect(calc.historial).toHaveLength(1);
+        expect(calc.historial[0]).toEqual({ operacion: 'sumar', a: 2, b: 3, resultado: 5 });
+    });
+});
+
+// Implementación (GREEN)
+class Calculadora {
+    constructor() {
+        this.historial = [];
+    }
+    
+    sumar(a, b) {
+        const resultado = a + b;
+        this.historial.push({ operacion: 'sumar', a, b, resultado });
+        return resultado;
+    }
+}</code>
+                </div>
+            </div>
+            <aside class="notes">TDD orientado a objetos prueba comportamiento de objetos.</aside>
+        </section>
+
+        <!-- Herencia y Polimorfismo -->
+        <section class="slide">
+            <h2>Herencia y Polimorfismo en TDD</h2>
+            <div class="summary-list">
+                <h3>Pruebas de Herencia:</h3>
+                <div class="code-block" style="font-size: 0.95em;">
+<code>// Clase base
+class Animal {
+    hacerSonido() {
+        throw new Error('Método abstracto');
+    }
+}
+
+// Clase derivada
+class Perro extends Animal {
+    hacerSonido() {
+        return 'Guau';
+    }
+}
+
+// Pruebas
+describe('Perro', () => {
+    test('debe hacer sonido de perro', () => {
+        const perro = new Perro();
+        expect(perro.hacerSonido()).toBe('Guau');
+    });
+    
+    test('debe ser instancia de Animal', () => {
+        const perro = new Perro();
+        expect(perro).toBeInstanceOf(Animal);
+    });
+});
+
+// Prueba polimórfica
+describe('Polimorfismo', () => {
+    test('debe tratar diferentes animales polimórficamente', () => {
+        const animales = [
+            new Perro(),
+            new Gato(),
+            new Pajaro()
+        ];
+        
+        const sonidos = animales.map(a => a.hacerSonido());
+        expect(sonidos).toEqual(['Guau', 'Miau', 'Pío']);
+    });
+});</code>
+                </div>
+            </div>
+            <aside class="notes">TDD funciona bien con herencia y polimorfismo.</aside>
+        </section>
+
+        <!-- Pruebas de regresión -->
+        <section class="slide">
+            <h2>Pruebas de Regresión en TDD</h2>
+            <div class="summary-list">
+                <h3>¿Qué son las Pruebas de Regresión?</h3>
+                <p>Pruebas que verifican que funcionalidad existente sigue funcionando después de cambios en el código.</p>
+
+                <h3 style="margin-top: 30px;">Cómo TDD Previene Regresiones:</h3>
+                <ul>
+                    <li><strong>Suite completa:</strong> Todas las pruebas se ejecutan en cada cambio</li>
+                    <li><strong>Detección inmediata:</strong> Si algo se rompe, las pruebas fallan</li>
+                    <li><strong>Confianza:</strong> Saber que el código existente sigue funcionando</li>
+                    <li><strong>Documentación:</strong> Las pruebas documentan comportamiento esperado</li>
+                </ul>
+
+                <h3 style="margin-top: 30px;">Ejemplo de Regresión Detectada:</h3>
+                <div class="code-block" style="font-size: 0.9em;">
+<code>// Código original (funciona)
+function calcularDescuento(monto) {
+    if (monto > 100) {
+        return monto * 0.1;
+    }
+    return 0;
+}
+
+// Cambio introduce bug
+function calcularDescuento(monto) {
+    if (monto >= 100) {  // ← Cambio: ahora incluye 100
+        return monto * 0.1;
+    }
+    return 0;
+}
+
+// Prueba de regresión detecta el cambio
+test('debe retornar 0 para monto exactamente 100', () => {
+    expect(calcularDescuento(100)).toBe(0); // ← Falla después del cambio
+});</code>
+                </div>
+            </div>
+            <aside class="notes">Las pruebas de regresión son esenciales para mantener estabilidad.</aside>
+        </section>
+
+        <!-- Mantenimiento de suites -->
+        <section class="slide">
+            <h2>Mantenimiento de Suites de Regresión</h2>
+            <div class="summary-list">
+                <h3>Mejores Prácticas:</h3>
+                
+                <div class="advanced-technique" style="margin-top: 20px;">
+                    <h3>1. Ejecutar Todas las Pruebas Regularmente</h3>
+                    <p>No solo las pruebas nuevas. Ejecutar toda la suite en cada cambio.</p>
+                </div>
+
+                <div class="advanced-technique">
+                    <h3>2. Mantener Pruebas Actualizadas</h3>
+                    <p>Cuando cambia el comportamiento esperado, actualizar las pruebas correspondientes.</p>
+                </div>
+
+                <div class="advanced-technique">
+                    <h3>3. Organizar por Funcionalidad</h3>
+                    <p>Agrupar pruebas relacionadas para facilitar mantenimiento.</p>
+                </div>
+
+                <div class="advanced-technique">
+                    <h3>4. Pruebas Rápidas</h3>
+                    <p>Mantener pruebas rápidas para ejecutar suite completa frecuentemente.</p>
+                </div>
+
+                <div class="advanced-technique">
+                    <h3>5. Documentar Cambios</h3>
+                    <p>Cuando se actualiza una prueba, documentar por qué cambió el comportamiento.</p>
+                </div>
+            </div>
+            <aside class="notes">El mantenimiento adecuado mantiene las suites útiles.</aside>
+        </section>
+
+        <!-- En la vida real -->
+        <section class="slide">
+            <h2>En la Vida Real: Técnicas Avanzadas</h2>
+            <div class="summary-list">
+                <h3>Escenario Real:</h3>
+                <p>Un sistema de e-commerce necesita integrar con múltiples servicios externos (pagos, envíos, inventario).</p>
+
+                <div class="two-column" style="margin-top: 30px;">
+                    <div class="warning-box">
+                        <h3>❌ Sin técnicas avanzadas:</h3>
+                        <ul>
+                            <li>Pruebas dependen de servicios reales</li>
+                            <li>Pruebas lentas (segundos por prueba)</li>
+                            <li>Pruebas fallan si servicios están caídos</li>
+                            <li>Difícil probar casos edge</li>
+                            <li>Tiempo total: 30 minutos</li>
+                        </ul>
+                    </div>
+                    <div class="mock-example">
+                        <h3>✅ Con técnicas avanzadas:</h3>
+                        <ul>
+                            <li>Stubs para servicios externos</li>
+                            <li>Pruebas rápidas (milisegundos)</li>
+                            <li>Pruebas aisladas y confiables</li>
+                            <li>Fácil probar casos edge</li>
+                            <li>Tiempo total: 2 minutos</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight" style="margin-top: 20px; padding: 15px;">
+                    <strong>Resultado:</strong> 15x más rápido, pruebas más confiables, mejor cobertura de casos edge.
+                </div>
+            </div>
+            <aside class="notes">Este ejemplo muestra el valor real de técnicas avanzadas.</aside>
+        </section>
+
+        <!-- Errores comunes -->
+        <section class="slide">
+            <h2>Errores Comunes en Técnicas Avanzadas</h2>
+            <div class="summary-list">
+                <h3>1. Abusar de Mocks</h3>
+                <p><strong>❌ Error:</strong> Mockear todo, incluso objetos simples.</p>
+                <p><strong>✅ Correcto:</strong> Usar mocks solo cuando es necesario verificar comportamiento.</p>
+
+                <h3 style="margin-top: 30px;">2. Mocks Demasiado Específicos</h3>
+                <p><strong>❌ Error:</strong> Verificar cada detalle de implementación.</p>
+                <p><strong>✅ Correcto:</strong> Verificar comportamiento, no implementación.</p>
+
+                <h3 style="margin-top: 30px;">3. Ignorar Pruebas de Regresión</h3>
+                <p><strong>❌ Error:</strong> Solo ejecutar pruebas nuevas.</p>
+                <p><strong>✅ Correcto:</strong> Ejecutar toda la suite en cada cambio.</p>
+
+                <h3 style="margin-top: 30px;">4. Stubs que No Reflejan Realidad</h3>
+                <p><strong>❌ Error:</strong> Stubs que devuelven valores irreales.</p>
+                <p><strong>✅ Correcto:</strong> Stubs que simulan comportamiento realista.</p>
+
+                <h3 style="margin-top: 30px;">5. No Limpiar Mocks</h3>
+                <p><strong>❌ Error:</strong> Estado de mocks persiste entre pruebas.</p>
+                <p><strong>✅ Correcto:</strong> Limpiar/resetear mocks en beforeEach.</p>
+            </div>
+            <aside class="notes">Estos errores son muy comunes. Estén atentos para evitarlos.</aside>
+        </section>
+
+        <!-- Buenas prácticas -->
+        <section class="slide">
+            <h2>Buenas Prácticas en Técnicas Avanzadas</h2>
+            <div class="summary-list">
+                <h3>1. Usar el Doble Más Simple</h3>
+                <p>Preferir stubs sobre mocks cuando sea posible. Solo usar mocks cuando necesites verificar comportamiento.</p>
+
+                <h3>2. Aislar Dependencias</h3>
+                <p>Usar dobles para aislar código bajo prueba de dependencias externas.</p>
+
+                <h3>3. Mantener Pruebas Legibles</h3>
+                <p>Las pruebas deben ser fáciles de entender, incluso con mocks y stubs.</p>
+
+                <h3>4. Verificar Comportamiento, No Implementación</h3>
+                <p>Probar qué hace el código, no cómo lo hace internamente.</p>
+
+                <h3>5. Ejecutar Suite Completa</h3>
+                <p>Ejecutar todas las pruebas de regresión en cada cambio.</p>
+
+                <h3>6. Documentar Decisiones</h3>
+                <p>Documentar por qué se usa un mock o stub específico.</p>
+
+                <h3>7. Revisar y Refactorizar</h3>
+                <p>Revisar pruebas regularmente y refactorizar cuando sea necesario.</p>
+            </div>
+            <aside class="notes">Estas prácticas hacen que las técnicas avanzadas sean efectivas.</aside>
+        </section>
+
+        <!-- Práctica Guiada 1 -->
+        <section class="slide">
+            <h2>Práctica Guiada #1: Crear Stubs</h2>
+            <div class="practice-box">
+                <h3>Objetivo:</h3>
+                <p>Crear stubs para aislar código de dependencias externas.</p>
+
+                <h3>Código a probar:</h3>
+                <div class="code-block" style="font-size: 0.9em;">
+<code>class GestorUsuarios {
+    constructor(repositorioUsuarios) {
+        this.repositorio = repositorioUsuarios;
+    }
+    
+    obtenerUsuarioPorId(id) {
+        return this.repositorio.buscarPorId(id);
+    }
+}
+
+// Repositorio real (lento, requiere BD)
+class RepositorioUsuarios {
+    buscarPorId(id) {
+        // Consulta real a base de datos
+        // Tarda segundos
+    }
+}</code>
+                </div>
+
+                <h3>Tareas:</h3>
+                <ol>
+                    <li>Crear stub de RepositorioUsuarios</li>
+                    <li>Escribir prueba usando el stub</li>
+                    <li>Verificar que la prueba es rápida</li>
+                    <li>Probar diferentes casos (usuario existe, no existe)</li>
+                </ol>
+            </div>
+            <aside class="notes">Vamos paso a paso creando stubs.</aside>
+        </section>
+
+        <!-- Práctica Guiada 1 - Solución -->
+        <section class="slide">
+            <h2>Práctica Guiada #1: Solución</h2>
+            <div class="practice-box">
+                <h3>Stub y Pruebas:</h3>
+                <div class="code-block" style="font-size: 0.9em;">
+<code>// Stub del repositorio
+class RepositorioUsuariosStub {
+    constructor() {
+        this.usuarios = {
+            '1': { id: '1', nombre: 'Juan', email: 'juan@email.com' },
+            '2': { id: '2', nombre: 'María', email: 'maria@email.com' }
+        };
+    }
+    
+    buscarPorId(id) {
+        return this.usuarios[id] || null;
+    }
+}
+
+// Pruebas usando stub
+describe('GestorUsuarios', () => {
+    test('debe obtener usuario existente', () => {
+        const stubRepo = new RepositorioUsuariosStub();
+        const gestor = new GestorUsuarios(stubRepo);
+        
+        const usuario = gestor.obtenerUsuarioPorId('1');
+        
+        expect(usuario).toEqual({ id: '1', nombre: 'Juan', email: 'juan@email.com' });
+    });
+    
+    test('debe retornar null para usuario inexistente', () => {
+        const stubRepo = new RepositorioUsuariosStub();
+        const gestor = new GestorUsuarios(stubRepo);
+        
+        const usuario = gestor.obtenerUsuarioPorId('999');
+        
+        expect(usuario).toBeNull();
+    });
+});</code>
+                </div>
+
+                <h3>Ventajas del Stub:</h3>
+                <ul>
+                    <li>✅ Prueba rápida (milisegundos vs segundos)</li>
+                    <li>✅ No requiere base de datos</li>
+                    <li>✅ Control total sobre datos de prueba</li>
+                    <li>✅ Prueba aislada</li>
+                </ul>
+            </div>
+            <aside class="notes">Este stub hace las pruebas rápidas y aisladas.</aside>
+        </section>
+
+        <!-- Práctica Guiada 2 -->
+        <section class="slide">
+            <h2>Práctica Guiada #2: Usar Mocks</h2>
+            <div class="practice-box">
+                <h3>Objetivo:</h3>
+                <p>Usar mocks para verificar comportamiento de dependencias.</p>
+
+                <h3>Código a probar:</h3>
+                <div class="code-block" style="font-size: 0.9em;">
+<code>class ServicioNotificaciones {
+    constructor(logger, emailService) {
+        this.logger = logger;
+        this.emailService = emailService;
+    }
+    
+    enviarNotificacion(email, mensaje) {
+        this.logger.info(`Enviando a ${email}`);
+        const resultado = this.emailService.enviar(email, mensaje);
+        this.logger.info(`Resultado: ${resultado.exito}`);
+        return resultado;
+    }
+}</code>
+                </div>
+
+                <h3>Tarea:</h3>
+                <p>Escribir pruebas usando mocks para verificar que:</p>
+                <ol>
+                    <li>Se llama logger.info dos veces</li>
+                    <li>Se llama emailService.enviar con parámetros correctos</li>
+                    <li>Se registra el resultado correctamente</li>
+                </ol>
+            </div>
+            <aside class="notes">Practiquen usando mocks para verificar comportamiento.</aside>
+        </section>
+
+        <!-- Práctica Guiada 2 - Solución -->
+        <section class="slide">
+            <h2>Práctica Guiada #2: Solución</h2>
+            <div class="practice-box">
+                <h3>Pruebas con Mocks:</h3>
+                <div class="code-block" style="font-size: 0.9em;">
+<code>describe('ServicioNotificaciones', () => {
+    test('debe registrar y enviar email correctamente', () => {
+        // Crear mocks
+        const loggerMock = {
+            info: jest.fn()
+        };
+        
+        const emailServiceMock = {
+            enviar: jest.fn().mockReturnValue({ exito: true })
+        };
+        
+        const servicio = new ServicioNotificaciones(loggerMock, emailServiceMock);
+        
+        // Act
+        const resultado = servicio.enviarNotificacion('juan@email.com', 'Hola');
+        
+        // Assert: Verificar comportamiento
+        expect(loggerMock.info).toHaveBeenCalledTimes(2);
+        expect(loggerMock.info).toHaveBeenNthCalledWith(1, 'Enviando a juan@email.com');
+        expect(loggerMock.info).toHaveBeenNthCalledWith(2, 'Resultado: true');
+        
+        expect(emailServiceMock.enviar).toHaveBeenCalledTimes(1);
+        expect(emailServiceMock.enviar).toHaveBeenCalledWith('juan@email.com', 'Hola');
+        
+        expect(resultado).toEqual({ exito: true });
+    });
+});</code>
+                </div>
+
+                <h3>Verificaciones del Mock:</h3>
+                <ul>
+                    <li>✅ Verifica que logger.info se llamó 2 veces</li>
+                    <li>✅ Verifica parámetros específicos de cada llamada</li>
+                    <li>✅ Verifica que emailService.enviar se llamó correctamente</li>
+                    <li>✅ Verifica el resultado retornado</li>
+                </ul>
+            </div>
+            <aside class="notes">Este ejemplo muestra cómo usar mocks para verificar comportamiento.</aside>
+        </section>
+
+        <!-- Práctica Evaluada -->
+        <section class="slide">
+            <h2>Práctica Evaluada</h2>
+            <div class="practice-box">
+                <h3>Enunciado:</h3>
+                <p>Implementa pruebas avanzadas para un sistema complejo aplicando todas las técnicas aprendidas:</p>
+                
+                <ol>
+                    <li>Identifica dependencias externas en un módulo</li>
+                    <li>Crea stubs para servicios lentos o externos</li>
+                    <li>Usa mocks para verificar comportamiento</li>
+                    <li>Escribe pruebas de regresión</li>
+                    <li>Aplica TDD orientado a objetos</li>
+                    <li>Documenta decisiones de diseño</li>
+                </ol>
+
+                <h3>Criterios de Evaluación:</h3>
+                <ul>
+                    <li><strong>Uso de Dobles (40%):</strong> Stubs y mocks usados correctamente, justificación clara</li>
+                    <li><strong>TDD OOP (25%):</strong> Pruebas orientadas a objetos bien diseñadas</li>
+                    <li><strong>Regresión (20%):</strong> Pruebas de regresión implementadas</li>
+                    <li><strong>Calidad (15%):</strong> Pruebas mantenibles, legibles, bien organizadas</li>
+                </ul>
+
+                <h3>Rúbrica:</h3>
+                <ul>
+                    <li><strong>Excelente (90-100):</strong> Todas las técnicas aplicadas correctamente, diseño impecable</li>
+                    <li><strong>Bueno (75-89):</strong> Técnicas aplicadas correctamente, diseño claro</li>
+                    <li><strong>Satisfactorio (60-74):</strong> Algunas técnicas aplicadas, diseño funcional</li>
+                    <li><strong>Necesita mejorar (<60):</strong> Técnicas no aplicadas correctamente</li>
+                </ul>
+            </div>
+            <aside class="notes">Esta práctica evalúa el dominio completo de técnicas avanzadas.</aside>
+        </section>
+
+        <!-- Mini-Quiz -->
+        <section class="slide">
+            <h2>Mini-Quiz</h2>
+            <div class="quiz-question">
+                <h3>1. ¿Qué es un stub?</h3>
+                <div class="quiz-option">a) Un objeto que verifica comportamiento</div>
+                <div class="quiz-option">b) Un objeto que proporciona respuestas predefinidas</div>
+                <div class="quiz-option">c) Un objeto real</div>
+                <div class="quiz-option">d) Un tipo de prueba</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>2. ¿Cuál es la diferencia principal entre stub y mock?</h3>
+                <div class="quiz-option">a) No hay diferencia</div>
+                <div class="quiz-option">b) Stub proporciona respuestas, mock verifica comportamiento</div>
+                <div class="quiz-option">c) Stub es más rápido</div>
+                <div class="quiz-option">d) Mock es más simple</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>3. ¿Qué son las pruebas de regresión?</h3>
+                <div class="quiz-option">a) Pruebas nuevas</div>
+                <div class="quiz-option">b) Pruebas que verifican que funcionalidad existente sigue funcionando</div>
+                <div class="quiz-option">c) Pruebas rápidas</div>
+                <div class="quiz-option">d) Pruebas de integración</div>
+            </div>
+        </section>
+
+        <!-- Mini-Quiz Continuación -->
+        <section class="slide">
+            <h2>Mini-Quiz (Continuación)</h2>
+            <div class="quiz-question">
+                <h3>4. ¿Cuándo deberías usar un stub?</h3>
+                <div class="quiz-option">a) Cuando necesitas verificar comportamiento</div>
+                <div class="quiz-option">b) Cuando solo necesitas una respuesta rápida sin verificar cómo se llama</div>
+                <div class="quiz-option">c) Siempre</div>
+                <div class="quiz-option">d) Nunca</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>5. Verdadero o Falso: TDD funciona bien con programación orientada a objetos.</h3>
+                <div class="quiz-option">Verdadero</div>
+                <div class="quiz-option">Falso</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>6. ¿Qué verifica un mock?</h3>
+                <div class="quiz-option">a) Solo valores de retorno</div>
+                <div class="quiz-option">b) Comportamiento: qué métodos se llamaron y con qué parámetros</div>
+                <div class="quiz-option">c) Velocidad</div>
+                <div class="quiz-option">d) Cobertura</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>7. ¿Por qué usar dobles de prueba?</h3>
+                <div class="quiz-option">a) Para hacer pruebas más lentas</div>
+                <div class="quiz-option">b) Para aislar código y evitar dependencias externas</div>
+                <div class="quiz-option">c) Para complicar las pruebas</div>
+                <div class="quiz-option">d) Para evitar escribir pruebas</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>8. ¿Cuál es un error común con mocks?</h3>
+                <div class="quiz-option">a) Usarlos cuando son necesarios</div>
+                <div class="quiz-option">b) Verificar detalles de implementación en lugar de comportamiento</div>
+                <div class="quiz-option">c) Limpiarlos entre pruebas</div>
+                <div class="quiz-option">d) Documentar su uso</div>
+            </div>
+        </section>
+
+        <!-- Respuestas del Quiz -->
+        <section class="slide">
+            <h2>Respuestas del Mini-Quiz</h2>
+            <div class="summary-list">
+                <ol>
+                    <li><strong>b) Un objeto que proporciona respuestas predefinidas</strong> - Definición de stub</li>
+                    <li><strong>b) Stub proporciona respuestas, mock verifica comportamiento</strong> - Diferencia clave</li>
+                    <li><strong>b) Pruebas que verifican que funcionalidad existente sigue funcionando</strong> - Definición</li>
+                    <li><strong>b) Cuando solo necesitas una respuesta rápida sin verificar cómo se llama</strong> - Uso de stub</li>
+                    <li><strong>Verdadero</strong> - TDD funciona excelentemente con OOP</li>
+                    <li><strong>b) Comportamiento: qué métodos se llamaron y con qué parámetros</strong> - Verificación de mock</li>
+                    <li><strong>b) Para aislar código y evitar dependencias externas</strong> - Propósito principal</li>
+                    <li><strong>b) Verificar detalles de implementación en lugar de comportamiento</strong> - Error común</li>
+                </ol>
+            </div>
+            <aside class="notes">Si tuvieron dudas, revisen esos conceptos.</aside>
+        </section>
+
+        <!-- Resumen -->
+        <section class="slide">
+            <h2>Resumen de la Unidad</h2>
+            <div class="summary-list">
+                <h3>Puntos Clave:</h3>
+                <ul>
+                    <li>Los <strong>dobles de prueba</strong> (stubs, mocks) aíslan código de dependencias</li>
+                    <li><strong>Stubs</strong> proporcionan respuestas predefinidas</li>
+                    <li><strong>Mocks</strong> verifican comportamiento y llamadas</li>
+                    <li><strong>TDD orientado a objetos</strong> prueba comportamiento de clases y objetos</li>
+                    <li>Las <strong>pruebas de regresión</strong> previenen que cambios rompan funcionalidad existente</li>
+                    <li>Usar el <strong>doble más simple</strong> que cumpla la necesidad</li>
+                    <li>Verificar <strong>comportamiento, no implementación</strong></li>
+                    <li>Ejecutar <strong>suite completa</strong> de regresión en cada cambio</li>
+                </ul>
+            </div>
+            <aside class="notes">Este resumen cubre los conceptos fundamentales de técnicas avanzadas.</aside>
+        </section>
+
+        <!-- Tarea -->
+        <section class="slide">
+            <h2>Tarea para Casa</h2>
+            <div class="practice-box">
+                <h3>Actividad:</h3>
+                <p>Implementa técnicas avanzadas de TDD en un proyecto aplicando todas las técnicas aprendidas:</p>
+                
+                <ol>
+                    <li>Identifica dependencias externas en tu proyecto</li>
+                    <li>Crea stubs para servicios lentos o externos</li>
+                    <li>Usa mocks para verificar comportamiento crítico</li>
+                    <li>Escribe pruebas de regresión para funcionalidad existente</li>
+                    <li>Aplica TDD orientado a objetos donde sea apropiado</li>
+                    <li>Documenta decisiones de diseño</li>
+                    <li>Compara velocidad y confiabilidad antes/después</li>
+                </ol>
+
+                <h3>Entregables:</h3>
+                <ul>
+                    <li>Código de pruebas con stubs y mocks</li>
+                    <li>Pruebas de regresión implementadas</li>
+                    <li>Documento explicando:
+                        <ul>
+                            <li>Dependencias identificadas</li>
+                            <li>Decisión de usar stub vs mock</li>
+                            <li>Pruebas de regresión creadas</li>
+                            <li>Mejoras en velocidad y confiabilidad</li>
+                            <li>Lecciones aprendidas</li>
+                        </ul>
+                    </li>
+                    <li>Métricas antes/después (velocidad, cobertura)</li>
+                </ul>
+
+                <h3>Fecha de entrega:</h3>
+                <p>Una semana después de esta clase</p>
+            </div>
+            <aside class="notes">Esta tarea les permitirá practicar técnicas avanzadas en un proyecto real.</aside>
+        </section>
+
+        <!-- Recursos Adicionales -->
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Para ampliar tu conocimiento sobre esta unidad, visita nuestra página de recursos con:</p>
+                <ul>
+                    <li>Videos sobre mocks y stubs</li>
+                    <li>Frameworks de mocking</li>
+                    <li>Técnicas avanzadas de testing</li>
+                    <li>Refactoring con TDD</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_06_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">
+                        Ver Recursos Adicionales →
+                    </a>
+                </p>
+            </div>
+        </section>
+
+        <!-- Diapositiva Final -->
+        <section class="slide title-slide">
+            <h1>¡Gracias!</h1>
+            <h2>Unidad VI: Técnicas avanzadas en TDD</h2>
+            <p style="margin-top: 50px; font-size: 1.5em;">Fin del Curso</p>
+            <p style="font-size: 1.2em; margin-top: 30px;">Preguntas y dudas</p>
+            <p style="font-size: 1.1em; margin-top: 20px;">¡Éxito en sus proyectos con TDD!</p>
+            <aside class="notes">Han completado el curso completo de TDD. Sigan practicando estas técnicas.</aside>
+        </section>
+    </div>
+
+    <!-- Controles -->
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">21</span>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul class="index-list" id="indexList"></ul>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        // Generar índice
+        const indexList = document.getElementById('indexList');
+        slides.forEach((slide, index) => {
+            const title = slide.querySelector('h1, h2');
+            if (title && !slide.classList.contains('title-slide')) {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = `${index + 1}. ${title.textContent}`;
+                a.onclick = (e) => {
+                    e.preventDefault();
+                    goToSlide(index);
+                    toggleIndex();
+                };
+                li.appendChild(a);
+                indexList.appendChild(li);
+            }
+        });
+
+        function showSlide(n) {
+            if (n >= totalSlides) n = 0;
+            if (n < 0) n = totalSlides - 1;
+            
+            slides[currentSlide].classList.remove('active');
+            currentSlide = n;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            // Actualizar botones
+            document.querySelector('.nav-btn:first-child').disabled = currentSlide === 0;
+            document.querySelector('.nav-btn:last-child').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function goToSlide(n) {
+            showSlide(n);
+        }
+
+        function toggleIndex() {
+            document.getElementById('indexPanel').classList.toggle('active');
+        }
+
+        // Navegación con teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            } else if (e.key === 'n' || e.key === 'N') {
+                e.preventDefault();
+                const notes = slides[currentSlide].querySelector('.notes');
+                if (notes) {
+                    notes.classList.toggle('active');
+                }
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                goToSlide(0);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                goToSlide(totalSlides - 1);
+            }
+        });
+
+        // Inicializar
+        showSlide(0);
+    </script>
+</body>
+</html>
+

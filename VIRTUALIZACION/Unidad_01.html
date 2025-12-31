@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 01 - Introducción a la Virtualización de Aplicaciones</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1e1e1e;
+            color: #e0e0e0;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            display: none;
+            width: 90vw;
+            max-width: 1280px;
+            height: 72vh;
+            max-height: 720px;
+            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+            border-radius: 12px;
+            padding: 60px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        .slide h1 {
+            font-size: 3.5em;
+            color: #4CAF50;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .slide h2 {
+            font-size: 2.5em;
+            color: #64B5F6;
+            margin: 30px 0 20px 0;
+            border-bottom: 3px solid #64B5F6;
+            padding-bottom: 10px;
+        }
+
+        .slide h3 {
+            font-size: 1.8em;
+            color: #FFB74D;
+            margin: 25px 0 15px 0;
+        }
+
+        .slide p, .slide li {
+            font-size: 1.3em;
+            line-height: 1.8;
+            margin: 15px 0;
+        }
+
+        .slide ul, .slide ol {
+            margin-left: 40px;
+            margin-top: 15px;
+        }
+
+        .slide code {
+            background: #1a1a1a;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #CE9178;
+            font-size: 0.9em;
+        }
+
+        .slide pre {
+            background: #1a1a1a;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .slide pre code {
+            color: #D4D4D4;
+            font-size: 1.1em;
+            line-height: 1.6;
+            display: block;
+            background: none;
+            padding: 0;
+        }
+
+        .cover-slide {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .cover-slide h1 {
+            font-size: 4em;
+            margin-bottom: 40px;
+        }
+
+        .cover-slide .subtitle {
+            font-size: 2.5em;
+            color: #64B5F6;
+            margin: 20px 0;
+        }
+
+        .cover-slide .code {
+            font-size: 1.8em;
+            color: #FFB74D;
+            margin-top: 30px;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .nav-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
+        }
+
+        .nav-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            z-index: 1000;
+        }
+
+        .index-btn {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            background: #64B5F6;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        .index-btn:hover {
+            background: #42A5F5;
+            transform: translateY(-2px);
+        }
+
+        .index-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            padding: 60px;
+            overflow-y: auto;
+        }
+
+        .index-panel.active {
+            display: block;
+        }
+
+        .index-panel h2 {
+            color: #4CAF50;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .index-panel ul {
+            list-style: none;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .index-panel li {
+            margin: 15px 0;
+        }
+
+        .index-panel a {
+            color: #64B5F6;
+            text-decoration: none;
+            font-size: 1.4em;
+            display: block;
+            padding: 15px;
+            border-left: 4px solid #64B5F6;
+            transition: all 0.3s;
+        }
+
+        .index-panel a:hover {
+            background: rgba(100, 181, 246, 0.1);
+            padding-left: 25px;
+        }
+
+        .close-index {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 1.2em;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .notes {
+            display: none;
+            background: rgba(255, 193, 7, 0.2);
+            border-left: 4px solid #FFC107;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+
+        .notes.visible {
+            display: block;
+        }
+
+        .notes-title {
+            color: #FFC107;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .highlight-box {
+            background: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid #4CAF50;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .practice-box {
+            background: rgba(100, 181, 246, 0.1);
+            border: 2px solid #64B5F6;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .practice-box h3 {
+            color: #64B5F6;
+            margin-top: 0;
+        }
+
+        .quiz-question {
+            background: rgba(255, 183, 77, 0.1);
+            border-left: 4px solid #FFB74D;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .quiz-answer {
+            background: rgba(76, 175, 80, 0.2);
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .diagram-box {
+            background: rgba(156, 39, 176, 0.1);
+            border: 2px solid #9C27B0;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                width: 95vw;
+                height: 80vh;
+                padding: 30px;
+            }
+
+            .slide h1 {
+                font-size: 2em;
+            }
+
+            .slide h2 {
+                font-size: 1.5em;
+            }
+
+            .slide p, .slide li {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Portada -->
+        <section class="slide active cover-slide">
+            <h1>Virtualización de Aplicaciones</h1>
+            <div class="subtitle">Unidad 01: Introducción a la Virtualización de Aplicaciones</div>
+            <aside class="notes">
+                <div class="notes-title">Notas del Presentador:</div>
+                Bienvenidos al curso de Virtualización de Aplicaciones. Esta primera unidad establece los fundamentos conceptuales y el contexto histórico de la virtualización. Es crucial que los estudiantes comprendan por qué la virtualización es importante en el mundo actual.
+            </aside>
+        </section>
+
+        <!-- Competencias y Resultados de Aprendizaje -->
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <h3>Competencia Fundamental:</h3>
+            <p><strong>CF4:</strong> Aplicar de forma intensiva y crítica las tecnologías de la información y la comunicación en las actividades profesionales.</p>
+            
+            <h3>Resultados de Aprendizaje:</h3>
+            <ul>
+                <li>Comprender los conceptos fundamentales de virtualización</li>
+                <li>Identificar los diferentes tipos de virtualización</li>
+                <li>Reconocer las ventajas y desventajas de la virtualización</li>
+                <li>Analizar casos de uso reales de virtualización</li>
+                <li>Diferenciar entre virtualización de hardware, sistema operativo y aplicaciones</li>
+            </ul>
+            <aside class="notes">
+                <div class="notes-title">Notas del Presentador:</div>
+                Estos resultados están alineados con el programa académico. Asegúrate de que los estudiantes comprendan que la virtualización es una tecnología transversal que impacta múltiples áreas de TI.
+            </aside>
+        </section>
+
+        <!-- Agenda -->
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <ol style="font-size: 1.4em; line-height: 2;">
+                <li>¿Qué es la virtualización?</li>
+                <li>Historia y evolución de la virtualización</li>
+                <li>Tipos de virtualización</li>
+                <li>Virtualización de hardware</li>
+                <li>Virtualización de sistema operativo</li>
+                <li>Virtualización de aplicaciones</li>
+                <li>Ventajas y desventajas</li>
+                <li>Casos de uso en la industria</li>
+                <li>Práctica guiada</li>
+                <li>Resumen y evaluación</li>
+            </ol>
+            <aside class="notes">
+                <div class="notes-title">Notas del Presentador:</div>
+                Duración estimada: 4 horas. Distribución: Teoría (2h), Práctica (1.5h), Evaluación (0.5h). Ajustar según el ritmo de la clase.
+            </aside>
+        </section>
+
+        <!-- ¿Qué es la Virtualización? -->
+        <section class="slide">
+            <h2>¿Qué es la Virtualización?</h2>
+            <div class="highlight-box">
+                <p><strong>Definición:</strong> La virtualización es una tecnología que permite crear una versión virtual (en lugar de física) de un recurso informático, como un servidor, dispositivo de almacenamiento, red o sistema operativo.</p>
+            </div>
+            <h3>Conceptos Clave:</h3>
+            <ul>
+                <li><strong>Abstracción:</strong> Separar los recursos físicos de su representación lógica</li>
+                <li><strong>Particionamiento:</strong> Dividir un recurso físico en múltiples recursos virtuales</li>
+                <li><strong>Aislamiento:</strong> Cada instancia virtual opera independientemente</li>
+                <li><strong>Encapsulación:</strong> Los recursos virtuales se empaquetan como unidades independientes</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Analogía:</strong> Como un edificio de apartamentos: un edificio físico (hardware) que contiene múltiples unidades independientes (máquinas virtuales), cada una con su propia entrada, servicios y privacidad.
+            </div>
+        </section>
+
+        <!-- Historia de la Virtualización -->
+        <section class="slide">
+            <h2>Historia y Evolución de la Virtualización</h2>
+            <h3>Línea de Tiempo:</h3>
+            <ul>
+                <li><strong>1960s:</strong> IBM desarrolla CP/CMS, el primer sistema de virtualización</li>
+                <li><strong>1970s-1980s:</strong> Virtualización en mainframes IBM (VM/370)</li>
+                <li><strong>1990s:</strong> Virtualización cae en desuso con el auge de servidores x86</li>
+                <li><strong>1999:</strong> VMware lanza VMware Workstation para x86</li>
+                <li><strong>2001:</strong> VMware ESX Server para servidores</li>
+                <li><strong>2003:</strong> Microsoft entra con Virtual PC y Virtual Server</li>
+                <li><strong>2005:</strong> Xen se convierte en estándar de código abierto</li>
+                <li><strong>2006:</strong> Intel y AMD agregan soporte de hardware para virtualización</li>
+                <li><strong>2010s:</strong> Contenedores (Docker) y cloud computing</li>
+                <li><strong>2020s:</strong> Virtualización en edge computing y IoT</li>
+            </ul>
+        </section>
+
+        <!-- Tipos de Virtualización -->
+        <section class="slide">
+            <h2>Tipos de Virtualización</h2>
+            <h3>Clasificación Principal:</h3>
+            <ol>
+                <li><strong>Virtualización de Hardware (Server Virtualization)</strong>
+                    <ul>
+                        <li>Máquinas virtuales completas</li>
+                        <li>Hipervisores tipo 1 y tipo 2</li>
+                    </ul>
+                </li>
+                <li><strong>Virtualización de Sistema Operativo (OS Virtualization)</strong>
+                    <ul>
+                        <li>Contenedores</li>
+                        <li>Jails y Zones</li>
+                    </ul>
+                </li>
+                <li><strong>Virtualización de Aplicaciones (Application Virtualization)</strong>
+                    <ul>
+                        <li>Streaming de aplicaciones</li>
+                        <li>Sandboxing</li>
+                    </ul>
+                </li>
+                <li><strong>Virtualización de Red (Network Virtualization)</strong>
+                    <ul>
+                        <li>VLANs, VPNs</li>
+                        <li>SDN (Software Defined Networking)</li>
+                    </ul>
+                </li>
+                <li><strong>Virtualización de Almacenamiento (Storage Virtualization)</strong>
+                    <ul>
+                        <li>RAID, SAN, NAS virtualizados</li>
+                    </ul>
+                </li>
+            </ol>
+        </section>
+
+        <!-- Virtualización de Hardware -->
+        <section class="slide">
+            <h2>Virtualización de Hardware</h2>
+            <h3>Concepto:</h3>
+            <p>Permite ejecutar múltiples sistemas operativos completos (máquinas virtuales) en un solo servidor físico.</p>
+            
+            <h3>Componentes:</h3>
+            <ul>
+                <li><strong>Hipervisor (VMM - Virtual Machine Monitor):</strong> Software que crea y ejecuta máquinas virtuales</li>
+                <li><strong>Máquina Virtual (VM):</strong> Instancia virtualizada de un sistema operativo completo</li>
+                <li><strong>Host:</strong> Máquina física que ejecuta el hipervisor</li>
+                <li><strong>Guest:</strong> Sistema operativo que corre dentro de una VM</li>
+            </ul>
+
+            <div class="diagram-box">
+                <h3>Arquitectura:</h3>
+                <pre style="text-align: left; background: transparent; border: none;">
+Servidor Físico (Host)
+├── Hipervisor
+    ├── VM 1 (Guest OS + Apps)
+    ├── VM 2 (Guest OS + Apps)
+    └── VM 3 (Guest OS + Apps)
+                </pre>
+            </div>
+        </section>
+
+        <!-- Tipos de Hipervisores -->
+        <section class="slide">
+            <h2>Tipos de Hipervisores</h2>
+            <h3>Hipervisor Tipo 1 (Bare Metal):</h3>
+            <ul>
+                <li>Se ejecuta directamente sobre el hardware</li>
+                <li>No requiere sistema operativo host</li>
+                <li>Mayor rendimiento y eficiencia</li>
+                <li><strong>Ejemplos:</strong> VMware ESXi, Microsoft Hyper-V, Citrix XenServer, KVM</li>
+            </ul>
+
+            <h3>Hipervisor Tipo 2 (Hosted):</h3>
+            <ul>
+                <li>Se ejecuta sobre un sistema operativo host</li>
+                <li>Más fácil de instalar y configurar</li>
+                <li>Menor rendimiento (overhead del OS host)</li>
+                <li><strong>Ejemplos:</strong> VMware Workstation, VirtualBox, Parallels Desktop</li>
+            </ul>
+
+            <div class="highlight-box">
+                <strong>Uso:</strong> Tipo 1 para producción/servidores, Tipo 2 para desarrollo/pruebas/desktop.
+            </div>
+        </section>
+
+        <!-- Virtualización de Sistema Operativo -->
+        <section class="slide">
+            <h2>Virtualización de Sistema Operativo</h2>
+            <h3>Concepto:</h3>
+            <p>Permite ejecutar múltiples instancias aisladas (contenedores) que comparten el mismo kernel del sistema operativo host.</p>
+
+            <h3>Características:</h3>
+            <ul>
+                <li>Comparten el kernel del OS host</li>
+                <li>Menor overhead que VMs</li>
+                <li>Inicio más rápido</li>
+                <li>Menor consumo de recursos</li>
+                <li>Mejor densidad (más instancias por servidor)</li>
+            </ul>
+
+            <h3>Tecnologías:</h3>
+            <ul>
+                <li><strong>Docker:</strong> Contenedores de aplicaciones</li>
+                <li><strong>Kubernetes:</strong> Orquestación de contenedores</li>
+                <li><strong>LXC/LXD:</strong> Contenedores de sistema Linux</li>
+                <li><strong>FreeBSD Jails:</strong> Aislamiento en FreeBSD</li>
+                <li><strong>Solaris Zones:</strong> Contenedores en Solaris</li>
+            </ul>
+        </section>
+
+        <!-- Virtualización de Aplicaciones -->
+        <section class="slide">
+            <h2>Virtualización de Aplicaciones</h2>
+            <h3>Concepto:</h3>
+            <p>Permite ejecutar aplicaciones sin instalarlas directamente en el sistema operativo, encapsulándolas en un entorno virtual aislado.</p>
+
+            <h3>Características:</h3>
+            <ul>
+                <li>Las aplicaciones no modifican el sistema operativo</li>
+                <li>Eliminación de conflictos entre aplicaciones</li>
+                <li>Portabilidad entre diferentes sistemas</li>
+                <li>Streaming de aplicaciones desde servidor</li>
+                <li>Sandboxing para seguridad</li>
+            </ul>
+
+            <h3>Tecnologías:</h3>
+            <ul>
+                <li><strong>Microsoft App-V:</strong> Virtualización de aplicaciones Windows</li>
+                <li><strong>VMware ThinApp:</strong> Empaquetado de aplicaciones</li>
+                <li><strong>Citrix XenApp:</strong> Entrega de aplicaciones remotas</li>
+                <li><strong>Docker (aplicaciones):</strong> Contenedores de aplicaciones</li>
+                <li><strong>Snap/Flatpak:</strong> Empaquetado universal en Linux</li>
+            </ul>
+        </section>
+
+        <!-- Ventajas de la Virtualización -->
+        <section class="slide">
+            <h2>Ventajas de la Virtualización</h2>
+            <h3>Eficiencia y Optimización:</h3>
+            <ul>
+                <li><strong>Consolidación de servidores:</strong> Múltiples VMs en un solo servidor físico</li>
+                <li><strong>Mejor utilización de recursos:</strong> De 10-15% a 80-90% de utilización</li>
+                <li><strong>Reducción de costos:</strong> Menos hardware, menos espacio, menos energía</li>
+                <li><strong>Escalabilidad:</strong> Fácil agregar o quitar recursos</li>
+            </ul>
+
+            <h3>Flexibilidad y Agilidad:</h3>
+            <ul>
+                <li><strong>Provisioning rápido:</strong> Crear VMs en minutos vs. días</li>
+                <li><strong>Portabilidad:</strong> Mover VMs entre servidores fácilmente</li>
+                <li><strong>Snapshots:</strong> Puntos de restauración instantáneos</li>
+                <li><strong>Clonación:</strong> Crear copias idénticas rápidamente</li>
+            </ul>
+
+            <h3>Seguridad y Aislamiento:</h3>
+            <ul>
+                <li><strong>Aislamiento:</strong> Fallos en una VM no afectan otras</li>
+                <li><strong>Segregación:</strong> Separar entornos (dev, test, prod)</li>
+                <li><strong>Backup y recuperación:</strong> Más fácil y rápido</li>
+            </ul>
+        </section>
+
+        <!-- Desventajas y Consideraciones -->
+        <section class="slide">
+            <h2>Desventajas y Consideraciones</h2>
+            <h3>Desafíos Técnicos:</h3>
+            <ul>
+                <li><strong>Overhead de rendimiento:</strong> Pérdida del 5-10% de rendimiento</li>
+                <li><strong>Complejidad:</strong> Requiere conocimientos especializados</li>
+                <li><strong>Single Point of Failure:</strong> Si falla el host, todas las VMs se afectan</li>
+                <li><strong>Licenciamiento:</strong> Costos de licencias de software virtualizado</li>
+            </ul>
+
+            <h3>Consideraciones de Seguridad:</h3>
+            <ul>
+                <li><strong>Superficie de ataque ampliada:</strong> Más componentes que proteger</li>
+                <li><strong>VM Escape:</strong> Ataques que salen de la VM al host</li>
+                <li><strong>Gestión de parches:</strong> Parchear múltiples sistemas</li>
+            </ul>
+
+            <h3>Costos Ocultos:</h3>
+            <ul>
+                <li>Capacitación del personal</li>
+                <li>Herramientas de gestión</li>
+                <li>Monitoreo y mantenimiento</li>
+            </ul>
+
+            <div class="highlight-box">
+                <strong>Nota:</strong> A pesar de las desventajas, los beneficios generalmente superan los costos en la mayoría de escenarios empresariales.
+            </div>
+        </section>
+
+        <!-- Casos de Uso -->
+        <section class="slide">
+            <h2>Casos de Uso en la Industria</h2>
+            <h3>1. Consolidación de Servidores:</h3>
+            <p>Reducir el número de servidores físicos consolidando cargas de trabajo en VMs.</p>
+
+            <h3>2. Desarrollo y Pruebas:</h3>
+            <p>Crear entornos aislados para desarrollo, testing y staging sin hardware adicional.</p>
+
+            <h3>3. Disaster Recovery:</h3>
+            <p>Replicar VMs a sitios remotos para recuperación ante desastres.</p>
+
+            <h3>4. Desktop Virtualization (VDI):</h3>
+            <p>Entregar escritorios virtuales a usuarios remotos.</p>
+
+            <h3>5. Cloud Computing:</h3>
+            <p>Base tecnológica de servicios IaaS, PaaS y SaaS.</p>
+
+            <h3>6. Legacy System Support:</h3>
+            <p>Ejecutar sistemas antiguos en hardware moderno.</p>
+        </section>
+
+        <!-- Ejemplos Reales -->
+        <section class="slide">
+            <h2>Ejemplos Reales de Virtualización</h2>
+            <div class="highlight-box">
+                <h3>Amazon Web Services (AWS):</h3>
+                <p>Millones de instancias EC2 (VMs) ejecutándose en su infraestructura global.</p>
+            </div>
+
+            <div class="highlight-box">
+                <h3>Google Cloud Platform:</h3>
+                <p>Usa virtualización para sus servicios de Compute Engine y App Engine.</p>
+            </div>
+
+            <div class="highlight-box">
+                <h3>Microsoft Azure:</h3>
+                <p>Infraestructura completamente virtualizada con Hyper-V.</p>
+            </div>
+
+            <div class="highlight-box">
+                <h3>Netflix:</h3>
+                <p>Ejecuta su infraestructura en AWS usando miles de instancias virtuales.</p>
+            </div>
+
+            <div class="highlight-box">
+                <h3>Empresas Tradicionales:</h3>
+                <p>Bancos, hospitales y gobiernos usan virtualización para consolidar y optimizar sus centros de datos.</p>
+            </div>
+        </section>
+
+        <!-- Práctica Guiada -->
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Práctica Guiada #1: Explorar Virtualización</h2>
+                <h3>Objetivo:</h3>
+                <p>Familiarizarse con conceptos de virtualización mediante exploración de herramientas.</p>
+                
+                <h3>Actividad 1: Investigación</h3>
+                <ol>
+                    <li>Investigar tres proveedores de virtualización (VMware, Microsoft, Citrix)</li>
+                    <li>Comparar sus productos principales</li>
+                    <li>Identificar casos de uso para cada uno</li>
+                </ol>
+
+                <h3>Actividad 2: Análisis de Caso</h3>
+                <ol>
+                    <li>Seleccionar una empresa real que use virtualización</li>
+                    <li>Identificar qué tipo de virtualización implementan</li>
+                    <li>Analizar los beneficios obtenidos</li>
+                    <li>Presentar hallazgos en 5 minutos</li>
+                </ol>
+
+                <h3>Actividad 3: Demostración</h3>
+                <p>El instructor demostrará la creación de una VM usando VirtualBox o VMware Workstation.</p>
+            </div>
+        </section>
+
+        <!-- Mini-Quiz -->
+        <section class="slide">
+            <h2>Mini-Quiz</h2>
+            
+            <div class="quiz-question">
+                <h3>Pregunta 1:</h3>
+                <p>¿Cuál es la principal diferencia entre un hipervisor Tipo 1 y Tipo 2?</p>
+                <div class="quiz-answer">
+                    <strong>Respuesta:</strong> El Tipo 1 se ejecuta directamente sobre el hardware (bare metal), mientras que el Tipo 2 se ejecuta sobre un sistema operativo host.
+                </div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>Pregunta 2:</h3>
+                <p>¿Qué ventaja principal ofrece la virtualización de aplicaciones?</p>
+                <div class="quiz-answer">
+                    <strong>Respuesta:</strong> Permite ejecutar aplicaciones sin instalarlas directamente en el OS, evitando conflictos y facilitando la portabilidad.
+                </div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>Pregunta 3:</h3>
+                <p>Menciona tres ventajas de la virtualización.</p>
+                <div class="quiz-answer">
+                    <strong>Respuesta:</strong> Consolidación de servidores, mejor utilización de recursos, provisioning rápido, portabilidad, aislamiento, etc.
+                </div>
+            </div>
+        </section>
+
+        <!-- Resumen -->
+        <section class="slide">
+            <h2>Resumen de la Unidad</h2>
+            <h3>Puntos Clave Aprendidos:</h3>
+            <ul>
+                <li>La virtualización abstrae recursos físicos en recursos lógicos</li>
+                <li>Existen múltiples tipos: hardware, OS, aplicaciones, red, almacenamiento</li>
+                <li>Los hipervisores gestionan las máquinas virtuales</li>
+                <li>Ventajas: eficiencia, flexibilidad, seguridad, reducción de costos</li>
+                <li>Desventajas: overhead, complejidad, gestión de seguridad</li>
+                <li>Casos de uso: consolidación, desarrollo, cloud, disaster recovery</li>
+            </ul>
+
+            <div class="highlight-box">
+                <h3>Conexión con la Siguiente Unidad:</h3>
+                <p>En la Unidad 2 profundizaremos en las tecnologías específicas de virtualización de aplicaciones, incluyendo Microsoft App-V, VMware ThinApp y otras soluciones del mercado.</p>
+            </div>
+        </section>
+
+        <!-- Tarea para Casa -->
+        <section class="slide">
+            <h2>Tarea para Casa</h2>
+            <div class="practice-box">
+                <h3>Actividades a Realizar:</h3>
+                <ol>
+                    <li><strong>Investigación (40 puntos):</strong>
+                        <ul>
+                            <li>Investigar la historia completa de VMware desde 1998 hasta la actualidad</li>
+                            <li>Identificar los principales productos de su portafolio</li>
+                            <li>Crear un documento de 2-3 páginas con hallazgos</li>
+                        </ul>
+                    </li>
+                    <li><strong>Análisis Comparativo (40 puntos):</strong>
+                        <ul>
+                            <li>Comparar VMware vSphere vs. Microsoft Hyper-V</li>
+                            <li>Incluir: características, costos, casos de uso, ventajas/desventajas</li>
+                            <li>Formato: tabla comparativa</li>
+                        </ul>
+                    </li>
+                    <li><strong>Reflexión (20 puntos):</strong>
+                        <ul>
+                            <li>Escribir un párrafo sobre cómo la virtualización podría aplicarse en tu área de interés profesional</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <h3>Entregables:</h3>
+                <ul>
+                    <li>Documento Word/PDF con las tres actividades</li>
+                    <li>Formato: Arial 12, márgenes normales, portada con datos del estudiante</li>
+                </ul>
+
+                <h3>Fecha de Entrega:</h3>
+                <p>Una semana después de esta clase (fecha a definir por el instructor)</p>
+
+                <h3>Criterios de Evaluación:</h3>
+                <ul>
+                    <li>Profundidad de investigación (30%)</li>
+                    <li>Claridad y organización (30%)</li>
+                    <li>Análisis crítico (30%)</li>
+                    <li>Formato y presentación (10%)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Recursos Adicionales -->
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Para ampliar tu conocimiento sobre esta unidad, visita nuestra página de recursos con:</p>
+                <ul>
+                    <li>Documentación oficial de proveedores de virtualización</li>
+                    <li>Videos tutoriales sobre conceptos de virtualización</li>
+                    <li>Artículos técnicos y white papers</li>
+                    <li>Herramientas de virtualización gratuitas</li>
+                    <li>Casos de estudio de empresas</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_01_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">
+                        Ver Recursos Adicionales →
+                    </a>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">18</span>
+    </div>
+    <div style="position: fixed; bottom: 100px; right: 30px; z-index: 1000;">
+        <a href="Unidad_02.html" style="background: #64B5F6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-size: 0.9em;">Siguiente Unidad →</a>
+    </div>
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul id="indexList"></ul>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let notesVisible = false;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            updateCounter();
+            updateNavigation();
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function updateCounter() {
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.querySelector('.nav-btn:first-child');
+            const nextBtn = document.querySelector('.nav-btn:last-child');
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+        }
+
+        function toggleIndex() {
+            const panel = document.getElementById('indexPanel');
+            panel.classList.toggle('active');
+            if (panel.classList.contains('active')) {
+                buildIndex();
+            }
+        }
+
+        function buildIndex() {
+            const indexList = document.getElementById('indexList');
+            indexList.innerHTML = '';
+            slides.forEach((slide, index) => {
+                const title = slide.querySelector('h1, h2')?.textContent || `Diapositiva ${index + 1}`;
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = title;
+                a.onclick = (e) => {
+                    e.preventDefault();
+                    showSlide(index);
+                    toggleIndex();
+                };
+                li.appendChild(a);
+                indexList.appendChild(li);
+            });
+        }
+
+        function toggleNotes() {
+            notesVisible = !notesVisible;
+            const notes = document.querySelectorAll('.notes');
+            notes.forEach(note => {
+                if (notesVisible) {
+                    note.classList.add('visible');
+                } else {
+                    note.classList.remove('visible');
+                }
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            } else if (e.key === 'PageDown') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'PageUp') {
+                e.preventDefault();
+                previousSlide();
+            } else if (e.key === 'n' || e.key === 'N') {
+                toggleNotes();
+            }
+        });
+
+        updateNavigation();
+        buildIndex();
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 04 - Recursos Adicionales</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        h1 { font-size: 3em; color: #4CAF50; margin-bottom: 20px; text-align: center; }
+        h2 { font-size: 2.2em; color: #64B5F6; margin: 40px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        h3 { font-size: 1.6em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .back-link { display: inline-block; background: #64B5F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-bottom: 30px; transition: all 0.3s; }
+        .back-link:hover { background: #42A5F5; transform: translateY(-2px); }
+        .resource-section { background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 30px; margin: 25px 0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+        .resource-item { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 15px 0; border-radius: 8px; transition: all 0.3s; }
+        .resource-item:hover { background: rgba(76, 175, 80, 0.2); transform: translateX(5px); }
+        .resource-item a { color: #64B5F6; text-decoration: none; font-size: 1.2em; font-weight: bold; }
+        .resource-item a:hover { color: #42A5F5; text-decoration: underline; }
+        .resource-item p { margin-top: 10px; color: #b0b0b0; font-size: 1em; line-height: 1.6; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin: 20px 0; border-radius: 8px; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 8px; }
+        .badge { display: inline-block; background: #9C27B0; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; margin-left: 10px; }
+        .badge.video { background: #f44336; }
+        .badge.doc { background: #2196F3; }
+        .badge.tool { background: #FF9800; }
+        .badge.github { background: #333; }
+        ul { margin-left: 30px; margin-top: 15px; }
+        li { margin: 10px 0; font-size: 1.1em; line-height: 1.8; }
+        .highlight-box { background: rgba(255, 193, 7, 0.1); border-left: 4px solid #FFC107; padding: 20px; margin: 20px 0; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="Unidad_04.html" class="back-link">← Volver a Unidad 04</a>
+        
+        <h1>Recursos Adicionales - Unidad 04</h1>
+        <p style="text-align: center; font-size: 1.2em; color: #b0b0b0; margin-bottom: 40px;">
+            Data Binding y MVVM - Enlaces, videos y material complementario
+        </p>
+
+        <div class="resource-section">
+            <h2>📚 Documentación Oficial de Microsoft</h2>
+            
+            <div class="resource-item">
+                <a href="https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/" target="_blank">
+                    Data Binding en .NET MAUI <span class="badge doc">Oficial</span>
+                </a>
+                <p>Guía completa sobre data binding, incluyendo binding modes, converters, y mejores prácticas.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/binding-mode" target="_blank">
+                    Binding Modes <span class="badge doc">Tutorial</span>
+                </a>
+                <p>Explicación detallada de OneWay, TwoWay, OneTime y OneWayToSource.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/value-converters" target="_blank">
+                    Value Converters <span class="badge doc">Guía</span>
+                </a>
+                <p>Cómo crear y usar value converters para transformar datos durante el binding.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>🎥 Videos Educativos</h2>
+            
+            <div class="resource-item">
+                <a href="https://www.youtube.com/watch?v=9Yx6t7V5J0k" target="_blank">
+                    MVVM Pattern en .NET MAUI <span class="badge video">Video</span>
+                </a>
+                <p>Tutorial sobre cómo implementar el patrón MVVM en aplicaciones .NET MAUI.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.youtube.com/watch?v=YVqJ1JqJ7YI" target="_blank">
+                    Data Binding Tutorial <span class="badge video">Tutorial</span>
+                </a>
+                <p>Guía paso a paso sobre data binding y cómo conectarlo con ViewModels.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>📦 Ejemplos de Código</h2>
+            
+            <div class="resource-item">
+                <a href="https://github.com/dotnet/maui-samples/tree/main/Controls/DataBinding" target="_blank">
+                    Ejemplos de Data Binding <span class="badge github">GitHub</span>
+                </a>
+                <p>Ejemplos oficiales mostrando diferentes tipos de binding y converters.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://github.com/dotnet-architecture/eShopOnContainers" target="_blank">
+                    eShopOnContainers - MVVM Completo <span class="badge github">Ejemplo</span>
+                </a>
+                <p>Aplicación de ejemplo completa usando MVVM con ViewModels, Commands y binding.</p>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <h3>💡 Consejo de Estudio</h3>
+            <p>MVVM es fundamental en .NET MAUI: 1) Practica creando ViewModels con INotifyPropertyChanged, 2) Implementa Commands para acciones, 3) Crea value converters para formatear datos, 4) Usa ObservableCollection para listas. La separación de responsabilidades es clave para aplicaciones mantenibles.</p>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #333;">
+            <a href="Unidad_03_Recursos.html" class="back-link">← Recursos Unidad 03</a>
+            <a href="Unidad_04.html" class="back-link" style="margin-left: 20px;">← Volver a Unidad 04</a>
+            <a href="Unidad_05_Recursos.html" class="back-link" style="margin-left: 20px;">Siguiente: Recursos Unidad 05 →</a>
+        </div>
+    </div>
+</body>
+</html>
+

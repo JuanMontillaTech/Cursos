@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad II - Introducción a TDD</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 60px;
+            background: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide h1 {
+            font-size: 3.5em;
+            color: #667eea;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .slide h2 {
+            font-size: 2.5em;
+            color: #764ba2;
+            margin-bottom: 25px;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .slide h3 {
+            font-size: 2em;
+            color: #555;
+            margin: 20px 0 15px 0;
+        }
+
+        .slide p {
+            font-size: 1.4em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .slide ul, .slide ol {
+            font-size: 1.3em;
+            line-height: 2;
+            color: #333;
+            margin-left: 40px;
+            margin-bottom: 20px;
+        }
+
+        .slide li {
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 25px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .code-block code {
+            color: #f8f8f2;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(118, 75, 162, 0.5);
+        }
+
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            z-index: 1000;
+        }
+
+        .index-btn {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            padding: 12px 25px;
+            background: #764ba2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+        }
+
+        .index-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            padding: 60px;
+            overflow-y: auto;
+        }
+
+        .index-panel.active {
+            display: block;
+        }
+
+        .index-panel h2 {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .index-list {
+            list-style: none;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .index-list li {
+            margin: 15px 0;
+        }
+
+        .index-list a {
+            color: white;
+            font-size: 1.5em;
+            text-decoration: none;
+            display: block;
+            padding: 15px 20px;
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            transition: all 0.3s;
+            border-left: 4px solid #667eea;
+        }
+
+        .index-list a:hover {
+            background: rgba(102, 126, 234, 0.6);
+            transform: translateX(10px);
+        }
+
+        .close-index {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        .notes {
+            display: none;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #856404;
+        }
+
+        .notes.active {
+            display: block;
+        }
+
+        .title-slide {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .title-slide h1 {
+            color: white;
+            font-size: 4em;
+            margin-bottom: 30px;
+        }
+
+        .title-slide h2 {
+            color: white;
+            border: none;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .title-slide p {
+            font-size: 1.8em;
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            width: 100%;
+        }
+
+        .practice-box {
+            background: #e8f4f8;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .practice-box h3 {
+            color: #667eea;
+            margin-top: 0;
+        }
+
+        .quiz-question {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .quiz-option {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quiz-option:hover {
+            background: #e8f4f8;
+        }
+
+        .summary-list {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px 20px;
+            }
+            .slide h1 {
+                font-size: 2em;
+            }
+            .slide h2 {
+                font-size: 1.8em;
+            }
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Portada -->
+        <section class="slide active title-slide">
+            <h1>Desarrollo Basado en Pruebas (TDD)</h1>
+            <h2>Unidad III: Ciclo de desarrollo en TDD</h2>
+            <aside class="notes">Bienvenidos a la primera unidad del curso. Hoy comenzamos nuestro viaje en el mundo del Test-Driven Development.</aside>
+        </section>
+
+        <!-- Competencias y Resultados de Aprendizaje -->
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <div class="summary-list">
+                <h3>Competencia Específica CE13</h3>
+                <p>Especificar y ejecutar pruebas de calidad de los prototipos (diseño), simulaciones y los componentes de software desarrollados para garantizar su fidelidad y precisión en todos los niveles (Test units) y garantizando una asertiva aceptación de los usuarios (UCT).</p>
+                
+                <h3 style="margin-top: 30px;">Resultados de Aprendizaje</h3>
+                <ul>
+                    <li>Comprender los conceptos fundamentales de TDD y su importancia en el desarrollo de software</li>
+                    <li>Identificar los beneficios y ventajas de aplicar TDD en proyectos de software</li>
+                    <li>Comparar TDD con enfoques tradicionales de desarrollo</li>
+                    <li>Reconocer cuándo es apropiado utilizar TDD en un proyecto</li>
+                    <li>Entender el impacto de TDD en la calidad del código y la productividad del equipo</li>
+                </ul>
+            </div>
+            <aside class="notes">Estos resultados de aprendizaje guiarán toda la unidad. Asegúrense de entender cada uno.</aside>
+        </section>
+
+        <!-- Agenda -->
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <div class="summary-list">
+                <ol>
+                    <li><strong>Conceptos fundamentales de TDD</strong>
+                        <ul>
+                            <li>¿Qué es TDD?</li>
+                            <li>Historia y evolución</li>
+                            <li>Principios básicos</li>
+                        </ul>
+                    </li>
+                    <li><strong>Beneficios y ventajas de TDD</strong>
+                        <ul>
+                            <li>Mejora en la calidad del código</li>
+                            <li>Reducción de bugs</li>
+                            <li>Documentación viva</li>
+                            <li>Refactoring seguro</li>
+                        </ul>
+                    </li>
+                    <li><strong>Comparación con enfoques tradicionales</strong>
+                        <ul>
+                            <li>TDD vs Desarrollo tradicional</li>
+                            <li>Cuándo usar TDD</li>
+                            <li>Cuándo no usar TDD</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+            <aside class="notes">Esta agenda nos llevará aproximadamente 3 horas de clase.</aside>
+        </section>
+
+        <!-- Tema 1: Conceptos Fundamentales -->
+        <section class="slide">
+            <h2>¿Qué es TDD?</h2>
+            <p><strong>TDD (Test-Driven Development)</strong> o <strong>Desarrollo Guiado por Pruebas</strong> es una metodología de desarrollo de software que consiste en escribir primero las pruebas (tests) antes de escribir el código de producción.</p>
+            
+            <div class="highlight" style="margin: 30px 0; padding: 20px; font-size: 1.3em;">
+                <strong>Definición clave:</strong> TDD invierte el orden tradicional: primero escribes qué debe hacer el código (test), luego escribes el código que cumpla esa expectativa.
+            </div>
+
+            <h3>Los tres pilares de TDD:</h3>
+            <ol>
+                <li><strong>Red:</strong> Escribir una prueba que falle</li>
+                <li><strong>Green:</strong> Escribir el código mínimo para que pase</li>
+                <li><strong>Refactor:</strong> Mejorar el código sin cambiar su comportamiento</li>
+            </ol>
+            <aside class="notes">TDD no es solo testing, es un enfoque de diseño de software.</aside>
+        </section>
+
+        <!-- Historia de TDD -->
+        <section class="slide">
+            <h2>Historia y Evolución de TDD</h2>
+            <div class="two-column">
+                <div>
+                    <h3>Orígenes (1990s)</h3>
+                    <ul>
+                        <li>Kent Beck desarrolla la metodología</li>
+                        <li>Influenciado por Extreme Programming (XP)</li>
+                        <li>Primera publicación: "Test-Driven Development: By Example" (2003)</li>
+                    </ul>
+
+                    <h3>Evolución (2000s)</h3>
+                    <ul>
+                        <li>Adopción en comunidades ágiles</li>
+                        <li>Framework xUnit para múltiples lenguajes</li>
+                        <li>Integración con CI/CD</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Estado Actual</h3>
+                    <ul>
+                        <li>Estándar en desarrollo ágil</li>
+                        <li>Herramientas modernas (Jest, pytest, JUnit 5)</li>
+                        <li>Prácticas avanzadas (BDD, ATDD)</li>
+                    </ul>
+
+                    <h3>Figuras Clave</h3>
+                    <ul>
+                        <li><strong>Kent Beck:</strong> Creador de TDD</li>
+                        <li><strong>Martin Fowler:</strong> Refactoring y patrones</li>
+                        <li><strong>Robert C. Martin:</strong> Clean Code y TDD</li>
+                    </ul>
+                </div>
+            </div>
+            <aside class="notes">Entender la historia ayuda a comprender por qué TDD es tan importante hoy en día.</aside>
+        </section>
+
+        <!-- Principios Básicos -->
+        <section class="slide">
+            <h2>Principios Básicos de TDD</h2>
+            <div class="summary-list">
+                <h3>1. Las pruebas son código de primera clase</h3>
+                <p>Las pruebas deben mantenerse con el mismo cuidado que el código de producción.</p>
+
+                <h3>2. Escribe pruebas antes del código</h3>
+                <p>Esto fuerza a pensar en el diseño antes de implementar.</p>
+
+                <h3>3. Mantén las pruebas simples</h3>
+                <p>Una prueba debe verificar una sola cosa (principio de responsabilidad única).</p>
+
+                <h3>4. Refactoriza constantemente</h3>
+                <p>Después de hacer pasar la prueba, mejora el código sin cambiar su comportamiento.</p>
+
+                <h3>5. Mantén el ciclo rápido</h3>
+                <p>Red-Green-Refactor debe ser un ciclo de minutos, no horas.</p>
+            </div>
+            <aside class="notes">Estos principios guían todas las prácticas de TDD.</aside>
+        </section>
+
+        <!-- En la vida real: Conceptos -->
+        <section class="slide">
+            <h2>En la Vida Real: Conceptos Fundamentales</h2>
+            <div class="practice-box">
+                <h3>Escenario: Desarrollo de un sistema de facturación</h3>
+                <p><strong>Situación tradicional:</strong></p>
+                <ul>
+                    <li>Desarrollas la clase <code>Factura</code></li>
+                    <li>Implementas métodos: <code>calcularTotal()</code>, <code>aplicarDescuento()</code></li>
+                    <li>Al final, escribes pruebas para verificar que funciona</li>
+                    <li><strong>Problema:</strong> Si las pruebas fallan, ya tienes mucho código escrito que puede necesitar cambios grandes</li>
+                </ul>
+
+                <p style="margin-top: 20px;"><strong>Con TDD:</strong></p>
+                <ul>
+                    <li>Primero escribes: "La factura debe calcular el total sumando los items"</li>
+                    <li>Escribes la prueba que verifica esto</li>
+                    <li>Escribes el código mínimo para que pase</li>
+                    <li><strong>Ventaja:</strong> El código está diseñado desde el principio para ser testeable</li>
+                </ul>
+            </div>
+            <aside class="notes">Este ejemplo muestra la diferencia fundamental en el enfoque mental.</aside>
+        </section>
+
+        <!-- Ejemplo: Conceptos -->
+        <section class="slide">
+            <h2>Ejemplo: Primer Test en TDD</h2>
+            <p>Supongamos que necesitamos una calculadora simple:</p>
+            
+            <div class="code-block">
+<code>// Paso 1: RED - Escribir la prueba (falla porque no existe la clase)
+describe('Calculadora', () => {
+    test('debe sumar dos números correctamente', () => {
+        const calc = new Calculadora();
+        expect(calc.sumar(2, 3)).toBe(5);
+    });
+});
+
+// Paso 2: GREEN - Código mínimo para pasar
+class Calculadora {
+    sumar(a, b) {
+        return a + b;
+    }
+}
+
+// Paso 3: REFACTOR - Mejorar (si es necesario)
+// En este caso, el código ya es simple y claro</code>
+            </div>
+
+            <p style="margin-top: 20px;"><strong>Observaciones:</strong></p>
+            <ul>
+                <li>La prueba define el comportamiento esperado</li>
+                <li>El código es mínimo pero suficiente</li>
+                <li>No hay código innecesario</li>
+            </ul>
+            <aside class="notes">Este es el ciclo básico que repetiremos constantemente.</aside>
+        </section>
+
+        <!-- Tema 2: Beneficios -->
+        <section class="slide">
+            <h2>Beneficios y Ventajas de TDD</h2>
+            <div class="two-column">
+                <div>
+                    <h3>1. Mejora en la Calidad del Código</h3>
+                    <ul>
+                        <li>Código más limpio y mantenible</li>
+                        <li>Mejor diseño (alta cohesión, bajo acoplamiento)</li>
+                        <li>Menos código innecesario</li>
+                    </ul>
+
+                    <h3>2. Reducción de Bugs</h3>
+                    <ul>
+                        <li>Detección temprana de errores</li>
+                        <li>Pruebas como red de seguridad</li>
+                        <li>Menos regresiones</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>3. Documentación Viva</h3>
+                    <ul>
+                        <li>Las pruebas documentan el comportamiento</li>
+                        <li>Siempre actualizadas</li>
+                        <li>Ejemplos de uso del código</li>
+                    </ul>
+
+                    <h3>4. Refactoring Seguro</h3>
+                    <ul>
+                        <li>Confianza para mejorar código</li>
+                        <li>Detección inmediata de problemas</li>
+                        <li>Evolución continua del diseño</li>
+                    </ul>
+                </div>
+            </div>
+            <aside class="notes">Estos beneficios se acumulan con el tiempo. No son inmediatos.</aside>
+        </section>
+
+        <!-- Más beneficios -->
+        <section class="slide">
+            <h2>Más Beneficios de TDD</h2>
+            <div class="summary-list">
+                <h3>5. Mejor Diseño de Arquitectura</h3>
+                <p>TDD fuerza a pensar en interfaces y dependencias desde el inicio, resultando en mejor arquitectura.</p>
+
+                <h3>6. Mayor Confianza del Equipo</h3>
+                <p>Los desarrolladores tienen más confianza para hacer cambios sabiendo que las pruebas detectarán problemas.</p>
+
+                <h3>7. Desarrollo más Rápido a Largo Plazo</h3>
+                <p>Aunque inicialmente puede ser más lento, a largo plazo acelera el desarrollo al reducir tiempo en debugging.</p>
+
+                <h3>8. Mejor Colaboración</h3>
+                <p>Las pruebas sirven como contrato entre desarrolladores, facilitando la integración de código.</p>
+
+                <h3>9. Reducción de Deuda Técnica</h3>
+                <p>El código escrito con TDD tiende a tener menos deuda técnica acumulada.</p>
+            </div>
+            <aside class="notes">Estos beneficios son especialmente notables en proyectos de mediano y largo plazo.</aside>
+        </section>
+
+        <!-- En la vida real: Beneficios -->
+        <section class="slide">
+            <h2>En la Vida Real: Beneficios de TDD</h2>
+            <div class="practice-box">
+                <h3>Caso: Refactorización de un módulo crítico</h3>
+                <p><strong>Sin TDD:</strong></p>
+                <ul>
+                    <li>El módulo tiene 2000 líneas de código</li>
+                    <li>Nadie se atreve a refactorizarlo por miedo a romper algo</li>
+                    <li>Se acumulan parches y workarounds</li>
+                    <li>El código se vuelve cada vez más difícil de mantener</li>
+                </ul>
+
+                <p style="margin-top: 20px;"><strong>Con TDD:</strong></p>
+                <ul>
+                    <li>El módulo tiene pruebas que cubren todos los casos importantes</li>
+                    <li>Puedes refactorizar con confianza</li>
+                    <li>Si algo se rompe, las pruebas lo detectan inmediatamente</li>
+                    <li>El código mejora continuamente</li>
+                </ul>
+
+                <div class="highlight" style="margin-top: 20px; padding: 15px;">
+                    <strong>Resultado:</strong> Con TDD, el código mejora con el tiempo. Sin TDD, el código se degrada con el tiempo.
+                </div>
+            </div>
+            <aside class="notes">Este es uno de los beneficios más importantes pero menos obvios de TDD.</aside>
+        </section>
+
+        <!-- Tema 3: Comparación -->
+        <section class="slide">
+            <h2>TDD vs Desarrollo Tradicional</h2>
+            <div class="two-column">
+                <div>
+                    <h3>Desarrollo Tradicional</h3>
+                    <ol>
+                        <li>Escribir código</li>
+                        <li>Probar manualmente</li>
+                        <li>Encontrar bugs</li>
+                        <li>Corregir bugs</li>
+                        <li>Repetir</li>
+                    </ol>
+                    <p style="margin-top: 20px;"><strong>Problemas:</strong></p>
+                    <ul>
+                        <li>Bugs detectados tarde</li>
+                        <li>Código difícil de testear</li>
+                        <li>Miedo a refactorizar</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Desarrollo con TDD</h3>
+                    <ol>
+                        <li>Escribir prueba (RED)</li>
+                        <li>Escribir código mínimo (GREEN)</li>
+                        <li>Refactorizar (REFACTOR)</li>
+                        <li>Repetir</li>
+                    </ol>
+                    <p style="margin-top: 20px;"><strong>Ventajas:</strong></p>
+                    <ul>
+                        <li>Bugs detectados temprano</li>
+                        <li>Código testeable por diseño</li>
+                        <li>Refactoring seguro</li>
+                    </ul>
+                </div>
+            </div>
+            <aside class="notes">La diferencia clave está en el orden y la mentalidad.</aside>
+        </section>
+
+        <!-- Cuándo usar TDD -->
+        <section class="slide">
+            <h2>¿Cuándo Usar TDD?</h2>
+            <div class="summary-list">
+                <h3>✅ Ideal para TDD:</h3>
+                <ul>
+                    <li><strong>Lógica de negocio compleja:</strong> Cálculos, validaciones, algoritmos</li>
+                    <li><strong>APIs y servicios:</strong> Contratos claros, comportamiento definido</li>
+                    <li><strong>Código que cambiará frecuentemente:</strong> Necesitas seguridad para refactorizar</li>
+                    <li><strong>Proyectos de largo plazo:</strong> La inversión inicial se paga con el tiempo</li>
+                    <li><strong>Equipos colaborativos:</strong> Las pruebas facilitan la integración</li>
+                </ul>
+
+                <h3>❌ No ideal para TDD:</h3>
+                <ul>
+                    <li><strong>Prototipos rápidos:</strong> Necesitas validar ideas rápidamente</li>
+                    <li><strong>Interfaces de usuario:</strong> Difícil de testear automáticamente</li>
+                    <li><strong>Código legacy sin estructura:</strong> Primero necesitas refactorizar</li>
+                    <li><strong>Proyectos muy pequeños:</strong> El overhead puede no valer la pena</li>
+                </ul>
+            </div>
+            <aside class="notes">TDD es una herramienta poderosa, pero no siempre es la mejor opción.</aside>
+        </section>
+
+        <!-- Errores Comunes -->
+        <section class="slide">
+            <h2>Errores Comunes al Empezar con TDD</h2>
+            <div class="summary-list">
+                <h3>1. Escribir demasiadas pruebas a la vez</h3>
+                <p><strong>Error:</strong> Escribir 10 pruebas antes de implementar nada.</p>
+                <p><strong>Correcto:</strong> Una prueba, implementar, refactorizar, siguiente prueba.</p>
+
+                <h3>2. Pruebas demasiado complejas</h3>
+                <p><strong>Error:</strong> Una prueba que verifica 5 cosas diferentes.</p>
+                <p><strong>Correcto:</strong> Una prueba verifica un comportamiento específico.</p>
+
+                <h3>3. Saltarse el refactor</h3>
+                <p><strong>Error:</strong> Hacer pasar la prueba y seguir con la siguiente.</p>
+                <p><strong>Correcto:</strong> Siempre refactorizar después de hacer pasar la prueba.</p>
+
+                <h3>4. Pruebas que dependen unas de otras</h3>
+                <p><strong>Error:</strong> La prueba 2 depende del resultado de la prueba 1.</p>
+                <p><strong>Correcto:</strong> Cada prueba es independiente y puede ejecutarse sola.</p>
+            </div>
+            <aside class="notes">Estos errores son muy comunes. Estén atentos para evitarlos.</aside>
+        </section>
+
+        <!-- Buenas Prácticas -->
+        <section class="slide">
+            <h2>Buenas Prácticas en TDD</h2>
+            <div class="summary-list">
+                <h3>1. Nombres descriptivos para las pruebas</h3>
+                <div class="code-block">
+<code>// ❌ Mal
+test('test1', () => { ... });
+
+// ✅ Bien
+test('debe calcular el descuento del 10% cuando el total es mayor a 1000', () => { ... });</code>
+                </div>
+
+                <h3>2. Arrange-Act-Assert (AAA)</h3>
+                <div class="code-block">
+<code>test('ejemplo AAA', () => {
+    // Arrange: Preparar
+    const calculadora = new Calculadora();
+    
+    // Act: Ejecutar
+    const resultado = calculadora.sumar(2, 3);
+    
+    // Assert: Verificar
+    expect(resultado).toBe(5);
+});</code>
+                </div>
+
+                <h3>3. Una aserción por prueba (idealmente)</h3>
+                <p>Facilita identificar qué falló cuando la prueba no pasa.</p>
+
+                <h3>4. Mantén las pruebas rápidas</h3>
+                <p>Las pruebas deben ejecutarse en milisegundos, no segundos.</p>
+            </div>
+            <aside class="notes">Estas prácticas hacen que TDD sea más efectivo y mantenible.</aside>
+        </section>
+
+        <!-- Práctica Guiada 1 -->
+        <section class="slide">
+            <h2>Práctica Guiada #1: Calculadora Simple</h2>
+            <div class="practice-box">
+                <h3>Objetivo:</h3>
+                <p>Implementar una calculadora básica usando TDD que pueda sumar, restar, multiplicar y dividir.</p>
+
+                <h3>Paso 1: Configurar el entorno</h3>
+                <div class="code-block">
+<code>// Crear archivo calculadora.test.js
+// Instalar dependencias: npm install --save-dev jest</code>
+                </div>
+
+                <h3>Paso 2: Escribir primera prueba (RED)</h3>
+                <div class="code-block">
+<code>describe('Calculadora', () => {
+    test('debe sumar dos números positivos', () => {
+        const calc = new Calculadora();
+        expect(calc.sumar(5, 3)).toBe(8);
+    });
+});</code>
+                </div>
+
+                <h3>Paso 3: Ejecutar y verificar que falla</h3>
+                <p>Ejecuta: <code>npm test</code> - Debe fallar porque Calculadora no existe.</p>
+            </div>
+            <aside class="notes">Vamos paso a paso. No se apresuren.</aside>
+        </section>
+
+        <!-- Práctica Guiada 1 - Continuación -->
+        <section class="slide">
+            <h2>Práctica Guiada #1: Continuación</h2>
+            <div class="practice-box">
+                <h3>Paso 4: Implementar código mínimo (GREEN)</h3>
+                <div class="code-block">
+<code>// Crear archivo calculadora.js
+class Calculadora {
+    sumar(a, b) {
+        return a + b;
+    }
+}
+
+module.exports = Calculadora;</code>
+                </div>
+
+                <h3>Paso 5: Ejecutar prueba - Debe pasar</h3>
+                <p>Ejecuta: <code>npm test</code> - Ahora debe pasar ✅</p>
+
+                <h3>Paso 6: Agregar siguiente funcionalidad (restar)</h3>
+                <div class="code-block">
+<code>// Primero la prueba
+test('debe restar dos números', () => {
+    const calc = new Calculadora();
+    expect(calc.restar(10, 4)).toBe(6);
+});
+
+// Luego la implementación
+restar(a, b) {
+    return a - b;
+}</code>
+                </div>
+
+                <h3>Paso 7: Repetir para multiplicar y dividir</h3>
+                <p>Sigue el mismo patrón: RED → GREEN → REFACTOR</p>
+            </div>
+            <aside class="notes">Este es el ciclo básico. Repítanlo para cada nueva funcionalidad.</aside>
+        </section>
+
+        <!-- Práctica Guiada 2 -->
+        <section class="slide">
+            <h2>Práctica Guiada #2: Validador de Email</h2>
+            <div class="practice-box">
+                <h3>Objetivo:</h3>
+                <p>Crear un validador de emails usando TDD que verifique el formato correcto.</p>
+
+                <h3>Paso 1: Escribir pruebas primero</h3>
+                <div class="code-block">
+<code>describe('ValidadorEmail', () => {
+    test('debe aceptar un email válido', () => {
+        const validador = new ValidadorEmail();
+        expect(validador.esValido('usuario@dominio.com')).toBe(true);
+    });
+
+    test('debe rechazar un email sin @', () => {
+        const validador = new ValidadorEmail();
+        expect(validador.esValido('usuariodominio.com')).toBe(false);
+    });
+
+    test('debe rechazar un email sin dominio', () => {
+        const validador = new ValidadorEmail();
+        expect(validador.esValido('usuario@')).toBe(false);
+    });
+});</code>
+                </div>
+            </div>
+            <aside class="notes">Escriban todas las pruebas primero, luego implementen.</aside>
+        </section>
+
+        <!-- Práctica Guiada 2 - Continuación -->
+        <section class="slide">
+            <h2>Práctica Guiada #2: Solución</h2>
+            <div class="practice-box">
+                <h3>Implementación del ValidadorEmail</h3>
+                <div class="code-block">
+<code>class ValidadorEmail {
+    esValido(email) {
+        if (!email || typeof email !== 'string') {
+            return false;
+        }
+        
+        // Verificar que tenga @
+        if (!email.includes('@')) {
+            return false;
+        }
+        
+        const partes = email.split('@');
+        
+        // Debe tener exactamente dos partes
+        if (partes.length !== 2) {
+            return false;
+        }
+        
+        const [usuario, dominio] = partes;
+        
+        // Usuario y dominio no pueden estar vacíos
+        if (!usuario || !dominio) {
+            return false;
+        }
+        
+        // Dominio debe tener al menos un punto
+        if (!dominio.includes('.')) {
+            return false;
+        }
+        
+        return true;
+    }
+}</code>
+                </div>
+
+                <h3>Refactorización sugerida:</h3>
+                <p>Podrías usar expresiones regulares para hacer el código más conciso, pero mantén la legibilidad.</p>
+            </div>
+            <aside class="notes">Noten cómo las pruebas guiaron el diseño de la clase.</aside>
+        </section>
+
+        <!-- Práctica Evaluada -->
+        <section class="slide">
+            <h2>Práctica Evaluada</h2>
+            <div class="practice-box">
+                <h3>Enunciado:</h3>
+                <p>Implementa una clase <code>GestorInventario</code> usando TDD que gestione productos en un inventario. Debe cumplir con los siguientes requisitos:</p>
+                
+                <ol>
+                    <li>Agregar un producto con nombre, precio y cantidad</li>
+                    <li>Obtener un producto por nombre</li>
+                    <li>Actualizar la cantidad de un producto</li>
+                    <li>Eliminar un producto</li>
+                    <li>Calcular el valor total del inventario (suma de precio × cantidad de todos los productos)</li>
+                    <li>Validar que no se puedan agregar productos con precio negativo</li>
+                    <li>Validar que no se puedan agregar productos con cantidad negativa</li>
+                </ol>
+
+                <h3>Criterios de Evaluación:</h3>
+                <ul>
+                    <li><strong>Uso correcto de TDD (40%):</strong> Pruebas escritas antes del código, ciclo RED-GREEN-REFACTOR seguido</li>
+                    <li><strong>Calidad de las pruebas (30%):</strong> Nombres descriptivos, una aserción por prueba, cobertura completa</li>
+                    <li><strong>Calidad del código (20%):</strong> Código limpio, bien estructurado, sin código innecesario</li>
+                    <li><strong>Funcionalidad (10%):</strong> Todos los requisitos implementados correctamente</li>
+                </ul>
+
+                <h3>Rúbrica:</h3>
+                <ul>
+                    <li><strong>Excelente (90-100):</strong> TDD aplicado perfectamente, pruebas exhaustivas, código impecable</li>
+                    <li><strong>Bueno (75-89):</strong> TDD aplicado correctamente, pruebas adecuadas, código funcional</li>
+                    <li><strong>Satisfactorio (60-74):</strong> TDD aplicado parcialmente, algunas pruebas, código funciona</li>
+                    <li><strong>Necesita mejorar (<60):</strong> TDD no aplicado, pocas o ninguna prueba, código incompleto</li>
+                </ul>
+            </div>
+            <aside class="notes">Esta práctica evalúa la comprensión completa de TDD.</aside>
+        </section>
+
+        <!-- Mini-Quiz -->
+        <section class="slide">
+            <h2>Mini-Quiz</h2>
+            <div class="quiz-question">
+                <h3>1. ¿Qué significa TDD?</h3>
+                <div class="quiz-option">a) Test-Driven Development</div>
+                <div class="quiz-option">b) Test-Defined Development</div>
+                <div class="quiz-option">c) Test-Directed Development</div>
+                <div class="quiz-option">d) Test-Design Development</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>2. ¿Cuál es el orden correcto del ciclo TDD?</h3>
+                <div class="quiz-option">a) Green → Red → Refactor</div>
+                <div class="quiz-option">b) Red → Green → Refactor</div>
+                <div class="quiz-option">c) Refactor → Red → Green</div>
+                <div class="quiz-option">d) Green → Refactor → Red</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>3. ¿Cuál es el principal beneficio de TDD?</h3>
+                <div class="quiz-option">a) Escribir código más rápido</div>
+                <div class="quiz-option">b) Mejor calidad del código y menos bugs</div>
+                <div class="quiz-option">c) Menos código en general</div>
+                <div class="quiz-option">d) No necesita documentación</div>
+            </div>
+        </section>
+
+        <!-- Mini-Quiz Continuación -->
+        <section class="slide">
+            <h2>Mini-Quiz (Continuación)</h2>
+            <div class="quiz-question">
+                <h3>4. ¿Cuándo NO es recomendable usar TDD?</h3>
+                <div class="quiz-option">a) En proyectos grandes</div>
+                <div class="quiz-option">b) En prototipos rápidos</div>
+                <div class="quiz-option">c) En código legacy</div>
+                <div class="quiz-option">d) b y c</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>5. ¿Qué significa "Red" en el ciclo TDD?</h3>
+                <div class="quiz-option">a) Escribir código que funciona</div>
+                <div class="quiz-option">b) Escribir una prueba que falla</div>
+                <div class="quiz-option">c) Refactorizar el código</div>
+                <div class="quiz-option">d) Eliminar código rojo</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>6. Verdadero o Falso: TDD es solo escribir pruebas.</h3>
+                <div class="quiz-option">Verdadero</div>
+                <div class="quiz-option">Falso - TDD es un enfoque de diseño</div>
+            </div>
+        </section>
+
+        <!-- Mini-Quiz Continuación 2 -->
+        <section class="slide">
+            <h2>Mini-Quiz (Continuación)</h2>
+            <div class="quiz-question">
+                <h3>7. ¿Cuál es una buena práctica en TDD?</h3>
+                <div class="quiz-option">a) Escribir todas las pruebas antes de implementar</div>
+                <div class="quiz-option">b) Una prueba por vez, implementar, refactorizar</div>
+                <div class="quiz-option">c) Escribir código primero y luego pruebas</div>
+                <div class="quiz-option">d) Solo escribir pruebas para código complejo</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>8. ¿Qué patrón se recomienda para estructurar pruebas?</h3>
+                <div class="quiz-option">a) AAA (Arrange-Act-Assert)</div>
+                <div class="quiz-option">b) BDD (Behavior-Driven Development)</div>
+                <div class="quiz-option">c) DDD (Domain-Driven Design)</div>
+                <div class="quiz-option">d) SOLID</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>9. Verdadero o Falso: Las pruebas en TDD deben ser independientes entre sí.</h3>
+                <div class="quiz-option">Verdadero</div>
+                <div class="quiz-option">Falso</div>
+            </div>
+        </section>
+
+        <!-- Respuestas del Quiz -->
+        <section class="slide">
+            <h2>Respuestas del Mini-Quiz</h2>
+            <div class="summary-list">
+                <ol>
+                    <li><strong>a) Test-Driven Development</strong> - Desarrollo Guiado por Pruebas</li>
+                    <li><strong>b) Red → Green → Refactor</strong> - Este es el ciclo fundamental</li>
+                    <li><strong>b) Mejor calidad del código y menos bugs</strong> - Aunque puede ser más lento inicialmente</li>
+                    <li><strong>d) b y c</strong> - Prototipos rápidos y código legacy sin estructura</li>
+                    <li><strong>b) Escribir una prueba que falla</strong> - La prueba debe fallar primero</li>
+                    <li><strong>Falso</strong> - TDD es un enfoque de diseño, no solo testing</li>
+                    <li><strong>b) Una prueba por vez</strong> - Mantener el ciclo rápido</li>
+                    <li><strong>a) AAA</strong> - Arrange-Act-Assert es el patrón recomendado</li>
+                    <li><strong>Verdadero</strong> - Cada prueba debe poder ejecutarse independientemente</li>
+                </ol>
+            </div>
+            <aside class="notes">Si tuvieron dudas en alguna pregunta, revisen ese tema.</aside>
+        </section>
+
+        <!-- Resumen -->
+        <section class="slide">
+            <h2>Resumen de la Unidad</h2>
+            <div class="summary-list">
+                <h3>Puntos Clave:</h3>
+                <ul>
+                    <li><strong>TDD</strong> es Desarrollo Guiado por Pruebas: escribir pruebas antes del código</li>
+                    <li>El ciclo fundamental es <strong>Red-Green-Refactor</strong></li>
+                    <li>TDD mejora la calidad del código, reduce bugs y permite refactoring seguro</li>
+                    <li>Las pruebas sirven como documentación viva del código</li>
+                    <li>TDD es ideal para lógica de negocio y código que cambiará frecuentemente</li>
+                    <li>No es recomendable para prototipos rápidos o interfaces de usuario complejas</li>
+                    <li>Buenas prácticas: nombres descriptivos, patrón AAA, pruebas independientes</li>
+                    <li>TDD requiere disciplina pero los beneficios se acumulan con el tiempo</li>
+                </ul>
+            </div>
+            <aside class="notes">Este resumen cubre los conceptos más importantes de la unidad.</aside>
+        </section>
+
+        <!-- Tarea -->
+        <section class="slide">
+            <h2>Tarea para Casa</h2>
+            <div class="practice-box">
+                <h3>Actividad:</h3>
+                <p>Implementa un sistema de gestión de biblioteca usando TDD con las siguientes funcionalidades:</p>
+                
+                <ol>
+                    <li>Clase <code>Libro</code> con propiedades: título, autor, ISBN, disponible</li>
+                    <li>Clase <code>Biblioteca</code> que pueda:
+                        <ul>
+                            <li>Agregar libros</li>
+                            <li>Buscar libro por ISBN</li>
+                            <li>Prestar un libro (marcar como no disponible)</li>
+                            <li>Devolver un libro (marcar como disponible)</li>
+                            <li>Listar todos los libros disponibles</li>
+                            <li>Validar que no se pueda prestar un libro ya prestado</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <h3>Entregables:</h3>
+                <ul>
+                    <li>Código fuente completo (archivos .js y .test.js)</li>
+                    <li>Capturas de pantalla mostrando que todas las pruebas pasan</li>
+                    <li>Documento breve (1-2 páginas) explicando:
+                        <ul>
+                            <li>El proceso TDD seguido</li>
+                            <li>Decisiones de diseño tomadas</li>
+                            <li>Reflexiones sobre la experiencia</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h3>Fecha de entrega:</h3>
+                <p>Una semana después de esta clase</p>
+
+                <h3>Formato de entrega:</h3>
+                <p>Repositorio Git (GitHub/GitLab) con commits que muestren el proceso TDD, o archivo ZIP con todos los archivos.</p>
+            </div>
+            <aside class="notes">Esta tarea les permitirá practicar TDD en un proyecto completo.</aside>
+        </section>
+
+        <!-- Diapositiva Final -->
+        <section class="slide title-slide">
+            <h1>¡Gracias!</h1>
+            <h2>Unidad III: Ciclo de desarrollo en TDD</h2>
+            <p style="margin-top: 50px; font-size: 1.5em;">Próxima clase: Unidad III - Ciclo de desarrollo en TDD</p>
+            <p style="font-size: 1.2em; margin-top: 30px;">Preguntas y dudas</p>
+            <aside class="notes">Asegúrense de hacer la tarea y venir preparados para la siguiente unidad.</aside>
+        </section>
+    </div>
+
+    <!-- Controles -->
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">20</span>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul class="index-list" id="indexList"></ul>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        // Generar índice
+        const indexList = document.getElementById('indexList');
+        slides.forEach((slide, index) => {
+            const title = slide.querySelector('h1, h2');
+            if (title && !slide.classList.contains('title-slide')) {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = `${index + 1}. ${title.textContent}`;
+                a.onclick = (e) => {
+                    e.preventDefault();
+                    goToSlide(index);
+                    toggleIndex();
+                };
+                li.appendChild(a);
+                indexList.appendChild(li);
+            }
+        });
+
+        function showSlide(n) {
+            if (n >= totalSlides) n = 0;
+            if (n < 0) n = totalSlides - 1;
+            
+            slides[currentSlide].classList.remove('active');
+            currentSlide = n;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            // Actualizar botones
+            document.querySelector('.nav-btn:first-child').disabled = currentSlide === 0;
+            document.querySelector('.nav-btn:last-child').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function goToSlide(n) {
+            showSlide(n);
+        }
+
+        function toggleIndex() {
+            document.getElementById('indexPanel').classList.toggle('active');
+        }
+
+        // Navegación con teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            } else if (e.key === 'n' || e.key === 'N') {
+                e.preventDefault();
+                const notes = slides[currentSlide].querySelector('.notes');
+                if (notes) {
+                    notes.classList.toggle('active');
+                }
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                goToSlide(0);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                goToSlide(totalSlides - 1);
+            }
+        });
+
+        // Inicializar
+        showSlide(0);
+    </script>
+</body>
+</html>
+
+

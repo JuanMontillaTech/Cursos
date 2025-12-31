@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 05 - Especificaciones de Clases</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; overflow: hidden; }
+        .presentation-container { width: 100vw; height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; }
+        .slide { display: none; width: 90vw; max-width: 1280px; height: 72vh; max-height: 720px; background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 60px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); overflow-y: auto; position: relative; }
+        .slide.active { display: block; }
+        .slide h1 { font-size: 3.5em; color: #4CAF50; margin-bottom: 30px; text-align: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        .slide h2 { font-size: 2.5em; color: #64B5F6; margin: 30px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        .slide h3 { font-size: 1.8em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .slide p, .slide li { font-size: 1.3em; line-height: 1.8; margin: 15px 0; }
+        .slide ul, .slide ol { margin-left: 40px; margin-top: 15px; }
+        .slide code { background: #1a1a1a; padding: 3px 8px; border-radius: 4px; font-family: 'Consolas', 'Monaco', monospace; color: #CE9178; font-size: 0.9em; }
+        .slide pre { background: #1a1a1a; border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; overflow-x: auto; box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3); }
+        .slide pre code { color: #D4D4D4; font-size: 1.1em; line-height: 1.6; display: block; background: none; padding: 0; }
+        .cover-slide { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .cover-slide h1 { font-size: 4em; margin-bottom: 40px; }
+        .cover-slide .subtitle { font-size: 2.5em; color: #64B5F6; margin: 20px 0; }
+        .cover-slide .author { font-size: 1.8em; color: #FFB74D; margin-top: 60px; }
+        .navigation { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
+        .nav-btn { background: #4CAF50; color: white; border: none; padding: 15px 30px; font-size: 1.2em; border-radius: 8px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); }
+        .nav-btn:hover { background: #45a049; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5); }
+        .nav-btn:disabled { background: #555; cursor: not-allowed; transform: none; }
+        .slide-counter { position: fixed; top: 30px; right: 30px; background: rgba(0, 0, 0, 0.7); padding: 10px 20px; border-radius: 8px; font-size: 1.1em; z-index: 1000; }
+        .index-btn { position: fixed; top: 30px; left: 30px; background: #64B5F6; color: white; border: none; padding: 15px 25px; font-size: 1.1em; border-radius: 8px; cursor: pointer; z-index: 1000; transition: all 0.3s; }
+        .index-btn:hover { background: #42A5F5; transform: translateY(-2px); }
+        .index-panel { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.95); z-index: 2000; padding: 60px; overflow-y: auto; }
+        .index-panel.active { display: block; }
+        .index-panel h2 { color: #4CAF50; font-size: 2.5em; margin-bottom: 30px; text-align: center; }
+        .index-panel ul { list-style: none; max-width: 800px; margin: 0 auto; }
+        .index-panel li { margin: 15px 0; }
+        .index-panel a { color: #64B5F6; text-decoration: none; font-size: 1.4em; display: block; padding: 15px; border-left: 4px solid #64B5F6; transition: all 0.3s; }
+        .index-panel a:hover { background: rgba(100, 181, 246, 0.1); padding-left: 25px; }
+        .close-index { position: absolute; top: 30px; right: 30px; background: #f44336; color: white; border: none; padding: 15px 25px; font-size: 1.2em; border-radius: 8px; cursor: pointer; }
+        .notes { display: none; background: rgba(255, 193, 7, 0.2); border-left: 4px solid #FFC107; padding: 15px; margin-top: 20px; border-radius: 4px; }
+        .notes.visible { display: block; }
+        .notes-title { color: #FFC107; font-weight: bold; margin-bottom: 10px; }
+        .highlight-box { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .practice-box { background: rgba(100, 181, 246, 0.1); border: 2px solid #64B5F6; padding: 25px; margin: 25px 0; border-radius: 8px; }
+        .practice-box h3 { color: #64B5F6; margin-top: 0; }
+        .quiz-question { background: rgba(255, 183, 77, 0.1); border-left: 4px solid #FFB74D; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .quiz-answer { background: rgba(76, 175, 80, 0.2); border-left: 4px solid #4CAF50; padding: 15px; margin: 10px 0; border-radius: 4px; }
+        .diagram-box { background: rgba(156, 39, 176, 0.1); border: 2px solid #9C27B0; padding: 25px; margin: 25px 0; border-radius: 8px; text-align: center; }
+        @media (max-width: 768px) { .slide { width: 95vw; height: 80vh; padding: 30px; } .slide h1 { font-size: 2em; } .slide h2 { font-size: 1.5em; } .slide p, .slide li { font-size: 1em; } }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <section class="slide active cover-slide">
+            <h1>Modelado de Software usando UML</h1>
+            <div class="subtitle">Unidad 05: Especificaciones de Clases</div>
+        </section>
+
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <h3>Resultados de Aprendizaje:</h3>
+            <ul>
+                <li>Identificar diferentes tipos de clases</li>
+                <li>Comprender interfaces y su uso</li>
+                <li>Definir relaciones entre clases</li>
+                <li>Aplicar generalización e herencia</li>
+                <li>Modelar asociaciones complejas</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <ol style="font-size: 1.4em; line-height: 2;">
+                <li>Tipos de Clases</li>
+                <li>Interfaces</li>
+                <li>Tipos de Relaciones</li>
+                <li>Relaciones de Generalización</li>
+                <li>Relaciones de Asociación</li>
+                <li>Casos Prácticos</li>
+            </ol>
+        </section>
+
+        <section class="slide">
+            <h2>Tipos de Clases</h2>
+            <h3>Clases Concretas:</h3>
+            <p>Pueden ser instanciadas directamente. Representan objetos reales del sistema.</p>
+            <h3>Clases Abstractas:</h3>
+            <p>No pueden ser instanciadas. Definen estructura común para subclases.</p>
+            <h3>Clases de Utilidad:</h3>
+            <p>Contienen solo operaciones estáticas. No tienen instancias.</p>
+            <h3>Clases de Entidad:</h3>
+            <p>Representan conceptos del dominio de negocio.</p>
+            <div class="highlight-box">
+                <strong>Notación:</strong> Clases abstractas se marcan con <code>&lt;&lt;abstract&gt;&gt;</code> o nombre en cursiva.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Interfaces</h2>
+            <h3>Definición:</h3>
+            <p>Define un contrato de comportamiento que las clases deben implementar.</p>
+            <h3>Características:</h3>
+            <ul>
+                <li>Solo define operaciones (sin atributos)</li>
+                <li>No tiene implementación</li>
+                <li>Una clase puede implementar múltiples interfaces</li>
+                <li>Permite polimorfismo</li>
+            </ul>
+            <h3>Notación:</h3>
+            <pre><code>┌──────────────────────┐
+│   <<interface>>      │
+│   Pagable             │
+├──────────────────────┤
+│ + procesarPago()      │
+│ + validarPago()       │
+└──────────────────────┘</code></pre>
+        </section>
+
+        <section class="slide">
+            <h2>Tipos de Relaciones</h2>
+            <h3>Relaciones Principales:</h3>
+            <ol>
+                <li><strong>Asociación:</strong> Relación estructural entre clases</li>
+                <li><strong>Generalización:</strong> Relación "es-un" (herencia)</li>
+                <li><strong>Dependencia:</strong> Una clase usa a otra</li>
+                <li><strong>Realización:</strong> Una clase implementa una interfaz</li>
+                <li><strong>Agregación:</strong> Relación "tiene-un" (parte-todo débil)</li>
+                <li><strong>Composición:</strong> Relación "parte-de" (parte-todo fuerte)</li>
+            </ol>
+            <div class="highlight-box">
+                <strong>Importante:</strong> Cada tipo de relación tiene un propósito específico y notación diferente.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Relaciones de Generalización</h2>
+            <h3>Definición:</h3>
+            <p>Representa herencia: una clase hija hereda características de una clase padre.</p>
+            <h3>Notación:</h3>
+            <pre><code>    Vehiculo
+        ▲
+        │
+   ┌────┴────┐
+   │         │
+Automovil  Motocicleta</code></pre>
+            <h3>Características:</h3>
+            <ul>
+                <li>La clase hija hereda atributos y operaciones</li>
+                <li>Puede sobrescribir operaciones (polimorfismo)</li>
+                <li>Puede agregar nuevos atributos y operaciones</li>
+                <li>Relación transitiva (herencia múltiple posible)</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Ejemplo: Generalización</h2>
+            <div class="diagram-box">
+                <pre><code>┌──────────────────┐
+│   Empleado       │
+├──────────────────┤
+│ - id: int        │
+│ - nombre: String │
+│ + calcularSalario()│
+└────────┬─────────┘
+         │
+    ┌────┴────┐
+    │         │
+┌───▼───┐ ┌──▼──────┐
+│Tiempo │ │Completo│
+│Completo│ │        │
+└───────┘ └─────────┘</code></pre>
+            </div>
+            <p><strong>Análisis:</strong> Empleado es la clase padre. TiempoCompleto y EmpleadoCompleto heredan sus características y pueden tener implementaciones específicas de calcularSalario().</p>
+        </section>
+
+        <section class="slide">
+            <h2>Relaciones de Asociación</h2>
+            <h3>Definición:</h3>
+            <p>Representa una conexión estructural entre clases que permite que objetos de una clase se relacionen con objetos de otra.</p>
+            <h3>Tipos:</h3>
+            <ul>
+                <li><strong>Asociación Simple:</strong> Relación básica entre clases</li>
+                <li><strong>Asociación con Clase Asociativa:</strong> Relación con atributos propios</li>
+                <li><strong>Asociación Reflexiva:</strong> Una clase se relaciona consigo misma</li>
+                <li><strong>Asociación Calificada:</strong> Con calificador para navegación</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Notación:</strong> Línea sólida entre clases, con multiplicidad en cada extremo.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Ejemplo: Asociación Simple</h2>
+            <div class="diagram-box">
+                <pre><code>┌──────────┐        ┌──────────┐
+│ Estudiante│        │  Curso   │
+├──────────┤        ├──────────┤
+│ - id     │        │ - codigo │
+│ - nombre │        │ - nombre │
+└────┬─────┘        └────┬─────┘
+     │                   │
+     │     1      *      │
+     └───────────────────┘
+         inscripcion</code></pre>
+            </div>
+            <p><strong>Interpretación:</strong> Un Estudiante puede estar inscrito en muchos Cursos (1..*), y un Curso puede tener muchos Estudiantes (*).</p>
+        </section>
+
+        <section class="slide">
+            <h2>Asociación con Clase Asociativa</h2>
+            <h3>Cuándo usar:</h3>
+            <p>Cuando la relación entre dos clases tiene atributos propios.</p>
+            <div class="diagram-box">
+                <pre><code>┌──────────┐      ┌──────────────┐      ┌──────────┐
+│ Estudiante│      │ Inscripcion  │      │  Curso   │
+├──────────┤      ├──────────────┤      ├──────────┤
+│ - id     │      │ - fecha      │      │ - codigo │
+│ - nombre │      │ - calificacion│     │ - nombre │
+└────┬─────┘      └──────┬───────┘      └────┬─────┘
+     │                   │                   │
+     │         *         │         *         │
+     └───────────────────┴───────────────────┘</code></pre>
+            </div>
+            <p><strong>Ventaja:</strong> Permite almacenar información específica de la relación (fecha de inscripción, calificación).</p>
+        </section>
+
+        <section class="slide">
+            <h2>Agregación vs. Composición</h2>
+            <h3>Agregación (Diamante Vacío):</h3>
+            <ul>
+                <li>Relación "tiene-un"</li>
+                <li>Parte puede existir sin el todo</li>
+                <li>Relación débil</li>
+                <li>Ejemplo: Universidad tiene Departamentos (pero un Departamento puede existir sin Universidad)</li>
+            </ul>
+            <h3>Composición (Diamante Lleno):</h3>
+            <ul>
+                <li>Relación "parte-de"</li>
+                <li>Parte no puede existir sin el todo</li>
+                <li>Relación fuerte</li>
+                <li>Ejemplo: Casa tiene Habitaciones (una Habitación no existe sin Casa)</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Dependencia</h2>
+            <h3>Definición:</h3>
+            <p>Una clase usa temporalmente a otra, pero no mantiene una relación estructural permanente.</p>
+            <h3>Cuándo usar:</h3>
+            <ul>
+                <li>Una clase usa operaciones de otra como parámetros</li>
+                <li>Una clase crea instancias temporales de otra</li>
+                <li>Una clase usa constantes o métodos estáticos de otra</li>
+            </ul>
+            <h3>Notación:</h3>
+            <pre><code>ClaseA ──┐
+         │ (línea punteada)
+         ▼
+      ClaseB</code></pre>
+            <div class="highlight-box">
+                <strong>Diferencia con Asociación:</strong> La dependencia es temporal, la asociación es estructural.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Realización (Implementación de Interfaces)</h2>
+            <h3>Definición:</h3>
+            <p>Una clase implementa las operaciones definidas en una interfaz.</p>
+            <h3>Notación:</h3>
+            <pre><code>┌──────────────┐
+│ <<interface>> │
+│  Imprimible   │
+└───────┬───────┘
+        │ (línea punteada con triángulo)
+        │
+┌───────▼───────┐
+│   Documento  │
+└──────────────┘</code></pre>
+            <h3>Características:</h3>
+            <ul>
+                <li>Una clase puede implementar múltiples interfaces</li>
+                <li>Debe implementar todas las operaciones de la interfaz</li>
+                <li>Permite polimorfismo</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Ejemplo Completo: Sistema de Biblioteca</h2>
+            <div class="diagram-box">
+                <pre><code>┌──────────┐      ┌──────────────┐      ┌──────────┐
+│ Usuario  │      │  Prestamo    │      │  Libro   │
+│          │1    *│              │*    1│          │
+└──────────┘      └──────────────┘      └──────────┘
+     │                   │                   │
+     │                   │                   │
+     └───────────────────┴───────────────────┘
+                    Generalización
+                         │
+                    ┌────▼────┐
+                    │ Usuario │
+                    │ Regular │
+                    └─────────┘</code></pre>
+            </div>
+            <p><strong>Análisis:</strong> Muestra asociación (Usuario-Libro a través de Prestamo) y generalización (Usuario Regular hereda de Usuario).</p>
+        </section>
+
+        <section class="slide">
+            <h2>Buenas Prácticas en Relaciones</h2>
+            <ul>
+                <li><strong>Usar herencia con cuidado:</strong> Solo cuando hay relación "es-un" real</li>
+                <li><strong>Preferir composición sobre herencia:</strong> Más flexible</li>
+                <li><strong>Interfaces para contratos:</strong> Usar interfaces para definir comportamientos</li>
+                <li><strong>Multiplicidad clara:</strong> Especificar siempre la multiplicidad</li>
+                <li><strong>Nombres descriptivos:</strong> Nombrar roles en asociaciones</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Principio:</strong> "Favor composition over inheritance" - La composición es más flexible que la herencia.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Práctica Guiada</h2>
+            <div class="practice-box">
+                <h3>Ejercicio: Modelar Sistema de E-commerce</h3>
+                <p>Crear un diagrama de clases que incluya:</p>
+                <ol>
+                    <li>Clase Producto (abstracta) con subclases ProductoFisico y ProductoDigital</li>
+                    <li>Clase Cliente con relación de asociación a Orden</li>
+                    <li>Clase Orden con composición de ItemOrden</li>
+                    <li>Interfaz Pagable implementada por Orden</li>
+                    <li>Relaciones apropiadas con multiplicidad</li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Resumen del Curso</h2>
+            <h3>Conceptos Clave Aprendidos:</h3>
+            <ol>
+                <li>Fundamentos de UML y su historia</li>
+                <li>Diagramas estructurales (Clases, Objetos, Paquetes)</li>
+                <li>Diagramas de comportamiento (Casos de Uso, Actividades, Estados, Secuencia)</li>
+                <li>Clasificadores, atributos y operaciones</li>
+                <li>Visibilidad, multiplicidad y abstracción</li>
+                <li>Tipos de clases e interfaces</li>
+                <li>Relaciones: Generalización, Asociación, Dependencia, Realización</li>
+            </ol>
+            <div class="highlight-box">
+                <strong>¡Felicidades!</strong> Has completado el curso de Modelado de Software usando UML. Continúa practicando y aplicando estos conceptos en proyectos reales.
+            </div>
+        </section>
+
+        <!-- Recursos Adicionales -->
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Para ampliar tu conocimiento sobre esta unidad y el curso completo, visita nuestra página de recursos con:</p>
+                <ul>
+                    <li>Videos sobre relaciones UML</li>
+                    <li>Guías de herencia vs composición</li>
+                    <li>Patrones de diseño</li>
+                    <li>Recursos avanzados</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_05_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">
+                        Ver Recursos Adicionales →
+                    </a>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+    <div class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">18</span></div>
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul id="indexList"></ul>
+    </div>
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        document.getElementById('total-slides').textContent = totalSlides;
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            updateCounter();
+            updateNavigation();
+        }
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function previousSlide() { showSlide(currentSlide - 1); }
+        function updateCounter() { document.getElementById('current-slide').textContent = currentSlide + 1; }
+        function updateNavigation() {
+            const prevBtn = document.querySelector('.nav-btn:first-child');
+            const nextBtn = document.querySelector('.nav-btn:last-child');
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+        }
+        function toggleIndex() {
+            const panel = document.getElementById('indexPanel');
+            panel.classList.toggle('active');
+            if (panel.classList.contains('active')) buildIndex();
+        }
+        function buildIndex() {
+            const indexList = document.getElementById('indexList');
+            indexList.innerHTML = '';
+            slides.forEach((slide, index) => {
+                const title = slide.querySelector('h1, h2')?.textContent || `Diapositiva ${index + 1}`;
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = title;
+                a.onclick = (e) => { e.preventDefault(); showSlide(index); toggleIndex(); };
+                li.appendChild(a);
+                indexList.appendChild(li);
+            });
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); previousSlide(); }
+        });
+        updateNavigation();
+        buildIndex();
+    </script>
+</body>
+</html>
+

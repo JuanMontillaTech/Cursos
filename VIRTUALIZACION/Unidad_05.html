@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 05 - Gestión y Seguridad en Entornos Virtualizados</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; overflow: hidden; }
+        .presentation-container { width: 100vw; height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; }
+        .slide { display: none; width: 90vw; max-width: 1280px; height: 72vh; max-height: 720px; background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 60px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); overflow-y: auto; position: relative; }
+        .slide.active { display: block; }
+        .slide h1 { font-size: 3.5em; color: #4CAF50; margin-bottom: 30px; text-align: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        .slide h2 { font-size: 2.5em; color: #64B5F6; margin: 30px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        .slide h3 { font-size: 1.8em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .slide p, .slide li { font-size: 1.3em; line-height: 1.8; margin: 15px 0; }
+        .slide ul, .slide ol { margin-left: 40px; margin-top: 15px; }
+        .slide code { background: #1a1a1a; padding: 3px 8px; border-radius: 4px; font-family: 'Consolas', 'Monaco', monospace; color: #CE9178; font-size: 0.9em; }
+        .slide pre { background: #1a1a1a; border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; overflow-x: auto; box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3); }
+        .slide pre code { color: #D4D4D4; font-size: 1.1em; line-height: 1.6; display: block; background: none; padding: 0; }
+        .cover-slide { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .cover-slide h1 { font-size: 4em; margin-bottom: 40px; }
+        .cover-slide .subtitle { font-size: 2.5em; color: #64B5F6; margin: 20px 0; }
+        .cover-slide .code { font-size: 1.8em; color: #FFB74D; margin-top: 30px; }
+        .navigation { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
+        .nav-btn { background: #4CAF50; color: white; border: none; padding: 15px 30px; font-size: 1.2em; border-radius: 8px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); }
+        .nav-btn:hover { background: #45a049; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5); }
+        .nav-btn:disabled { background: #555; cursor: not-allowed; transform: none; }
+        .slide-counter { position: fixed; top: 30px; right: 30px; background: rgba(0, 0, 0, 0.7); padding: 10px 20px; border-radius: 8px; font-size: 1.1em; z-index: 1000; }
+        .index-btn { position: fixed; top: 30px; left: 30px; background: #64B5F6; color: white; border: none; padding: 15px 25px; font-size: 1.1em; border-radius: 8px; cursor: pointer; z-index: 1000; transition: all 0.3s; }
+        .index-btn:hover { background: #42A5F5; transform: translateY(-2px); }
+        .index-panel { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.95); z-index: 2000; padding: 60px; overflow-y: auto; }
+        .index-panel.active { display: block; }
+        .index-panel h2 { color: #4CAF50; font-size: 2.5em; margin-bottom: 30px; text-align: center; }
+        .index-panel ul { list-style: none; max-width: 800px; margin: 0 auto; }
+        .index-panel li { margin: 15px 0; }
+        .index-panel a { color: #64B5F6; text-decoration: none; font-size: 1.4em; display: block; padding: 15px; border-left: 4px solid #64B5F6; transition: all 0.3s; }
+        .index-panel a:hover { background: rgba(100, 181, 246, 0.1); padding-left: 25px; }
+        .close-index { position: absolute; top: 30px; right: 30px; background: #f44336; color: white; border: none; padding: 15px 25px; font-size: 1.2em; border-radius: 8px; cursor: pointer; }
+        .notes { display: none; background: rgba(255, 193, 7, 0.2); border-left: 4px solid #FFC107; padding: 15px; margin-top: 20px; border-radius: 4px; }
+        .notes.visible { display: block; }
+        .notes-title { color: #FFC107; font-weight: bold; margin-bottom: 10px; }
+        .highlight-box { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .practice-box { background: rgba(100, 181, 246, 0.1); border: 2px solid #64B5F6; padding: 25px; margin: 25px 0; border-radius: 8px; }
+        .practice-box h3 { color: #64B5F6; margin-top: 0; }
+        .quiz-question { background: rgba(255, 183, 77, 0.1); border-left: 4px solid #FFB74D; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .quiz-answer { background: rgba(76, 175, 80, 0.2); border-left: 4px solid #4CAF50; padding: 15px; margin: 10px 0; border-radius: 4px; }
+        .diagram-box { background: rgba(156, 39, 176, 0.1); border: 2px solid #9C27B0; padding: 25px; margin: 25px 0; border-radius: 8px; text-align: center; }
+        @media (max-width: 768px) { .slide { width: 95vw; height: 80vh; padding: 30px; } .slide h1 { font-size: 2em; } .slide h2 { font-size: 1.5em; } .slide p, .slide li { font-size: 1em; } }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <section class="slide active cover-slide">
+            <h1>Virtualización de Aplicaciones</h1>
+            <div class="subtitle">Unidad 05: Gestión y Seguridad en Entornos Virtualizados</div>
+            <aside class="notes"><div class="notes-title">Notas del Presentador:</div>Esta unidad final cubre aspectos críticos de gestión y seguridad en entornos virtualizados. Los estudiantes aprenderán sobre monitoreo, backup, seguridad y mejores prácticas.</aside>
+        </section>
+
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <h3>Resultados de Aprendizaje:</h3>
+            <ul>
+                <li>Comprender los desafíos de gestión en entornos virtualizados</li>
+                <li>Conocer herramientas de monitoreo y gestión</li>
+                <li>Entender estrategias de backup y recuperación</li>
+                <li>Identificar riesgos de seguridad en virtualización</li>
+                <li>Aplicar mejores prácticas de seguridad</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <ol style="font-size: 1.4em; line-height: 2;">
+                <li>Gestión de entornos virtualizados</li>
+                <li>Monitoreo y métricas</li>
+                <li>Herramientas de gestión</li>
+                <li>Backup y recuperación</li>
+                <li>Riesgos de seguridad</li>
+                <li>Mejores prácticas de seguridad</li>
+                <li>Compliance y auditoría</li>
+                <li>Práctica guiada</li>
+                <li>Resumen y evaluación final</li>
+            </ol>
+            <aside class="notes"><div class="notes-title">Notas del Presentador:</div>Duración: 4 horas. Teoría (2h), Práctica (1.5h), Evaluación (0.5h).</aside>
+        </section>
+
+        <section class="slide">
+            <h2>Gestión de Entornos Virtualizados</h2>
+            <h3>Desafíos de Gestión:</h3>
+            <ul>
+                <li><strong>VM Sprawl:</strong> Proliferación descontrolada de VMs</li>
+                <li><strong>Gestión de recursos:</strong> Asignación y optimización</li>
+                <li><strong>Versionado:</strong> Control de versiones de VMs</li>
+                <li><strong>Lifecycle management:</strong> Creación, actualización, eliminación</li>
+                <li><strong>Costos:</strong> Control y optimización de gastos</li>
+            </ul>
+            <h3>Áreas Clave:</h3>
+            <ul>
+                <li>Provisioning y deployment</li>
+                <li>Configuración y cambio</li>
+                <li>Monitoreo y performance</li>
+                <li>Backup y disaster recovery</li>
+                <li>Seguridad y compliance</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Monitoreo y Métricas</h2>
+            <h3>Métricas Clave a Monitorear:</h3>
+            <ul>
+                <li><strong>CPU:</strong> Utilización, tiempo de espera</li>
+                <li><strong>Memoria:</strong> Uso, swap, ballooning</li>
+                <li><strong>Almacenamiento:</strong> I/O, latencia, espacio</li>
+                <li><strong>Red:</strong> Ancho de banda, paquetes, errores</li>
+                <li><strong>Host:</strong> Recursos físicos del servidor</li>
+            </ul>
+            <h3>Herramientas de Monitoreo:</h3>
+            <ul>
+                <li><strong>VMware vRealize Operations:</strong> Monitoreo para vSphere</li>
+                <li><strong>Microsoft System Center:</strong> Gestión de Hyper-V</li>
+                <li><strong>Nagios/Zabbix:</strong> Monitoreo open-source</li>
+                <li><strong>Prometheus/Grafana:</strong> Monitoreo moderno</li>
+                <li><strong>CloudWatch/Azure Monitor:</strong> Monitoreo en la nube</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Herramientas de Gestión</h2>
+            <h3>VMware vCenter:</h3>
+            <ul>
+                <li>Gestión centralizada de vSphere</li>
+                <li>Provisioning automatizado</li>
+                <li>vMotion (migración en vivo)</li>
+                <li>DRS (Distributed Resource Scheduler)</li>
+                <li>HA (High Availability)</li>
+            </ul>
+            <h3>Microsoft System Center:</h3>
+            <ul>
+                <li>SCVMM (Virtual Machine Manager)</li>
+                <li>Gestión de Hyper-V y VMware</li>
+                <li>Automatización y orquestación</li>
+            </ul>
+            <h3>OpenStack:</h3>
+            <ul>
+                <li>Plataforma open-source para cloud</li>
+                <li>Gestión de recursos virtualizados</li>
+                <li>Usado por muchos proveedores</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Backup y Recuperación</h2>
+            <h3>Estrategias de Backup:</h3>
+            <ul>
+                <li><strong>Backup completo:</strong> Copia completa de la VM</li>
+                <li><strong>Backup incremental:</strong> Solo cambios desde último backup</li>
+                <li><strong>Backup diferencial:</strong> Cambios desde backup completo</li>
+                <li><strong>Snapshot:</strong> Punto en el tiempo (no es backup)</li>
+            </ul>
+            <h3>Métodos de Backup:</h3>
+            <ul>
+                <li><strong>Agent-based:</strong> Agente dentro de la VM</li>
+                <li><strong>Agentless:</strong> Backup desde el hipervisor</li>
+                <li><strong>Image-level:</strong> Backup completo de la VM</li>
+                <li><strong>File-level:</strong> Backup de archivos específicos</li>
+            </ul>
+            <h3>Herramientas:</h3>
+            <ul>
+                <li>Veeam Backup & Replication</li>
+                <li>VMware vSphere Data Protection</li>
+                <li>Azure Backup, AWS Backup</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Disaster Recovery</h2>
+            <h3>Conceptos:</h3>
+            <ul>
+                <li><strong>RTO (Recovery Time Objective):</strong> Tiempo máximo de inactividad aceptable</li>
+                <li><strong>RPO (Recovery Point Objective):</strong> Pérdida máxima de datos aceptable</li>
+                <li><strong>Replicación:</strong> Copia continua de VMs a sitio remoto</li>
+                <li><strong>Failover:</strong> Cambio automático a sitio secundario</li>
+            </ul>
+            <h3>Estrategias:</h3>
+            <ul>
+                <li><strong>Hot Site:</strong> Sitio completamente operativo</li>
+                <li><strong>Warm Site:</strong> Sitio parcialmente configurado</li>
+                <li><strong>Cold Site:</strong> Infraestructura básica, sin datos</li>
+                <li><strong>Cloud DR:</strong> Disaster recovery en la nube</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Ventaja de Virtualización:</strong> Facilita DR al poder replicar VMs completas fácilmente.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Riesgos de Seguridad en Virtualización</h2>
+            <h3>Amenazas Principales:</h3>
+            <ul>
+                <li><strong>VM Escape:</strong> Ataque que sale de la VM al host</li>
+                <li><strong>VM Hopping:</strong> Ataque entre VMs en el mismo host</li>
+                <li><strong>Hypervisor attacks:</strong> Ataques al hipervisor</li>
+                <li><strong>VM Sprawl:</strong> VMs no gestionadas (riesgo de seguridad)</li>
+                <li><strong>Snapshots comprometidos:</strong> Snapshots con vulnerabilidades</li>
+                <li><strong>Network isolation failures:</strong> Fallos en aislamiento de red</li>
+            </ul>
+            <h3>Superficie de Ataque:</h3>
+            <ul>
+                <li>Hipervisor (punto crítico)</li>
+                <li>Management interfaces</li>
+                <li>Red virtual</li>
+                <li>Almacenamiento compartido</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Mejores Prácticas de Seguridad</h2>
+            <h3>Seguridad del Hipervisor:</h3>
+            <ul>
+                <li>Parchear regularmente el hipervisor</li>
+                <li>Deshabilitar servicios innecesarios</li>
+                <li>Usar autenticación fuerte</li>
+                <li>Limitar acceso administrativo</li>
+                <li>Auditar logs regularmente</li>
+            </ul>
+            <h3>Seguridad de VMs:</h3>
+            <ul>
+                <li>Parchear sistemas operativos guest</li>
+                <li>Usar antivirus en cada VM</li>
+                <li>Implementar firewalls</li>
+                <li>Segmentar red (VLANs)</li>
+                <li>Eliminar VMs no utilizadas</li>
+            </ul>
+            <h3>Gestión de Accesos:</h3>
+            <ul>
+                <li>Principio de menor privilegio</li>
+                <li>Separación de roles</li>
+                <li>Autenticación multifactor</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Seguridad en Contenedores</h2>
+            <h3>Riesgos Específicos:</h3>
+            <ul>
+                <li><strong>Container escape:</strong> Salir del contenedor al host</li>
+                <li><strong>Imágenes comprometidas:</strong> Imágenes con vulnerabilidades</li>
+                <li><strong>Secretos en imágenes:</strong> Credenciales hardcodeadas</li>
+                <li><strong>Orquestación insegura:</strong> Kubernetes mal configurado</li>
+            </ul>
+            <h3>Mejores Prácticas:</h3>
+            <ul>
+                <li>Usar imágenes base oficiales y actualizadas</li>
+                <li>Escanear imágenes en busca de vulnerabilidades</li>
+                <li>No ejecutar contenedores como root</li>
+                <li>Usar secrets management (no hardcodear)</li>
+                <li>Implementar network policies</li>
+                <li>Limitar recursos (CPU, memoria)</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Compliance y Auditoría</h2>
+            <h3>Regulaciones Relevantes:</h3>
+            <ul>
+                <li><strong>GDPR:</strong> Protección de datos en UE</li>
+                <li><strong>HIPAA:</strong> Salud en EE.UU.</li>
+                <li><strong>PCI-DSS:</strong> Pagos con tarjeta</li>
+                <li><strong>SOX:</strong> Información financiera</li>
+            </ul>
+            <h3>Auditoría en Virtualización:</h3>
+            <ul>
+                <li>Logging de todas las acciones administrativas</li>
+                <li>Monitoreo de cambios en configuración</li>
+                <li>Auditoría de acceso a recursos</li>
+                <li>Reportes de compliance</li>
+                <li>Retención de logs según regulaciones</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Importante:</strong> La virtualización puede facilitar compliance al centralizar controles, pero también requiere gestión adecuada.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Optimización de Recursos</h2>
+            <h3>Right-sizing:</h3>
+            <ul>
+                <li>Asignar recursos apropiados a cada VM</li>
+                <li>Evitar over-provisioning (desperdicio)</li>
+                <li>Evitar under-provisioning (pobre rendimiento)</li>
+                <li>Monitorear y ajustar según uso real</li>
+            </ul>
+            <h3>Consolidación:</h3>
+            <ul>
+                <li>Identificar VMs subutilizadas</li>
+                <li>Consolidar cargas de trabajo</li>
+                <li>Apagar VMs no utilizadas</li>
+                <li>Optimizar densidad (VMs por host)</li>
+            </ul>
+            <h3>Automatización:</h3>
+            <ul>
+                <li>Auto-scaling según demanda</li>
+                <li>DRS (Distributed Resource Scheduler)</li>
+                <li>Power management (apagar hosts ociosos)</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Gestión del Ciclo de Vida</h2>
+            <h3>Fases del Ciclo de Vida de VMs:</h3>
+            <ol>
+                <li><strong>Planificación:</strong> Definir requisitos</li>
+                <li><strong>Provisioning:</strong> Crear VM</li>
+                <li><strong>Configuración:</strong> Instalar y configurar</li>
+                <li><strong>Operación:</strong> Uso productivo</li>
+                <li><strong>Mantenimiento:</strong> Actualizaciones, parches</li>
+                <li><strong>Retiro:</strong> Migración o eliminación</li>
+            </ol>
+            <h3>Gestión de Templates:</h3>
+            <ul>
+                <li>Crear templates estándar (golden images)</li>
+                <li>Versionar templates</li>
+                <li>Actualizar templates regularmente</li>
+                <li>Documentar configuración</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Beneficio:</strong> Templates aceleran provisioning y aseguran consistencia.
+            </div>
+        </section>
+
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Práctica Guiada #5: Plan de Seguridad</h2>
+                <h3>Objetivo:</h3>
+                <p>Crear un plan de seguridad para un entorno virtualizado.</p>
+                
+                <h3>Actividad:</h3>
+                <ol>
+                    <li>Definir un escenario empresarial (tamaño, tipo de datos)</li>
+                    <li>Identificar riesgos de seguridad específicos</li>
+                    <li>Proponer medidas de seguridad (al menos 10)</li>
+                    <li>Definir estrategia de backup y DR</li>
+                    <li>Crear checklist de mejores prácticas</li>
+                    <li>Presentar plan en 15 minutos</li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Mini-Quiz</h2>
+            <div class="quiz-question">
+                <h3>Pregunta 1:</h3>
+                <p>¿Qué es VM Escape y por qué es peligroso?</p>
+                <div class="quiz-answer">
+                    <strong>Respuesta:</strong> VM Escape es un ataque donde un atacante sale de una VM comprometida y accede al host o a otras VMs. Es peligroso porque compromete todo el entorno virtualizado.
+                </div>
+            </div>
+            <div class="quiz-question">
+                <h3>Pregunta 2:</h3>
+                <p>¿Cuál es la diferencia entre RTO y RPO?</p>
+                <div class="quiz-answer">
+                    <strong>Respuesta:</strong> RTO es el tiempo máximo de inactividad aceptable, mientras que RPO es la pérdida máxima de datos aceptable (cuánto tiempo atrás puede ir el backup).
+                </div>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Resumen de la Unidad</h2>
+            <h3>Puntos Clave:</h3>
+            <ul>
+                <li>Gestión: monitoreo, provisioning, lifecycle management</li>
+                <li>Backup: estrategias, métodos, herramientas</li>
+                <li>Disaster Recovery: RTO, RPO, replicación</li>
+                <li>Seguridad: VM escape, hypervisor attacks, mejores prácticas</li>
+                <li>Compliance: regulaciones, auditoría, logging</li>
+                <li>Optimización: right-sizing, consolidación, automatización</li>
+            </ul>
+            <div class="highlight-box">
+                <h3>Resumen del Curso:</h3>
+                <p>Hemos cubierto desde conceptos fundamentales hasta gestión avanzada. La virtualización es una tecnología poderosa que requiere conocimiento técnico y buenas prácticas para implementarla exitosamente.</p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Tarea Final del Curso</h2>
+            <div class="practice-box">
+                <h3>Proyecto Final (100 puntos):</h3>
+                <p>Crear un plan completo de virtualización para una empresa.</p>
+                
+                <h3>Componentes Requeridos:</h3>
+                <ol>
+                    <li><strong>Análisis de Requisitos (20 puntos):</strong> Definir necesidades, cargas de trabajo, requisitos de seguridad</li>
+                    <li><strong>Arquitectura Propuesta (25 puntos):</strong> Diseñar arquitectura virtualizada (hipervisores, almacenamiento, red)</li>
+                    <li><strong>Selección de Tecnologías (20 puntos):</strong> Justificar elección de tecnologías (VMware, Hyper-V, contenedores, cloud)</li>
+                    <li><strong>Plan de Seguridad (20 puntos):</strong> Medidas de seguridad, backup, disaster recovery</li>
+                    <li><strong>Análisis de Costos (10 puntos):</strong> Estimación de costos (licencias, hardware, cloud)</li>
+                    <li><strong>Roadmap de Implementación (5 puntos):</strong> Fases y cronograma</li>
+                </ol>
+                <h3>Entregables:</h3>
+                <p>Documento completo de 10-15 páginas con diagramas, tablas y justificaciones técnicas.</p>
+                <h3>Fecha de Entrega:</h3>
+                <p>Dos semanas después de esta clase.</p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Visita nuestra página de recursos para:</p>
+                <ul>
+                    <li>Guías de mejores prácticas de seguridad</li>
+                    <li>Herramientas de monitoreo y gestión</li>
+                    <li>Casos de estudio de implementación</li>
+                    <li>Certificaciones profesionales</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_05_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">Ver Recursos Adicionales →</a>
+                </p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>¡Gracias por Completar el Curso!</h2>
+            <div class="highlight-box" style="text-align: center; padding: 40px;">
+                <h1 style="color: #4CAF50; font-size: 3em; margin-bottom: 30px;">Virtualización de Aplicaciones</h1>
+                <p style="font-size: 1.5em; margin: 20px 0;">Has completado las 5 unidades del curso</p>
+                <p style="font-size: 1.3em; margin: 20px 0;">Esperamos que este conocimiento te sea útil en tu carrera profesional</p>
+                <p style="font-size: 1.2em; margin-top: 30px; color: #FFB74D;">¡Éxito en tus proyectos!</p>
+            </div>
+        </section>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+    <div class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">18</span></div>
+    <div style="position: fixed; bottom: 100px; right: 30px; z-index: 1000;">
+        <a href="Unidad_04.html" style="background: #64B5F6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-size: 0.9em;">← Unidad 04</a>
+    </div>
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul id="indexList"></ul>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let notesVisible = false;
+        document.getElementById('total-slides').textContent = totalSlides;
+        function showSlide(n) { slides[currentSlide].classList.remove('active'); currentSlide = (n + totalSlides) % totalSlides; slides[currentSlide].classList.add('active'); updateCounter(); updateNavigation(); }
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function previousSlide() { showSlide(currentSlide - 1); }
+        function updateCounter() { document.getElementById('current-slide').textContent = currentSlide + 1; }
+        function updateNavigation() { const prevBtn = document.querySelector('.nav-btn:first-child'); const nextBtn = document.querySelector('.nav-btn:last-child'); prevBtn.disabled = currentSlide === 0; nextBtn.disabled = currentSlide === totalSlides - 1; }
+        function toggleIndex() { const panel = document.getElementById('indexPanel'); panel.classList.toggle('active'); if (panel.classList.contains('active')) { buildIndex(); } }
+        function buildIndex() { const indexList = document.getElementById('indexList'); indexList.innerHTML = ''; slides.forEach((slide, index) => { const title = slide.querySelector('h1, h2')?.textContent || `Diapositiva ${index + 1}`; const li = document.createElement('li'); const a = document.createElement('a'); a.href = '#'; a.textContent = title; a.onclick = (e) => { e.preventDefault(); showSlide(index); toggleIndex(); }; li.appendChild(a); indexList.appendChild(li); }); }
+        function toggleNotes() { notesVisible = !notesVisible; const notes = document.querySelectorAll('.notes'); notes.forEach(note => { if (notesVisible) { note.classList.add('visible'); } else { note.classList.remove('visible'); } }); }
+        document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); } else if (e.key === 'ArrowLeft') { e.preventDefault(); previousSlide(); } else if (e.key === 'PageDown') { e.preventDefault(); nextSlide(); } else if (e.key === 'PageUp') { e.preventDefault(); previousSlide(); } else if (e.key === 'n' || e.key === 'N') { toggleNotes(); } });
+        updateNavigation();
+        buildIndex();
+    </script>
+</body>
+</html>
+

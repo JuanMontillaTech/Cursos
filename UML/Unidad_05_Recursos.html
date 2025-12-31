@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 05 - Recursos Adicionales</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        h1 { font-size: 3em; color: #4CAF50; margin-bottom: 20px; text-align: center; }
+        h2 { font-size: 2.2em; color: #64B5F6; margin: 40px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        h3 { font-size: 1.6em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .back-link { display: inline-block; background: #64B5F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-bottom: 30px; transition: all 0.3s; }
+        .back-link:hover { background: #42A5F5; transform: translateY(-2px); }
+        .resource-section { background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 30px; margin: 25px 0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+        .resource-item { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 15px 0; border-radius: 8px; transition: all 0.3s; }
+        .resource-item:hover { background: rgba(76, 175, 80, 0.2); transform: translateX(5px); }
+        .resource-item a { color: #64B5F6; text-decoration: none; font-size: 1.2em; font-weight: bold; }
+        .resource-item a:hover { color: #42A5F5; text-decoration: underline; }
+        .resource-item p { margin-top: 10px; color: #b0b0b0; font-size: 1em; line-height: 1.6; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin: 20px 0; border-radius: 8px; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 8px; }
+        .badge { display: inline-block; background: #9C27B0; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; margin-left: 10px; }
+        .badge.video { background: #f44336; }
+        .badge.doc { background: #2196F3; }
+        .badge.tool { background: #FF9800; }
+        ul { margin-left: 30px; margin-top: 15px; }
+        li { margin: 10px 0; font-size: 1.1em; line-height: 1.8; }
+        .highlight-box { background: rgba(255, 193, 7, 0.1); border-left: 4px solid #FFC107; padding: 20px; margin: 20px 0; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="Unidad_05.html" class="back-link">← Volver a Unidad 05</a>
+        
+        <h1>Recursos Adicionales - Unidad 05</h1>
+        <p style="text-align: center; font-size: 1.2em; color: #b0b0b0; margin-bottom: 40px;">
+            Especificaciones de Clases - Enlaces, videos y material complementario
+        </p>
+
+        <div class="resource-section">
+            <h2>📚 Documentación Específica</h2>
+            
+            <div class="resource-item">
+                <a href="https://www.uml-diagrams.org/class-diagrams.html#relationships" target="_blank">
+                    Relaciones en UML - Guía Completa <span class="badge doc">Documentación</span>
+                </a>
+                <p>Documentación detallada sobre todos los tipos de relaciones en diagramas de clases.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.uml-diagrams.org/generalization.html" target="_blank">
+                    Generalización e Herencia <span class="badge doc">Referencia</span>
+                </a>
+                <p>Guía completa sobre relaciones de generalización y herencia en UML.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.uml-diagrams.org/association.html" target="_blank">
+                    Asociaciones en UML <span class="badge doc">Referencia</span>
+                </a>
+                <p>Documentación sobre asociaciones simples, calificadas y reflexivas.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.uml-diagrams.org/interface.html" target="_blank">
+                    Interfaces y Realización <span class="badge doc">Referencia</span>
+                </a>
+                <p>Guía sobre interfaces y la relación de realización en UML.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.uml-diagrams.org/aggregation.html" target="_blank">
+                    Agregación y Composición <span class="badge doc">Referencia</span>
+                </a>
+                <p>Documentación sobre agregación vs composición y cuándo usar cada una.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>🎥 Videos Educativos</h2>
+            
+            <div class="resource-item">
+                <h3>Relaciones en UML - Tutorial Completo</h3>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/3cmzqZzwNDM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <p>Tutorial completo sobre todos los tipos de relaciones en UML.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.youtube.com/watch?v=zid-MVo7Mso" target="_blank">
+                    Herencia vs Composición - ¿Cuándo usar cada una? <span class="badge video">Video</span>
+                </a>
+                <p>Video explicando cuándo usar herencia y cuándo composición en diseño orientado a objetos.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.youtube.com/watch?v=WnMQ8HlmeXc" target="_blank">
+                    Interfaces en UML y POO <span class="badge video">Video</span>
+                </a>
+                <p>Explicación sobre interfaces, su uso y la relación de realización.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.youtube.com/watch?v=UI6lqHOVHic" target="_blank">
+                    Agregación vs Composición - Diferencias <span class="badge video">Video</span>
+                </a>
+                <p>Video sobre las diferencias entre agregación y composición con ejemplos prácticos.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.youtube.com/watch?v=zid-MVo7Mso" target="_blank">
+                    Asociaciones en UML - Tipos y Uso <span class="badge video">Video</span>
+                </a>
+                <p>Tutorial sobre diferentes tipos de asociaciones y cómo modelarlas correctamente.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>💡 Artículos y Tutoriales</h2>
+            
+            <div class="resource-item">
+                <a href="https://www.tutorialspoint.com/uml/uml_class_relationship.htm" target="_blank">
+                    Relaciones entre Clases - TutorialsPoint
+                </a>
+                <p>Tutorial completo sobre las relaciones entre clases en UML.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.guru99.com/uml-relationships.html" target="_blank">
+                    Tipos de Relaciones UML - Guru99
+                </a>
+                <p>Guía detallada sobre todos los tipos de relaciones con ejemplos.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.ibm.com/docs/en/rational-soft-arch/9.7.0?topic=diagrams-class" target="_blank">
+                    Especificación de Clases - Documentación IBM
+                </a>
+                <p>Documentación técnica completa sobre especificación de clases y relaciones.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>📖 Conceptos Avanzados</h2>
+            
+            <div class="resource-item">
+                <a href="https://www.uml-diagrams.org/dependency.html" target="_blank">
+                    Dependencias en UML
+                </a>
+                <p>Documentación sobre relaciones de dependencia y cuándo usarlas.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.uml-diagrams.org/realization.html" target="_blank">
+                    Realización de Interfaces
+                </a>
+                <p>Guía sobre la relación de realización entre clases e interfaces.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://refactoring.guru/design-patterns" target="_blank">
+                    Patrones de Diseño - Refactoring Guru
+                </a>
+                <p>Recurso excelente sobre patrones de diseño que utilizan relaciones UML.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>🎯 Ejercicios y Casos Prácticos</h2>
+            
+            <div class="resource-item">
+                <a href="https://www.uml-diagrams.org/exercises.html" target="_blank">
+                    Ejercicios de Relaciones UML
+                </a>
+                <p>Ejercicios prácticos para practicar diferentes tipos de relaciones.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://creately.com/diagram/example/t-class-diagram" target="_blank">
+                    Ejemplos de Diagramas con Relaciones
+                </a>
+                <p>Ejemplos reales de diagramas de clases con diferentes tipos de relaciones.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>📚 Libros Especializados</h2>
+            
+            <div class="resource-item">
+                <a href="https://www.amazon.com/Design-Patterns-Elements-Reusable-Object-Oriented/dp/0201633612" target="_blank">
+                    Design Patterns - Gang of Four
+                </a>
+                <p>Libro clásico sobre patrones de diseño que utiliza extensivamente relaciones UML.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.amazon.com/Clean-Architecture-Craftsmans-Software-Structure/dp/0134494164" target="_blank">
+                    Clean Architecture - Robert C. Martin
+                </a>
+                <p>Libro sobre arquitectura de software que profundiza en relaciones y dependencias.</p>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <h3>💡 Consejo de Estudio</h3>
+            <p>Para dominar las especificaciones de clases y relaciones, practica modelando sistemas completos. Intenta crear diagramas de clases para sistemas como: red social, sistema bancario, e-commerce, sistema de reservas. Presta especial atención a cuándo usar herencia vs composición, y recuerda: "Favor composition over inheritance". Practica identificando relaciones en código existente y modelándolas en UML.</p>
+        </div>
+
+        <div class="highlight-box" style="background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50;">
+            <h3>🎉 ¡Felicitaciones!</h3>
+            <p>Has completado todas las unidades del curso de Modelado de Software usando UML. Continúa practicando y aplicando estos conceptos en proyectos reales. El modelado UML es una habilidad que mejora con la práctica constante.</p>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #333;">
+            <a href="Unidad_04_Recursos.html" class="back-link">← Recursos Unidad 04</a>
+            <a href="Unidad_05.html" class="back-link" style="margin-left: 20px;">Volver a Unidad 05</a>
+        </div>
+    </div>
+</body>
+</html>
+

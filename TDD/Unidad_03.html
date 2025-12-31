@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad III - Diseño de pruebas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 60px;
+            background: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide h1 {
+            font-size: 3.5em;
+            color: #667eea;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .slide h2 {
+            font-size: 2.5em;
+            color: #764ba2;
+            margin-bottom: 25px;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .slide h3 {
+            font-size: 2em;
+            color: #555;
+            margin: 20px 0 15px 0;
+        }
+
+        .slide p {
+            font-size: 1.4em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .slide ul, .slide ol {
+            font-size: 1.3em;
+            line-height: 2;
+            color: #333;
+            margin-left: 40px;
+            margin-bottom: 20px;
+        }
+
+        .slide li {
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 25px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .code-block code {
+            color: #f8f8f2;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(118, 75, 162, 0.5);
+        }
+
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            z-index: 1000;
+        }
+
+        .index-btn {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            padding: 12px 25px;
+            background: #764ba2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+        }
+
+        .index-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            padding: 60px;
+            overflow-y: auto;
+        }
+
+        .index-panel.active {
+            display: block;
+        }
+
+        .index-panel h2 {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .index-list {
+            list-style: none;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .index-list li {
+            margin: 15px 0;
+        }
+
+        .index-list a {
+            color: white;
+            font-size: 1.5em;
+            text-decoration: none;
+            display: block;
+            padding: 15px 20px;
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            transition: all 0.3s;
+            border-left: 4px solid #667eea;
+        }
+
+        .index-list a:hover {
+            background: rgba(102, 126, 234, 0.6);
+            transform: translateX(10px);
+        }
+
+        .close-index {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        .notes {
+            display: none;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #856404;
+        }
+
+        .notes.active {
+            display: block;
+        }
+
+        .title-slide {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .title-slide h1 {
+            color: white;
+            font-size: 4em;
+            margin-bottom: 30px;
+        }
+
+        .title-slide h2 {
+            color: white;
+            border: none;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .title-slide p {
+            font-size: 1.8em;
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            width: 100%;
+        }
+
+        .practice-box {
+            background: #e8f4f8;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .practice-box h3 {
+            color: #667eea;
+            margin-top: 0;
+        }
+
+        .quiz-question {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .quiz-option {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quiz-option:hover {
+            background: #e8f4f8;
+        }
+
+        .summary-list {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .good-practice {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .bad-practice {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px 20px;
+            }
+            .slide h1 {
+                font-size: 2em;
+            }
+            .slide h2 {
+                font-size: 1.8em;
+            }
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Portada -->
+        <section class="slide active title-slide">
+            <h1>Desarrollo Basado en Pruebas (TDD)</h1>
+            <h2>Unidad III: Diseño de pruebas</h2>
+            <aside class="notes">Bienvenidos a la tercera unidad. Hoy aprenderemos cómo diseñar pruebas efectivas en TDD.</aside>
+        </section>
+
+        <!-- Competencias y Resultados de Aprendizaje -->
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <div class="summary-list">
+                <h3>Competencia Específica CE13</h3>
+                <p>Especificar y ejecutar pruebas de calidad de los prototipos (diseño), simulaciones y los componentes de software desarrollados para garantizar su fidelidad y precisión en todos los niveles (Test units) y garantizando una asertiva aceptación de los usuarios (UCT).</p>
+                
+                <h3 style="margin-top: 30px;">Resultados de Aprendizaje</h3>
+                <ul>
+                    <li>Identificar las características de una buena prueba en TDD</li>
+                    <li>Utilizar aserciones efectivamente en las pruebas</li>
+                    <li>Organizar y estructurar las pruebas de manera clara</li>
+                    <li>Escribir pruebas mantenibles y legibles</li>
+                    <li>Aplicar patrones de diseño de pruebas</li>
+                </ul>
+            </div>
+            <aside class="notes">El diseño de pruebas es fundamental para mantener suites de pruebas efectivas y mantenibles.</aside>
+        </section>
+
+        <!-- Agenda -->
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <div class="summary-list">
+                <ol>
+                    <li><strong>Características de una buena prueba en TDD</strong>
+                        <ul>
+                            <li>F.I.R.S.T. principles</li>
+                            <li>Readability y mantenibilidad</li>
+                            <li>Independencia y aislación</li>
+                        </ul>
+                    </li>
+                    <li><strong>Utilización de aserciones</strong>
+                        <ul>
+                            <li>Tipos de aserciones</li>
+                            <li>Uso efectivo de aserciones</li>
+                            <li>Mensajes de error claros</li>
+                        </ul>
+                    </li>
+                    <li><strong>Organización y estructura de las pruebas</strong>
+                        <ul>
+                            <li>Estructura de archivos de pruebas</li>
+                            <li>Nomenclatura y organización</li>
+                            <li>Patrón Arrange-Act-Assert</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+            <aside class="notes">Esta agenda cubre todos los aspectos del diseño de pruebas en TDD.</aside>
+        </section>
+
+        <!-- Características de una buena prueba -->
+        <section class="slide">
+            <h2>Características de una Buena Prueba en TDD</h2>
+            <div class="summary-list">
+                <h3>Principios F.I.R.S.T.</h3>
+                <ul>
+                    <li><strong>F</strong>ast (Rápida): Las pruebas deben ejecutarse rápidamente</li>
+                    <li><strong>I</strong>ndependent (Independiente): Cada prueba debe poder ejecutarse sola</li>
+                    <li><strong>R</strong>epeatable (Repetible): Debe dar el mismo resultado siempre</li>
+                    <li><strong>S</strong>elf-validating (Auto-validante): Debe pasar o fallar claramente</li>
+                    <li><strong>T</strong>imely (Oportuna): Debe escribirse en el momento adecuado (antes del código)</li>
+                </ul>
+
+                <h3 style="margin-top: 30px;">Características Adicionales:</h3>
+                <ul>
+                    <li><strong>Legible:</strong> Fácil de entender qué verifica</li>
+                    <li><strong>Mantenible:</strong> Fácil de modificar cuando cambia la funcionalidad</li>
+                    <li><strong>Específica:</strong> Verifica un solo comportamiento</li>
+                    <li><strong>Confiable:</strong> No falla intermitentemente</li>
+                </ul>
+            </div>
+            <aside class="notes">Los principios FIRST son fundamentales para escribir buenas pruebas.</aside>
+        </section>
+
+        <!-- F.I.R.S.T. en detalle -->
+        <section class="slide">
+            <h2>F.I.R.S.T. en Detalle</h2>
+            <div class="two-column">
+                <div>
+                    <div class="good-practice">
+                        <h3>Fast (Rápida)</h3>
+                        <p>Las pruebas deben ejecutarse en milisegundos. Si una prueba tarda segundos, algo está mal.</p>
+                        <p><strong>Ejemplo:</strong> Una prueba unitaria simple debe ejecutarse en menos de 10ms.</p>
+                    </div>
+
+                    <div class="good-practice">
+                        <h3>Independent (Independiente)</h3>
+                        <p>Cada prueba debe poder ejecutarse sola, sin depender de otras pruebas.</p>
+                        <p><strong>Problema común:</strong> Prueba 2 depende del estado dejado por Prueba 1.</p>
+                    </div>
+
+                    <div class="good-practice">
+                        <h3>Repeatable (Repetible)</h3>
+                        <p>Debe dar el mismo resultado cada vez que se ejecuta, sin importar el orden o el entorno.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="good-practice">
+                        <h3>Self-validating (Auto-validante)</h3>
+                        <p>El resultado debe ser binario: pasa o falla. No requiere interpretación humana.</p>
+                        <p><strong>Mal:</strong> "Verificar manualmente que el resultado es correcto"</p>
+                    </div>
+
+                    <div class="good-practice">
+                        <h3>Timely (Oportuna)</h3>
+                        <p>Debe escribirse justo antes del código que valida (en la fase RED).</p>
+                        <p><strong>No escribir:</strong> Pruebas después de implementar el código.</p>
+                    </div>
+                </div>
+            </div>
+            <aside class="notes">Cada principio FIRST tiene un propósito específico y debe seguirse.</aside>
+        </section>
+
+        <!-- Ejemplo: Prueba Mal Diseñada -->
+        <section class="slide">
+            <h2>Ejemplo: Prueba Mal Diseñada</h2>
+            <div class="bad-practice">
+                <h3>❌ Prueba con problemas:</h3>
+                <div class="code-block" style="font-size: 0.95em;">
+<code>describe('Usuario', () => {
+    let usuario;
+    
+    beforeEach(() => {
+        usuario = new Usuario();
+        usuario.nombre = 'Juan';
+        usuario.apellido = 'Pérez';
+        usuario.email = 'juan@email.com';
+        usuario.edad = 25;
+        usuario.guardar(); // Guarda en base de datos
+    });
+
+    test('test1', () => {
+        // Modifica el usuario global
+        usuario.edad = 30;
+        usuario.actualizar();
+        expect(usuario.edad).toBe(30);
+    });
+
+    test('test2', () => {
+        // Depende de test1 - si test1 falla, este también falla
+        expect(usuario.edad).toBe(30); // Espera el valor de test1
+    });
+});</code>
+                </div>
+            </div>
+
+            <div class="highlight" style="margin-top: 20px; padding: 15px;">
+                <strong>Problemas:</strong>
+                <ul style="margin-top: 10px;">
+                    <li>❌ Nombres no descriptivos (test1, test2)</li>
+                    <li>❌ Dependencia entre pruebas (test2 depende de test1)</li>
+                    <li>❌ Lenta (accede a base de datos)</li>
+                    <li>❌ Estado compartido entre pruebas</li>
+                </ul>
+            </div>
+            <aside class="notes">Esta prueba tiene múltiples problemas. Veamos cómo mejorarla.</aside>
+        </section>
+
+        <!-- Ejemplo: Prueba Bien Diseñada -->
+        <section class="slide">
+            <h2>Ejemplo: Prueba Bien Diseñada</h2>
+            <div class="good-practice">
+                <h3>✅ Prueba mejorada:</h3>
+                <div class="code-block" style="font-size: 0.95em;">
+<code>describe('Usuario', () => {
+    test('debe actualizar la edad cuando se proporciona un nuevo valor', () => {
+        // Arrange: Preparar datos de prueba aislados
+        const usuario = new Usuario();
+        usuario.nombre = 'Juan';
+        usuario.edad = 25;
+        
+        // Act: Ejecutar la operación
+        usuario.actualizarEdad(30);
+        
+        // Assert: Verificar resultado
+        expect(usuario.edad).toBe(30);
+    });
+
+    test('debe mantener la edad original si se proporciona un valor inválido', () => {
+        // Arrange: Cada prueba tiene su propio estado
+        const usuario = new Usuario();
+        usuario.edad = 25;
+        
+        // Act
+        usuario.actualizarEdad(-5);
+        
+        // Assert: Verificación independiente
+        expect(usuario.edad).toBe(25);
+    });
+});</code>
+                </div>
+            </div>
+
+            <div class="highlight" style="margin-top: 20px; padding: 15px;">
+                <strong>Mejoras:</strong>
+                <ul style="margin-top: 10px;">
+                    <li>✅ Nombres descriptivos</li>
+                    <li>✅ Pruebas independientes</li>
+                    <li>✅ Sin dependencias externas (base de datos)</li>
+                    <li>✅ Estado aislado para cada prueba</li>
+                    <li>✅ Estructura AAA clara</li>
+                </ul>
+            </div>
+            <aside class="notes">Noten la diferencia. Esta prueba sigue todos los principios FIRST.</aside>
+        </section>
+
+        <!-- Utilización de Aserciones -->
+        <section class="slide">
+            <h2>Utilización de Aserciones</h2>
+            <div class="summary-list">
+                <h3>¿Qué es una Aserción?</h3>
+                <p>Una <strong>aserción</strong> es una declaración que verifica que algo es verdadero. Si la aserción falla, la prueba falla.</p>
+
+                <h3>Tipos de Aserciones Comunes:</h3>
+                <ul>
+                    <li><strong>Igualdad:</strong> <code>expect(valor).toBe(esperado)</code></li>
+                    <li><strong>Desigualdad:</strong> <code>expect(valor).not.toBe(esperado)</code></li>
+                    <li><strong>Verdadero/Falso:</strong> <code>expect(valor).toBeTruthy()</code></li>
+                    <li><strong>Contiene:</strong> <code>expect(array).toContain(elemento)</code></li>
+                    <li><strong>Excepciones:</strong> <code>expect(() => funcion()).toThrow()</code></li>
+                    <li><strong>Mayor/Menor:</strong> <code>expect(valor).toBeGreaterThan(limite)</code></li>
+                </ul>
+            </div>
+            <aside class="notes">Las aserciones son la herramienta fundamental para verificar comportamiento.</aside>
+        </section>
+
+        <!-- Mensajes de Error en Aserciones -->
+        <section class="slide">
+            <h2>Mensajes de Error en Aserciones</h2>
+            <div class="two-column">
+                <div>
+                    <div class="bad-practice">
+                        <h3>❌ Aserción sin mensaje:</h3>
+                        <div class="code-block" style="font-size: 0.9em;">
+<code>test('prueba descuento', () => {
+    const precio = calcularDescuento(100, 10);
+    expect(precio).toBe(90);
+});
+
+// Si falla: "Expected 90 but got 95"
+// ¿Qué descuento? ¿Qué precio?</code>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="good-practice">
+                        <h3>✅ Aserción con mensaje:</h3>
+                        <div class="code-block" style="font-size: 0.9em;">
+<code>test('debe aplicar 10% de descuento a precio de $100', () => {
+    const precio = calcularDescuento(100, 10);
+    expect(precio).toBe(90);
+});
+
+// Si falla: "Expected 90 but got 95"
+// El nombre del test ya explica qué se prueba</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight" style="margin-top: 20px; padding: 15px;">
+                <strong>Recomendación:</strong> El nombre del test debe ser suficientemente descriptivo para entender qué falló sin necesidad de agregar mensajes adicionales en las aserciones.
+            </div>
+            <aside class="notes">Un buen nombre de prueba es mejor que un mensaje de error detallado.</aside>
+        </section>
+
+        <!-- Ejemplos de Aserciones -->
+        <section class="slide">
+            <h2>Ejemplos de Aserciones Comunes</h2>
+            <div class="code-block" style="font-size: 0.95em;">
+<code>// Igualdad exacta
+expect(5).toBe(5);
+expect('texto').toBe('texto');
+
+// Igualdad aproximada (para números decimales)
+expect(0.1 + 0.2).toBeCloseTo(0.3, 5);
+
+// Verdadero/Falso
+expect(true).toBeTruthy();
+expect(false).toBeFalsy();
+expect(usuario.activo).toBe(true);
+
+// Arrays y objetos
+expect(['a', 'b', 'c']).toContain('b');
+expect(objeto).toHaveProperty('nombre');
+expect(objeto).toEqual({nombre: 'Juan', edad: 25});
+
+// Excepciones
+expect(() => dividir(10, 0)).toThrow();
+expect(() => dividir(10, 0)).toThrow('División por cero');
+
+// Comparaciones numéricas
+expect(10).toBeGreaterThan(5);
+expect(5).toBeLessThan(10);
+expect(10).toBeGreaterThanOrEqual(10);
+
+// Strings
+expect('Hola Mundo').toContain('Mundo');
+expect('email@dominio.com').toMatch(/^[\w-]+@[\w-]+\.\w+$/);
+
+// Null/Undefined
+expect(null).toBeNull();
+expect(undefined).toBeUndefined();
+
+// Negación
+expect(5).not.toBe(10);
+expect(usuario).not.toBeNull();</code>
+            </div>
+            <aside class="notes">Estos son ejemplos comunes de aserciones. Elijan la más apropiada para cada caso.</aside>
+        </section>
+
+        <!-- Patrón Arrange-Act-Assert -->
+        <section class="slide">
+            <h2>Patrón Arrange-Act-Assert (AAA)</h2>
+            <div class="summary-list">
+                <h3>El patrón AAA estructura las pruebas en tres fases:</h3>
+                
+                <div class="good-practice" style="margin-top: 20px;">
+                    <h3>1. Arrange (Preparar)</h3>
+                    <p>Configurar todos los datos y objetos necesarios para la prueba.</p>
+                    <div class="code-block" style="font-size: 0.9em; margin-top: 10px;">
+<code>// Arrange
+const calculadora = new Calculadora();
+const numero1 = 10;
+const numero2 = 5;</code>
+                    </div>
+                </div>
+
+                <div class="good-practice">
+                    <h3>2. Act (Actuar)</h3>
+                    <p>Ejecutar la operación que se está probando.</p>
+                    <div class="code-block" style="font-size: 0.9em; margin-top: 10px;">
+<code>// Act
+const resultado = calculadora.sumar(numero1, numero2);</code>
+                    </div>
+                </div>
+
+                <div class="good-practice">
+                    <h3>3. Assert (Verificar)</h3>
+                    <p>Verificar que el resultado es el esperado.</p>
+                    <div class="code-block" style="font-size: 0.9em; margin-top: 10px;">
+<code>// Assert
+expect(resultado).toBe(15);</code>
+                    </div>
+                </div>
+            </div>
+            <aside class="notes">El patrón AAA hace que las pruebas sean más legibles y mantenibles.</aside>
+        </section>
+
+        <!-- Ejemplo Completo AAA -->
+        <section class="slide">
+            <h2>Ejemplo Completo: Patrón AAA</h2>
+            <div class="code-block" style="font-size: 0.95em;">
+<code>describe('CalculadoraDescuentos', () => {
+    test('debe aplicar 15% de descuento cuando el monto es mayor a $500', () => {
+        // Arrange: Preparar todos los datos necesarios
+        const calculadora = new CalculadoraDescuentos();
+        const montoSinDescuento = 600;
+        const descuentoEsperado = 90; // 15% de 600
+        
+        // Act: Ejecutar la operación que se está probando
+        const resultado = calculadora.calcularDescuento(montoSinDescuento);
+        
+        // Assert: Verificar que el resultado es correcto
+        expect(resultado).toBe(descuentoEsperado);
+    });
+
+    test('debe lanzar error cuando el monto es negativo', () => {
+        // Arrange
+        const calculadora = new CalculadoraDescuentos();
+        const montoInvalido = -100;
+        
+        // Act & Assert: En este caso, Act y Assert están juntos
+        expect(() => {
+            calculadora.calcularDescuento(montoInvalido);
+        }).toThrow('El monto no puede ser negativo');
+    });
+});</code>
+            </div>
+
+            <div class="highlight" style="margin-top: 20px; padding: 15px;">
+                <strong>Ventajas del patrón AAA:</strong>
+                <ul style="margin-top: 10px;">
+                    <li>Hace explícito qué se está probando</li>
+                    <li>Facilita identificar dónde falla la prueba</li>
+                    <li>Mejora la legibilidad</li>
+                    <li>Facilita el mantenimiento</li>
+                </ul>
+            </div>
+            <aside class="notes">Siempre sigan el patrón AAA. Hace que las pruebas sean mucho más claras.</aside>
+        </section>
+
+        <!-- Organización de Pruebas -->
+        <section class="slide">
+            <h2>Organización y Estructura de Pruebas</h2>
+            <div class="summary-list">
+                <h3>Estructura de Archivos:</h3>
+                <ul>
+                    <li><strong>Un archivo de prueba por archivo de código:</strong>
+                        <ul>
+                            <li><code>calculadora.js</code> → <code>calculadora.test.js</code></li>
+                            <li><code>usuario.js</code> → <code>usuario.test.js</code></li>
+                        </ul>
+                    </li>
+                    <li><strong>Carpetas paralelas:</strong>
+                        <ul>
+                            <li><code>src/calculadora.js</code></li>
+                            <li><code>tests/calculadora.test.js</code></li>
+                        </ul>
+                    </li>
+                    <li><strong>Misma estructura:</strong>
+                        <ul>
+                            <li><code>src/models/usuario.js</code></li>
+                            <li><code>tests/models/usuario.test.js</code></li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h3 style="margin-top: 30px;">Agrupación con describe():</h3>
+                <p>Usa <code>describe()</code> para agrupar pruebas relacionadas y crear una estructura jerárquica clara.</p>
+            </div>
+            <aside class="notes">La organización es clave para mantener suites de pruebas grandes.</aside>
+        </section>
+
+        <!-- Ejemplo de Organización -->
+        <section class="slide">
+            <h2>Ejemplo de Organización con describe()</h2>
+            <div class="code-block" style="font-size: 0.95em;">
+<code>// Estructura jerárquica clara
+describe('Calculadora', () => {
+    describe('operaciones básicas', () => {
+        test('debe sumar dos números', () => {
+            const calc = new Calculadora();
+            expect(calc.sumar(2, 3)).toBe(5);
+        });
+
+        test('debe restar dos números', () => {
+            const calc = new Calculadora();
+            expect(calc.restar(5, 3)).toBe(2);
+        });
+    });
+
+    describe('validaciones', () => {
+        test('debe lanzar error al dividir por cero', () => {
+            const calc = new Calculadora();
+            expect(() => calc.dividir(10, 0)).toThrow();
+        });
+
+        test('debe validar que los operandos sean números', () => {
+            const calc = new Calculadora();
+            expect(() => calc.sumar('a', 5)).toThrow();
+        });
+    });
+
+    describe('operaciones avanzadas', () => {
+        test('debe calcular potencia', () => {
+            const calc = new Calculadora();
+            expect(calc.potencia(2, 3)).toBe(8);
+        });
+    });
+});</code>
+            </div>
+
+            <div class="highlight" style="margin-top: 20px; padding: 15px;">
+                <strong>Resultado en la consola:</strong><br>
+                <code>Calculadora</code><br>
+                <code>  operaciones básicas</code><br>
+                <code>    ✓ debe sumar dos números</code><br>
+                <code>    ✓ debe restar dos números</code><br>
+                <code>  validaciones</code><br>
+                <code>    ✓ debe lanzar error al dividir por cero</code><br>
+            </div>
+            <aside class="notes">Esta organización hace que sea fácil encontrar pruebas específicas.</aside>
+        </section>
+
+        <!-- Nomenclatura -->
+        <section class="slide">
+            <h2>Nomenclatura de Pruebas</h2>
+            <div class="two-column">
+                <div>
+                    <div class="bad-practice">
+                        <h3>❌ Malos Nombres:</h3>
+                        <ul>
+                            <li><code>test1()</code></li>
+                            <li><code>testCalculadora()</code></li>
+                            <li><code>prueba()</code></li>
+                            <li><code>test_suma()</code></li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div class="good-practice">
+                        <h3>✅ Buenos Nombres:</h3>
+                        <ul>
+                            <li><code>debe sumar dos números positivos</code></li>
+                            <li><code>debe lanzar error cuando el divisor es cero</code></li>
+                            <li><code>debe aplicar descuento del 10% para montos mayores a $100</code></li>
+                            <li><code>no debe aceptar emails inválidos</code></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-list" style="margin-top: 30px;">
+                <h3>Convenciones de Nomenclatura:</h3>
+                <ul>
+                    <li><strong>Formato:</strong> "debe [acción] [condición] [resultado esperado]"</li>
+                    <li><strong>Ejemplo:</strong> "debe calcular el área de un círculo dado su radio"</li>
+                    <li><strong>Lenguaje:</strong> Español claro y descriptivo</li>
+                    <li><strong>Longitud:</strong> No tener miedo a nombres largos si son descriptivos</li>
+                </ul>
+            </div>
+            <aside class="notes">Un buen nombre de prueba dice exactamente qué se está probando.</aside>
+        </section>
+
+        <!-- Errores Comunes -->
+        <section class="slide">
+            <h2>Errores Comunes en el Diseño de Pruebas</h2>
+            <div class="summary-list">
+                <h3>1. Pruebas que verifican múltiples cosas</h3>
+                <div class="bad-practice">
+                    <p><strong>❌ Error:</strong></p>
+                    <div class="code-block" style="font-size: 0.9em; margin-top: 10px;">
+<code>test('debe crear usuario y validar email y calcular edad', () => {
+    const usuario = new Usuario('Juan', 'juan@email.com', '1990-01-01');
+    expect(usuario.nombre).toBe('Juan');
+    expect(usuario.email).toBe('juan@email.com');
+    expect(usuario.edad).toBe(34);
+});</code>
+                    </div>
+                    <p style="margin-top: 10px;"><strong>✅ Correcto:</strong> Una prueba por comportamiento</p>
+                </div>
+
+                <h3>2. Pruebas dependientes</h3>
+                <p><strong>❌ Error:</strong> Prueba 2 depende del estado de Prueba 1.</p>
+                <p><strong>✅ Correcto:</strong> Cada prueba es independiente y puede ejecutarse sola.</p>
+
+                <h3>3. Pruebas lentas</h3>
+                <p><strong>❌ Error:</strong> Acceder a base de datos o servicios externos en pruebas unitarias.</p>
+                <p><strong>✅ Correcto:</strong> Usar mocks o stubs para dependencias externas.</p>
+
+                <h3>4. Nombres genéricos</h3>
+                <p><strong>❌ Error:</strong> Nombres como "test1", "prueba", "ejemplo".</p>
+                <p><strong>✅ Correcto:</strong> Nombres descriptivos que explican qué se prueba.</p>
+            </div>
+            <aside class="notes">Estos errores son muy comunes. Estén atentos para evitarlos.</aside>
+        </section>
+
+        <!-- Buenas Prácticas -->
+        <section class="slide">
+            <h2>Buenas Prácticas en el Diseño de Pruebas</h2>
+            <div class="summary-list">
+                <h3>1. Una aserción por prueba (idealmente)</h3>
+                <p>Facilita identificar qué falló cuando la prueba no pasa.</p>
+
+                <h3>2. Nombres descriptivos</h3>
+                <p>El nombre debe explicar qué comportamiento se está probando.</p>
+
+                <h3>3. Pruebas aisladas</h3>
+                <p>Cada prueba debe poder ejecutarse independientemente, en cualquier orden.</p>
+
+                <h3>4. Datos de prueba simples</h3>
+                <p>Usa los datos más simples posibles que demuestren el comportamiento.</p>
+
+                <h3>5. Pruebas rápidas</h3>
+                <p>Las pruebas unitarias deben ejecutarse en milisegundos, no segundos.</p>
+
+                <h3>6. Sin efectos secundarios</h3>
+                <p>Una prueba no debe modificar el estado que afecte a otras pruebas.</p>
+
+                <h3>7. Estructura AAA clara</h3>
+                <p>Siempre separa Arrange, Act y Assert con comentarios si es necesario.</p>
+            </div>
+            <aside class="notes">Estas prácticas hacen que las pruebas sean mantenibles a largo plazo.</aside>
+        </section>
+
+        <!-- Práctica Guiada 1 -->
+        <section class="slide">
+            <h2>Práctica Guiada #1: Rediseñar Pruebas</h2>
+            <div class="practice-box">
+                <h3>Objetivo:</h3>
+                <p>Mejorar el diseño de pruebas existentes aplicando los principios FIRST y el patrón AAA.</p>
+
+                <h3>Prueba original (con problemas):</h3>
+                <div class="code-block" style="font-size: 0.9em;">
+<code>describe('Usuario', () => {
+    let usuario;
+    
+    beforeEach(() => {
+        usuario = new Usuario();
+    });
+
+    test('test1', () => {
+        usuario.nombre = 'Juan';
+        usuario.guardar();
+        expect(usuario.nombre).toBe('Juan');
+    });
+
+    test('test2', () => {
+        expect(usuario.nombre).toBe('Juan');
+    });
+});</code>
+                </div>
+
+                <h3>Tareas:</h3>
+                <ol>
+                    <li>Renombrar las pruebas con nombres descriptivos</li>
+                    <li>Eliminar dependencias entre pruebas</li>
+                    <li>Aplicar patrón AAA</li>
+                    <li>Hacer cada prueba independiente</li>
+                </ol>
+            </div>
+            <aside class="notes">Vamos paso a paso mejorando esta prueba.</aside>
+        </section>
+
+        <!-- Práctica Guiada 1 - Solución -->
+        <section class="slide">
+            <h2>Práctica Guiada #1: Solución</h2>
+            <div class="practice-box">
+                <h3>Prueba mejorada:</h3>
+                <div class="code-block" style="font-size: 0.9em;">
+<code>describe('Usuario', () => {
+    test('debe establecer el nombre cuando se proporciona un valor válido', () => {
+        // Arrange
+        const usuario = new Usuario();
+        const nombreEsperado = 'Juan';
+        
+        // Act
+        usuario.nombre = nombreEsperado;
+        
+        // Assert
+        expect(usuario.nombre).toBe(nombreEsperado);
+    });
+
+    test('debe mantener el nombre establecido independientemente de otras pruebas', () => {
+        // Arrange: Cada prueba crea su propio usuario
+        const usuario = new Usuario();
+        const nombreEsperado = 'María';
+        
+        // Act
+        usuario.nombre = nombreEsperado;
+        
+        // Assert
+        expect(usuario.nombre).toBe(nombreEsperado);
+    });
+});</code>
+                </div>
+
+                <h3>Mejoras aplicadas:</h3>
+                <ul>
+                    <li>✅ Nombres descriptivos que explican qué se prueba</li>
+                    <li>✅ Cada prueba es independiente</li>
+                    <li>✅ Patrón AAA aplicado claramente</li>
+                    <li>✅ Sin dependencias entre pruebas</li>
+                    <li>✅ Comentarios AAA para claridad</li>
+                </ul>
+            </div>
+            <aside class="notes">Noten cómo cada prueba ahora es clara e independiente.</aside>
+        </section>
+
+        <!-- Práctica Guiada 2 -->
+        <section class="slide">
+            <h2>Práctica Guiada #2: Diseñar Pruebas desde Cero</h2>
+            <div class="practice-box">
+                <h3>Objetivo:</h3>
+                <p>Diseñar pruebas bien estructuradas para una clase <code>ValidadorTarjeta</code>.</p>
+
+                <h3>Requisitos:</h3>
+                <ul>
+                    <li>Validar que el número de tarjeta tenga 16 dígitos</li>
+                    <li>Validar que todos los caracteres sean numéricos</li>
+                    <li>Validar que el número no esté vacío</li>
+                    <li>Lanzar errores descriptivos cuando la validación falla</li>
+                </ul>
+
+                <h3>Tarea:</h3>
+                <p>Diseñar pruebas que sigan todos los principios FIRST y el patrón AAA. Escribir nombres descriptivos y estructurar las pruebas adecuadamente.</p>
+            </div>
+            <aside class="notes">Usen todos los principios aprendidos para diseñar estas pruebas.</aside>
+        </section>
+
+        <!-- Práctica Guiada 2 - Solución -->
+        <section class="slide">
+            <h2>Práctica Guiada #2: Solución</h2>
+            <div class="practice-box">
+                <h3>Pruebas bien diseñadas:</h3>
+                <div class="code-block" style="font-size: 0.9em;">
+<code>describe('ValidadorTarjeta', () => {
+    describe('validación de longitud', () => {
+        test('debe aceptar un número de tarjeta con exactamente 16 dígitos', () => {
+            // Arrange
+            const validador = new ValidadorTarjeta();
+            const numeroValido = '1234567890123456';
+            
+            // Act
+            const resultado = validador.esValido(numeroValido);
+            
+            // Assert
+            expect(resultado).toBe(true);
+        });
+
+        test('debe rechazar un número de tarjeta con menos de 16 dígitos', () => {
+            // Arrange
+            const validador = new ValidadorTarjeta();
+            const numeroInvalido = '123456789012345';
+            
+            // Act & Assert
+            expect(() => validador.esValido(numeroInvalido))
+                .toThrow('El número de tarjeta debe tener 16 dígitos');
+        });
+    });
+
+    describe('validación de formato', () => {
+        test('debe rechazar números que contengan letras', () => {
+            // Arrange
+            const validador = new ValidadorTarjeta();
+            const numeroConLetras = '123456789012345a';
+            
+            // Act & Assert
+            expect(() => validador.esValido(numeroConLetras))
+                .toThrow('El número de tarjeta solo puede contener dígitos');
+        });
+
+        test('debe rechazar números vacíos', () => {
+            // Arrange
+            const validador = new ValidadorTarjeta();
+            const numeroVacio = '';
+            
+            // Act & Assert
+            expect(() => validador.esValido(numeroVacio))
+                .toThrow('El número de tarjeta no puede estar vacío');
+        });
+    });
+});</code>
+                </div>
+
+                <h3>Características del diseño:</h3>
+                <ul>
+                    <li>✅ Agrupación lógica con describe()</li>
+                    <li>✅ Nombres descriptivos y claros</li>
+                    <li>✅ Patrón AAA aplicado</li>
+                    <li>✅ Pruebas independientes</li>
+                    <li>✅ Una cosa por prueba</li>
+                </ul>
+            </div>
+            <aside class="notes">Este es un ejemplo excelente de diseño de pruebas bien estructurado.</aside>
+        </section>
+
+        <!-- Práctica Evaluada -->
+        <section class="slide">
+            <h2>Práctica Evaluada</h2>
+            <div class="practice-box">
+                <h3>Enunciado:</h3>
+                <p>Diseña y escribe pruebas bien estructuradas para una clase <code>GestorPedidos</code> con las siguientes funcionalidades:</p>
+                
+                <ol>
+                    <li>Agregar producto a un pedido</li>
+                    <li>Eliminar producto de un pedido</li>
+                    <li>Calcular el total del pedido</li>
+                    <li>Aplicar descuento por código</li>
+                    <li>Validar que no se puedan agregar productos con cantidad negativa</li>
+                    <li>Validar que no se pueda eliminar un producto que no existe</li>
+                </ol>
+
+                <h3>Criterios de Evaluación:</h3>
+                <ul>
+                    <li><strong>Diseño de pruebas (40%):</strong> Principios FIRST aplicados, patrón AAA, pruebas independientes</li>
+                    <li><strong>Nomenclatura (25%):</strong> Nombres descriptivos, formato consistente</li>
+                    <li><strong>Organización (20%):</strong> Agrupación lógica con describe(), estructura clara</li>
+                    <li><strong>Aserciones (15%):</strong> Uso apropiado de aserciones, mensajes claros</li>
+                </ul>
+
+                <h3>Rúbrica:</h3>
+                <ul>
+                    <li><strong>Excelente (90-100):</strong> Todos los principios aplicados perfectamente, diseño impecable</li>
+                    <li><strong>Bueno (75-89):</strong> Principios aplicados correctamente, diseño claro y mantenible</li>
+                    <li><strong>Satisfactorio (60-74):</strong> Algunos principios aplicados, diseño funcional</li>
+                    <li><strong>Necesita mejorar (<60):</strong> Principios no aplicados, diseño deficiente</li>
+                </ul>
+            </div>
+            <aside class="notes">Esta práctica evalúa el dominio completo del diseño de pruebas.</aside>
+        </section>
+
+        <!-- Mini-Quiz -->
+        <section class="slide">
+            <h2>Mini-Quiz</h2>
+            <div class="quiz-question">
+                <h3>1. ¿Qué significa F.I.R.S.T. en el contexto de pruebas?</h3>
+                <div class="quiz-option">a) Fast, Independent, Repeatable, Self-validating, Timely</div>
+                <div class="quiz-option">b) Fast, Integrated, Reliable, Simple, Testable</div>
+                <div class="quiz-option">c) Functional, Independent, Repeatable, Simple, Timely</div>
+                <div class="quiz-option">d) Flexible, Independent, Reliable, Simple, Testable</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>2. ¿Qué patrón se recomienda para estructurar pruebas?</h3>
+                <div class="quiz-option">a) AAA (Arrange-Act-Assert)</div>
+                <div class="quiz-option">b) BDD (Behavior-Driven Development)</div>
+                <div class="quiz-option">c) DDD (Domain-Driven Design)</div>
+                <div class="quiz-option">d) SOLID</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>3. ¿Cuál es una característica de una buena prueba?</h3>
+                <div class="quiz-option">a) Debe ejecutarse en segundos</div>
+                <div class="quiz-option">b) Debe ser independiente y ejecutarse sola</div>
+                <div class="quiz-option">c) Debe depender de otras pruebas</div>
+                <div class="quiz-option">d) Debe requerir interpretación humana</div>
+            </div>
+        </section>
+
+        <!-- Mini-Quiz Continuación -->
+        <section class="slide">
+            <h2>Mini-Quiz (Continuación)</h2>
+            <div class="quiz-question">
+                <h3>4. ¿Cuál es un buen nombre para una prueba?</h3>
+                <div class="quiz-option">a) test1</div>
+                <div class="quiz-option">b) debe calcular el descuento del 10% cuando el monto es mayor a $100</div>
+                <div class="quiz-option">c) pruebaCalculadora</div>
+                <div class="quiz-option">d) test</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>5. ¿Qué significa "Self-validating" en FIRST?</h3>
+                <div class="quiz-option">a) La prueba se valida automáticamente</div>
+                <div class="quiz-option">b) Debe tener un resultado binario claro (pasa o falla)</div>
+                <div class="quiz-option">c) Debe validarse manualmente</div>
+                <div class="quiz-option">d) Debe validar múltiples cosas</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>6. Verdadero o Falso: Una prueba puede verificar múltiples comportamientos.</h3>
+                <div class="quiz-option">Verdadero</div>
+                <div class="quiz-option">Falso - Idealmente una prueba verifica un comportamiento</div>
+            </div>
+        </section>
+
+        <!-- Mini-Quiz Continuación 2 -->
+        <section class="slide">
+            <h2>Mini-Quiz (Continuación)</h2>
+            <div class="quiz-question">
+                <h3>7. ¿Para qué se usa describe() en las pruebas?</h3>
+                <div class="quiz-option">a) Para describir la prueba</div>
+                <div class="quiz-option">b) Para agrupar pruebas relacionadas</div>
+                <div class="quiz-option">c) Para comentar código</div>
+                <div class="quiz-option">d) Para documentar</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>8. ¿Cuál es el tiempo ideal de ejecución de una prueba unitaria?</h3>
+                <div class="quiz-option">a) Segundos</div>
+                <div class="quiz-option">b) Milisegundos</div>
+                <div class="quiz-option">c) Minutos</div>
+                <div class="quiz-option">d) No importa</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>9. Verdadero o Falso: Las pruebas deben poder ejecutarse en cualquier orden.</h3>
+                <div class="quiz-option">Verdadero</div>
+                <div class="quiz-option">Falso</div>
+            </div>
+
+            <div class="quiz-question">
+                <h3>10. ¿Cuál es un error común en el diseño de pruebas?</h3>
+                <div class="quiz-option">a) Usar nombres descriptivos</div>
+                <div class="quiz-option">b) Hacer pruebas dependientes entre sí</div>
+                <div class="quiz-option">c) Aplicar patrón AAA</div>
+                <div class="quiz-option">d) Hacer pruebas independientes</div>
+            </div>
+        </section>
+
+        <!-- Respuestas del Quiz -->
+        <section class="slide">
+            <h2>Respuestas del Mini-Quiz</h2>
+            <div class="summary-list">
+                <ol>
+                    <li><strong>a) Fast, Independent, Repeatable, Self-validating, Timely</strong> - Los principios FIRST</li>
+                    <li><strong>a) AAA (Arrange-Act-Assert)</strong> - Patrón recomendado para estructurar pruebas</li>
+                    <li><strong>b) Debe ser independiente y ejecutarse sola</strong> - Independencia es clave</li>
+                    <li><strong>b) debe calcular el descuento del 10% cuando el monto es mayor a $100</strong> - Nombre descriptivo</li>
+                    <li><strong>b) Debe tener un resultado binario claro (pasa o falla)</strong> - Self-validating</li>
+                    <li><strong>Falso</strong> - Idealmente una prueba verifica un comportamiento</li>
+                    <li><strong>b) Para agrupar pruebas relacionadas</strong> - Organización lógica</li>
+                    <li><strong>b) Milisegundos</strong> - Las pruebas deben ser rápidas</li>
+                    <li><strong>Verdadero</strong> - Las pruebas deben ser independientes</li>
+                    <li><strong>b) Hacer pruebas dependientes entre sí</strong> - Error común</li>
+                </ol>
+            </div>
+            <aside class="notes">Si tuvieron dudas, revisen esos conceptos antes de continuar.</aside>
+        </section>
+
+        <!-- Resumen -->
+        <section class="slide">
+            <h2>Resumen de la Unidad</h2>
+            <div class="summary-list">
+                <h3>Puntos Clave:</h3>
+                <ul>
+                    <li>Las pruebas deben seguir los principios <strong>F.I.R.S.T.</strong></li>
+                    <li>El patrón <strong>Arrange-Act-Assert (AAA)</strong> estructura las pruebas claramente</li>
+                    <li>Las pruebas deben ser <strong>independientes</strong> y poder ejecutarse en cualquier orden</li>
+                    <li>Los <strong>nombres descriptivos</strong> son fundamentales para entender qué se prueba</li>
+                    <li>Las pruebas deben ser <strong>rápidas</strong> (milisegundos, no segundos)</li>
+                    <li>La <strong>organización</strong> con describe() mejora la estructura y legibilidad</li>
+                    <li>Las <strong>aserciones</strong> deben ser apropiadas y claras</li>
+                    <li>Una prueba debe verificar <strong>un comportamiento</strong> específico</li>
+                </ul>
+            </div>
+            <aside class="notes">Este resumen cubre los conceptos fundamentales del diseño de pruebas.</aside>
+        </section>
+
+        <!-- Tarea -->
+        <section class="slide">
+            <h2>Tarea para Casa</h2>
+            <div class="practice-box">
+                <h3>Actividad:</h3>
+                <p>Rediseña las pruebas de un proyecto existente (o crea pruebas desde cero) aplicando todos los principios de diseño aprendidos:</p>
+                
+                <ol>
+                    <li>Elige una clase o módulo de código</li>
+                    <li>Escribe pruebas siguiendo principios FIRST</li>
+                    <li>Aplica patrón AAA en todas las pruebas</li>
+                    <li>Organiza las pruebas con describe() apropiadamente</li>
+                    <li>Usa nombres descriptivos para todas las pruebas</li>
+                    <li>Asegúrate de que las pruebas sean independientes</li>
+                    <li>Verifica que las pruebas sean rápidas</li>
+                </ol>
+
+                <h3>Entregables:</h3>
+                <ul>
+                    <li>Código de pruebas completo (archivos .test.js)</li>
+                    <li>Documento explicando:
+                        <ul>
+                            <li>Cómo se aplicaron los principios FIRST</li>
+                            <li>Cómo se estructuró el código con AAA</li>
+                            <li>Decisiones de organización tomadas</li>
+                            <li>Mejoras realizadas respecto a pruebas anteriores</li>
+                        </ul>
+                    </li>
+                    <li>Capturas de pantalla mostrando la ejecución de las pruebas</li>
+                </ul>
+
+                <h3>Fecha de entrega:</h3>
+                <p>Una semana después de esta clase</p>
+            </div>
+            <aside class="notes">Esta tarea les permitirá practicar el diseño de pruebas en un proyecto real.</aside>
+        </section>
+
+        <!-- Recursos Adicionales -->
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Para ampliar tu conocimiento sobre esta unidad, visita nuestra página de recursos con:</p>
+                <ul>
+                    <li>Videos sobre diseño de pruebas</li>
+                    <li>Patrones de testing</li>
+                    <li>Ejemplos de pruebas unitarias</li>
+                    <li>Herramientas de testing</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_03_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">
+                        Ver Recursos Adicionales →
+                    </a>
+                </p>
+            </div>
+        </section>
+
+        <!-- Diapositiva Final -->
+        <section class="slide title-slide">
+            <h1>¡Gracias!</h1>
+            <h2>Unidad III: Diseño de pruebas</h2>
+            <p style="margin-top: 50px; font-size: 1.5em;">Próxima clase: Unidad IV - Cobertura de pruebas</p>
+            <p style="font-size: 1.2em; margin-top: 30px;">Preguntas y dudas</p>
+            <aside class="notes">Practiquen el diseño de pruebas hasta que sea natural.</aside>
+        </section>
+    </div>
+
+    <!-- Controles -->
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">22</span>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul class="index-list" id="indexList"></ul>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        // Generar índice
+        const indexList = document.getElementById('indexList');
+        slides.forEach((slide, index) => {
+            const title = slide.querySelector('h1, h2');
+            if (title && !slide.classList.contains('title-slide')) {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = '#';
+                a.textContent = `${index + 1}. ${title.textContent}`;
+                a.onclick = (e) => {
+                    e.preventDefault();
+                    goToSlide(index);
+                    toggleIndex();
+                };
+                li.appendChild(a);
+                indexList.appendChild(li);
+            }
+        });
+
+        function showSlide(n) {
+            if (n >= totalSlides) n = 0;
+            if (n < 0) n = totalSlides - 1;
+            
+            slides[currentSlide].classList.remove('active');
+            currentSlide = n;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            // Actualizar botones
+            document.querySelector('.nav-btn:first-child').disabled = currentSlide === 0;
+            document.querySelector('.nav-btn:last-child').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function goToSlide(n) {
+            showSlide(n);
+        }
+
+        function toggleIndex() {
+            document.getElementById('indexPanel').classList.toggle('active');
+        }
+
+        // Navegación con teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            } else if (e.key === 'n' || e.key === 'N') {
+                e.preventDefault();
+                const notes = slides[currentSlide].querySelector('.notes');
+                if (notes) {
+                    notes.classList.toggle('active');
+                }
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                goToSlide(0);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                goToSlide(totalSlides - 1);
+            }
+        });
+
+        // Inicializar
+        showSlide(0);
+    </script>
+</body>
+</html>
+

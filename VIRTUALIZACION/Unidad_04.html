@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 04 - Virtualización en la Nube</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; overflow: hidden; }
+        .presentation-container { width: 100vw; height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; }
+        .slide { display: none; width: 90vw; max-width: 1280px; height: 72vh; max-height: 720px; background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 60px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); overflow-y: auto; position: relative; }
+        .slide.active { display: block; }
+        .slide h1 { font-size: 3.5em; color: #4CAF50; margin-bottom: 30px; text-align: center; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+        .slide h2 { font-size: 2.5em; color: #64B5F6; margin: 30px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        .slide h3 { font-size: 1.8em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .slide p, .slide li { font-size: 1.3em; line-height: 1.8; margin: 15px 0; }
+        .slide ul, .slide ol { margin-left: 40px; margin-top: 15px; }
+        .slide code { background: #1a1a1a; padding: 3px 8px; border-radius: 4px; font-family: 'Consolas', 'Monaco', monospace; color: #CE9178; font-size: 0.9em; }
+        .slide pre { background: #1a1a1a; border: 2px solid #4CAF50; border-radius: 8px; padding: 20px; margin: 20px 0; overflow-x: auto; box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3); }
+        .slide pre code { color: #D4D4D4; font-size: 1.1em; line-height: 1.6; display: block; background: none; padding: 0; }
+        .cover-slide { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .cover-slide h1 { font-size: 4em; margin-bottom: 40px; }
+        .cover-slide .subtitle { font-size: 2.5em; color: #64B5F6; margin: 20px 0; }
+        .cover-slide .code { font-size: 1.8em; color: #FFB74D; margin-top: 30px; }
+        .navigation { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 1000; }
+        .nav-btn { background: #4CAF50; color: white; border: none; padding: 15px 30px; font-size: 1.2em; border-radius: 8px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); }
+        .nav-btn:hover { background: #45a049; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5); }
+        .nav-btn:disabled { background: #555; cursor: not-allowed; transform: none; }
+        .slide-counter { position: fixed; top: 30px; right: 30px; background: rgba(0, 0, 0, 0.7); padding: 10px 20px; border-radius: 8px; font-size: 1.1em; z-index: 1000; }
+        .index-btn { position: fixed; top: 30px; left: 30px; background: #64B5F6; color: white; border: none; padding: 15px 25px; font-size: 1.1em; border-radius: 8px; cursor: pointer; z-index: 1000; transition: all 0.3s; }
+        .index-btn:hover { background: #42A5F5; transform: translateY(-2px); }
+        .index-panel { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.95); z-index: 2000; padding: 60px; overflow-y: auto; }
+        .index-panel.active { display: block; }
+        .index-panel h2 { color: #4CAF50; font-size: 2.5em; margin-bottom: 30px; text-align: center; }
+        .index-panel ul { list-style: none; max-width: 800px; margin: 0 auto; }
+        .index-panel li { margin: 15px 0; }
+        .index-panel a { color: #64B5F6; text-decoration: none; font-size: 1.4em; display: block; padding: 15px; border-left: 4px solid #64B5F6; transition: all 0.3s; }
+        .index-panel a:hover { background: rgba(100, 181, 246, 0.1); padding-left: 25px; }
+        .close-index { position: absolute; top: 30px; right: 30px; background: #f44336; color: white; border: none; padding: 15px 25px; font-size: 1.2em; border-radius: 8px; cursor: pointer; }
+        .notes { display: none; background: rgba(255, 193, 7, 0.2); border-left: 4px solid #FFC107; padding: 15px; margin-top: 20px; border-radius: 4px; }
+        .notes.visible { display: block; }
+        .notes-title { color: #FFC107; font-weight: bold; margin-bottom: 10px; }
+        .highlight-box { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .practice-box { background: rgba(100, 181, 246, 0.1); border: 2px solid #64B5F6; padding: 25px; margin: 25px 0; border-radius: 8px; }
+        .practice-box h3 { color: #64B5F6; margin-top: 0; }
+        .quiz-question { background: rgba(255, 183, 77, 0.1); border-left: 4px solid #FFB74D; padding: 20px; margin: 20px 0; border-radius: 4px; }
+        .quiz-answer { background: rgba(76, 175, 80, 0.2); border-left: 4px solid #4CAF50; padding: 15px; margin: 10px 0; border-radius: 4px; }
+        .diagram-box { background: rgba(156, 39, 176, 0.1); border: 2px solid #9C27B0; padding: 25px; margin: 25px 0; border-radius: 8px; text-align: center; }
+        @media (max-width: 768px) { .slide { width: 95vw; height: 80vh; padding: 30px; } .slide h1 { font-size: 2em; } .slide h2 { font-size: 1.5em; } .slide p, .slide li { font-size: 1em; } }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <section class="slide active cover-slide">
+            <h1>Virtualización de Aplicaciones</h1>
+            <div class="subtitle">Unidad 04: Virtualización en la Nube</div>
+            <aside class="notes"><div class="notes-title">Notas del Presentador:</div>Esta unidad explora cómo la virtualización es la base del cloud computing. Los estudiantes aprenderán sobre IaaS, PaaS, SaaS y los principales proveedores de nube.</aside>
+        </section>
+
+        <section class="slide">
+            <h2>Competencias y Resultados de Aprendizaje</h2>
+            <h3>Resultados de Aprendizaje:</h3>
+            <ul>
+                <li>Comprender el modelo de servicio en la nube (IaaS, PaaS, SaaS)</li>
+                <li>Conocer los principales proveedores de nube (AWS, Azure, GCP)</li>
+                <li>Entender cómo la virtualización habilita el cloud computing</li>
+                <li>Analizar servicios de virtualización en la nube</li>
+                <li>Evaluar cuándo usar cloud vs. on-premise</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Agenda de la Unidad</h2>
+            <ol style="font-size: 1.4em; line-height: 2;">
+                <li>Cloud Computing: Introducción</li>
+                <li>Modelos de servicio: IaaS, PaaS, SaaS</li>
+                <li>Virtualización como base del cloud</li>
+                <li>Amazon Web Services (AWS)</li>
+                <li>Microsoft Azure</li>
+                <li>Google Cloud Platform (GCP)</li>
+                <li>Comparación de proveedores</li>
+                <li>Casos de uso en la nube</li>
+                <li>Práctica guiada</li>
+                <li>Resumen y evaluación</li>
+            </ol>
+            <aside class="notes"><div class="notes-title">Notas del Presentador:</div>Duración: 4 horas. Teoría (2.5h), Práctica (1h), Evaluación (0.5h).</aside>
+        </section>
+
+        <section class="slide">
+            <h2>Cloud Computing: Introducción</h2>
+            <div class="highlight-box">
+                <p><strong>Definición:</strong> Cloud Computing es la entrega de servicios informáticos (servidores, almacenamiento, bases de datos, redes, software) a través de Internet ("la nube") con un modelo de pago por uso.</p>
+            </div>
+            <h3>Características Esenciales:</h3>
+            <ul>
+                <li><strong>On-demand self-service:</strong> Provisioning automático</li>
+                <li><strong>Broad network access:</strong> Acceso desde cualquier lugar</li>
+                <li><strong>Resource pooling:</strong> Recursos compartidos</li>
+                <li><strong>Rapid elasticity:</strong> Escalado rápido</li>
+                <li><strong>Measured service:</strong> Pago por uso</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Base Tecnológica:</strong> La virtualización es fundamental para el cloud computing, permitiendo la abstracción y el pooling de recursos.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Modelos de Servicio en la Nube</h2>
+            <h3>IaaS (Infrastructure as a Service):</h3>
+            <ul>
+                <li>Provee infraestructura virtualizada (VMs, almacenamiento, redes)</li>
+                <li>Control sobre OS, aplicaciones y datos</li>
+                <li><strong>Ejemplos:</strong> AWS EC2, Azure Virtual Machines, Google Compute Engine</li>
+            </ul>
+            <h3>PaaS (Platform as a Service):</h3>
+            <ul>
+                <li>Provee plataforma de desarrollo y despliegue</li>
+                <li>Gestiona infraestructura, desarrollador gestiona aplicaciones</li>
+                <li><strong>Ejemplos:</strong> AWS Elastic Beanstalk, Azure App Service, Google App Engine</li>
+            </ul>
+            <h3>SaaS (Software as a Service):</h3>
+            <ul>
+                <li>Aplicaciones completas accesibles vía web</li>
+                <li>Proveedor gestiona todo</li>
+                <li><strong>Ejemplos:</strong> Office 365, Salesforce, Gmail</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Virtualización como Base del Cloud</h2>
+            <h3>¿Cómo habilita la virtualización el cloud?</h3>
+            <ul>
+                <li><strong>Abstracción de recursos:</strong> Recursos físicos se convierten en virtuales</li>
+                <li><strong>Multi-tenancy:</strong> Múltiples clientes comparten la misma infraestructura</li>
+                <li><strong>Escalabilidad:</strong> Crear/destruir recursos según demanda</li>
+                <li><strong>Eficiencia:</strong> Mejor utilización de recursos físicos</li>
+                <li><strong>Aislamiento:</strong> Cada cliente tiene su propio entorno virtual</li>
+            </ul>
+            <div class="diagram-box">
+                <h3>Arquitectura Cloud:</h3>
+                <pre style="text-align: left; background: transparent; border: none;">
+Centro de Datos Físico
+├── Hipervisores (Virtualización)
+    ├── Tenant 1 (VMs/Contenedores)
+    ├── Tenant 2 (VMs/Contenedores)
+    └── Tenant 3 (VMs/Contenedores)
+                </pre>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Amazon Web Services (AWS)</h2>
+            <h3>Servicios de Virtualización:</h3>
+            <ul>
+                <li><strong>EC2 (Elastic Compute Cloud):</strong> Máquinas virtuales en la nube</li>
+                <li><strong>ECS (Elastic Container Service):</strong> Contenedores Docker</li>
+                <li><strong>EKS (Elastic Kubernetes Service):</strong> Kubernetes gestionado</li>
+                <li><strong>Lambda:</strong> Serverless (sin servidores)</li>
+                <li><strong>Lightsail:</strong> VPS simplificado</li>
+            </ul>
+            <h3>Características:</h3>
+            <ul>
+                <li>Mayor cuota de mercado (32%)</li>
+                <li>Amplia gama de servicios</li>
+                <li>Presencia global (múltiples regiones)</li>
+                <li>Modelo de precios flexible</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Uso típico:</strong> Empresas de todos los tamaños, startups, aplicaciones enterprise.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Microsoft Azure</h2>
+            <h3>Servicios de Virtualización:</h3>
+            <ul>
+                <li><strong>Virtual Machines:</strong> VMs Windows y Linux</li>
+                <li><strong>Container Instances:</strong> Contenedores sin servidor</li>
+                <li><strong>Azure Kubernetes Service (AKS):</strong> Kubernetes gestionado</li>
+                <li><strong>App Service:</strong> Plataforma para aplicaciones web</li>
+                <li><strong>Functions:</strong> Serverless computing</li>
+            </ul>
+            <h3>Características:</h3>
+            <ul>
+                <li>Integración con ecosistema Microsoft</li>
+                <li>Hybrid Cloud (conexión con on-premise)</li>
+                <li>Seguridad empresarial</li>
+                <li>Segunda mayor cuota de mercado (20%)</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Uso típico:</strong> Empresas que usan Microsoft, organizaciones gubernamentales, entornos híbridos.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Google Cloud Platform (GCP)</h2>
+            <h3>Servicios de Virtualización:</h3>
+            <ul>
+                <li><strong>Compute Engine:</strong> VMs en la nube</li>
+                <li><strong>Cloud Run:</strong> Contenedores serverless</li>
+                <li><strong>Google Kubernetes Engine (GKE):</strong> Kubernetes (creado por Google)</li>
+                <li><strong>App Engine:</strong> Plataforma PaaS</li>
+                <li><strong>Cloud Functions:</strong> Serverless</li>
+            </ul>
+            <h3>Características:</h3>
+            <ul>
+                <li>Fortaleza en big data y ML/AI</li>
+                <li>Excelente rendimiento de red</li>
+                <li>Precios competitivos</li>
+                <li>Tercera mayor cuota de mercado (9%)</li>
+            </ul>
+            <div class="highlight-box">
+                <strong>Uso típico:</strong> Aplicaciones que requieren big data, ML, análisis, startups tecnológicas.
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Comparación de Proveedores Cloud</h2>
+            <div class="highlight-box">
+                <h3>AWS vs. Azure vs. GCP:</h3>
+                <ul>
+                    <li><strong>Cuota de mercado:</strong> AWS (32%) > Azure (20%) > GCP (9%)</li>
+                    <li><strong>Fortalezas:</strong>
+                        <ul>
+                            <li>AWS: Amplia gama de servicios, madurez</li>
+                            <li>Azure: Integración Microsoft, hybrid cloud</li>
+                            <li>GCP: Big data, ML, Kubernetes</li>
+                        </ul>
+                    </li>
+                    <li><strong>Precios:</strong> Varían según uso, GCP generalmente más económico</li>
+                    <li><strong>Casos de uso:</strong> Cada uno tiene sus fortalezas específicas</li>
+                </ul>
+            </div>
+            <div class="highlight-box">
+                <h3>Elegir Proveedor:</h3>
+                <p>Depende de: ecosistema existente, requisitos técnicos, presupuesto, ubicación geográfica, compliance y certificaciones necesarias.</p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Servicios de Virtualización en la Nube</h2>
+            <h3>Máquinas Virtuales (IaaS):</h3>
+            <ul>
+                <li>AWS EC2, Azure VMs, GCP Compute Engine</li>
+                <li>Control total sobre el OS y aplicaciones</li>
+                <li>Ideal para: aplicaciones legacy, workloads específicos</li>
+            </ul>
+            <h3>Contenedores (CaaS - Containers as a Service):</h3>
+            <ul>
+                <li>AWS ECS/EKS, Azure AKS, GCP GKE</li>
+                <li>Gestión de contenedores y orquestación</li>
+                <li>Ideal para: microservicios, aplicaciones modernas</li>
+            </ul>
+            <h3>Serverless (FaaS - Functions as a Service):</h3>
+            <ul>
+                <li>AWS Lambda, Azure Functions, GCP Cloud Functions</li>
+                <li>Ejecución sin gestionar servidores</li>
+                <li>Ideal para: procesamiento de eventos, APIs, tareas esporádicas</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <h2>Casos de Uso en la Nube</h2>
+            <h3>1. Escalado Elástico:</h3>
+            <p>Aplicaciones que necesitan escalar según demanda (e-commerce en temporadas).</p>
+            <h3>2. Disaster Recovery:</h3>
+            <p>Replicar infraestructura en la nube para recuperación ante desastres.</p>
+            <h3>3. Desarrollo y Pruebas:</h3>
+            <p>Crear entornos temporales para testing sin inversión en hardware.</p>
+            <h3>4. Aplicaciones Globales:</h3>
+            <p>Desplegar en múltiples regiones para baja latencia mundial.</p>
+            <h3>5. Big Data y Analytics:</h3>
+            <p>Procesar grandes volúmenes de datos usando servicios gestionados.</p>
+            <h3>6. Backup y Almacenamiento:</h3>
+            <p>Almacenamiento escalable y duradero en la nube.</p>
+        </section>
+
+        <section class="slide">
+            <h2>Ventajas y Desventajas del Cloud</h2>
+            <h3>Ventajas:</h3>
+            <ul>
+                <li><strong>Costos:</strong> Pago por uso, sin inversión inicial</li>
+                <li><strong>Escalabilidad:</strong> Escalar según necesidad</li>
+                <li><strong>Flexibilidad:</strong> Acceso desde cualquier lugar</li>
+                <li><strong>Mantenimiento:</strong> Proveedor gestiona infraestructura</li>
+                <li><strong>Innovación:</strong> Acceso a tecnologías de vanguardia</li>
+            </ul>
+            <h3>Desventajas:</h3>
+            <ul>
+                <li><strong>Dependencia:</strong> Dependencia del proveedor</li>
+                <li><strong>Seguridad:</strong> Datos fuera del control directo</li>
+                <li><strong>Costos ocultos:</strong> Pueden acumularse con el tiempo</li>
+                <li><strong>Latencia:</strong> Depende de conexión a Internet</li>
+                <li><strong>Compliance:</strong> Regulaciones de datos por región</li>
+            </ul>
+        </section>
+
+        <section class="slide">
+            <div class="practice-box">
+                <h2>Práctica Guiada #4: Explorar Cloud Providers</h2>
+                <h3>Objetivo:</h3>
+                <p>Familiarizarse con los principales proveedores de nube y sus servicios.</p>
+                
+                <h3>Actividad:</h3>
+                <ol>
+                    <li>Visitar sitios web de AWS, Azure y GCP</li>
+                    <li>Explorar sus servicios de virtualización (EC2, VMs, Compute Engine)</li>
+                    <li>Revisar calculadoras de precios</li>
+                    <li>Comparar características de instancias básicas</li>
+                    <li>Crear cuenta gratuita (si es posible) en uno de los proveedores</li>
+                    <li>Documentar hallazgos y crear tabla comparativa</li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Mini-Quiz</h2>
+            <div class="quiz-question">
+                <h3>Pregunta 1:</h3>
+                <p>¿Cuál es la diferencia entre IaaS, PaaS y SaaS?</p>
+                <div class="quiz-answer">
+                    <strong>Respuesta:</strong> IaaS provee infraestructura (VMs), PaaS provee plataforma de desarrollo, SaaS provee aplicaciones completas. El nivel de gestión aumenta de IaaS a SaaS.
+                </div>
+            </div>
+            <div class="quiz-question">
+                <h3>Pregunta 2:</h3>
+                <p>¿Por qué la virtualización es fundamental para el cloud computing?</p>
+                <div class="quiz-answer">
+                    <strong>Respuesta:</strong> Permite abstraer recursos físicos, crear multi-tenancy, escalar rápidamente y optimizar el uso de recursos físicos.
+                </div>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Resumen de la Unidad</h2>
+            <h3>Puntos Clave:</h3>
+            <ul>
+                <li>Cloud computing: entrega de servicios a través de Internet</li>
+                <li>Modelos: IaaS (infraestructura), PaaS (plataforma), SaaS (software)</li>
+                <li>Virtualización habilita el cloud: abstracción, multi-tenancy, escalabilidad</li>
+                <li>Principales proveedores: AWS, Azure, GCP</li>
+                <li>Servicios: VMs, contenedores, serverless</li>
+                <li>Ventajas: costos, escalabilidad, flexibilidad</li>
+                <li>Desventajas: dependencia, seguridad, costos ocultos</li>
+            </ul>
+            <div class="highlight-box">
+                <h3>Conexión con la Siguiente Unidad:</h3>
+                <p>En la Unidad 5 exploraremos la gestión y seguridad en entornos virtualizados, aspectos críticos para operar infraestructura virtualizada tanto on-premise como en la nube.</p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Tarea para Casa</h2>
+            <div class="practice-box">
+                <h3>Actividades:</h3>
+                <ol>
+                    <li><strong>Investigación (40 puntos):</strong> Profundizar en un proveedor cloud (AWS, Azure o GCP). Documentar servicios principales, precios, casos de uso. 3-4 páginas.</li>
+                    <li><strong>Comparación (40 puntos):</strong> Crear tabla comparativa de AWS EC2 vs. Azure VMs vs. GCP Compute Engine. Incluir: precios, características, casos de uso.</li>
+                    <li><strong>Análisis (20 puntos):</strong> Seleccionar un caso de uso empresarial y recomendar si usar cloud o on-premise, justificando la decisión.</li>
+                </ol>
+                <h3>Entregables:</h3>
+                <p>Documento Word/PDF con portada, formato Arial 12.</p>
+            </div>
+        </section>
+
+        <section class="slide">
+            <h2>Recursos Adicionales</h2>
+            <div class="highlight-box">
+                <h3>📚 Material Complementario</h3>
+                <p>Visita nuestra página de recursos para:</p>
+                <ul>
+                    <li>Documentación oficial de AWS, Azure, GCP</li>
+                    <li>Calculadoras de precios</li>
+                    <li>Casos de estudio de migración a la nube</li>
+                    <li>Guías de mejores prácticas</li>
+                </ul>
+                <p style="margin-top: 20px; text-align: center;">
+                    <a href="Unidad_04_Recursos.html" style="background: #64B5F6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-size: 1.2em;">Ver Recursos Adicionales →</a>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <button class="index-btn" onclick="toggleIndex()">Índice</button>
+    <div class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">17</span></div>
+    <div style="position: fixed; bottom: 100px; right: 30px; z-index: 1000;">
+        <a href="Unidad_03.html" style="background: #64B5F6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-size: 0.9em; margin-right: 10px;">← Unidad 03</a>
+        <a href="Unidad_05.html" style="background: #64B5F6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-size: 0.9em;">Unidad 05 →</a>
+    </div>
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+    </div>
+    <div class="index-panel" id="indexPanel">
+        <button class="close-index" onclick="toggleIndex()">✕ Cerrar</button>
+        <h2>Índice de Contenidos</h2>
+        <ul id="indexList"></ul>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let notesVisible = false;
+        document.getElementById('total-slides').textContent = totalSlides;
+        function showSlide(n) { slides[currentSlide].classList.remove('active'); currentSlide = (n + totalSlides) % totalSlides; slides[currentSlide].classList.add('active'); updateCounter(); updateNavigation(); }
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function previousSlide() { showSlide(currentSlide - 1); }
+        function updateCounter() { document.getElementById('current-slide').textContent = currentSlide + 1; }
+        function updateNavigation() { const prevBtn = document.querySelector('.nav-btn:first-child'); const nextBtn = document.querySelector('.nav-btn:last-child'); prevBtn.disabled = currentSlide === 0; nextBtn.disabled = currentSlide === totalSlides - 1; }
+        function toggleIndex() { const panel = document.getElementById('indexPanel'); panel.classList.toggle('active'); if (panel.classList.contains('active')) { buildIndex(); } }
+        function buildIndex() { const indexList = document.getElementById('indexList'); indexList.innerHTML = ''; slides.forEach((slide, index) => { const title = slide.querySelector('h1, h2')?.textContent || `Diapositiva ${index + 1}`; const li = document.createElement('li'); const a = document.createElement('a'); a.href = '#'; a.textContent = title; a.onclick = (e) => { e.preventDefault(); showSlide(index); toggleIndex(); }; li.appendChild(a); indexList.appendChild(li); }); }
+        function toggleNotes() { notesVisible = !notesVisible; const notes = document.querySelectorAll('.notes'); notes.forEach(note => { if (notesVisible) { note.classList.add('visible'); } else { note.classList.remove('visible'); } }); }
+        document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); } else if (e.key === 'ArrowLeft') { e.preventDefault(); previousSlide(); } else if (e.key === 'PageDown') { e.preventDefault(); nextSlide(); } else if (e.key === 'PageUp') { e.preventDefault(); previousSlide(); } else if (e.key === 'n' || e.key === 'N') { toggleNotes(); } });
+        updateNavigation();
+        buildIndex();
+    </script>
+</body>
+</html>
+
