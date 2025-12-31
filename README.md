@@ -30,8 +30,6 @@ Este repositorio contiene material educativo completo en formato HTML interactiv
 
 ## 📚 Cursos Disponibles
 
-### 🎓 UNICARIBE
-
 #### 1. Desarrollo de Aplicaciones Multiplataforma con .NET MAUI
 
 **Descripción:**
@@ -125,8 +123,6 @@ Curso integral sobre virtualización de aplicaciones, cubriendo desde los concep
 - Unidad 05: [Presentación](VIRTUALIZACION/Unidad_05.html) | [Recursos](VIRTUALIZACION/Unidad_05_Recursos.html)
 
 ---
-
-### 🎓 UTECO
 
 #### 3. Desarrollo de Software I
 
@@ -377,7 +373,7 @@ Este material está destinado para uso educativo. Por favor, respeta los derecho
 
 ## 📧 Contacto
 
-Para preguntas o más información sobre este material educativo, por favor contacta a través de los canales apropiados de la institución correspondiente.
+Para preguntas o más información sobre este material educativo, por favor contacta a través de los canales apropiados.
 
 ---
 
