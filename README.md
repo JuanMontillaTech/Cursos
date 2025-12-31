@@ -68,14 +68,14 @@ Curso completo sobre desarrollo de aplicaciones multiplataforma utilizando .NET 
    - Acceso a funcionalidades nativas
    - Publicación de aplicaciones
 
-**📁 Ubicación:** [`UNICARIBE/TALLERPROGRAMACION/`](UNICARIBE/TALLERPROGRAMACION/)
+**📁 Ubicación:** [`TALLERPROGRAMACION/`](TALLERPROGRAMACION/)
 
 **📄 Archivos:**
-- Unidad 01: [Presentación](UNICARIBE/TALLERPROGRAMACION/Unidad_01.html) | [Recursos](UNICARIBE/TALLERPROGRAMACION/Unidad_01_Recursos.html)
-- Unidad 02: [Presentación](UNICARIBE/TALLERPROGRAMACION/Unidad_02.html) | [Recursos](UNICARIBE/TALLERPROGRAMACION/Unidad_02_Recursos.html)
-- Unidad 03: [Presentación](UNICARIBE/TALLERPROGRAMACION/Unidad_03.html) | [Recursos](UNICARIBE/TALLERPROGRAMACION/Unidad_03_Recursos.html)
-- Unidad 04: [Presentación](UNICARIBE/TALLERPROGRAMACION/Unidad_04.html) | [Recursos](UNICARIBE/TALLERPROGRAMACION/Unidad_04_Recursos.html)
-- Unidad 05: [Presentación](UNICARIBE/TALLERPROGRAMACION/Unidad_05.html) | [Recursos](UNICARIBE/TALLERPROGRAMACION/Unidad_05_Recursos.html)
+- Unidad 01: [Presentación](TALLERPROGRAMACION/Unidad_01.html) | [Recursos](TALLERPROGRAMACION/Unidad_01_Recursos.html)
+- Unidad 02: [Presentación](TALLERPROGRAMACION/Unidad_02.html) | [Recursos](TALLERPROGRAMACION/Unidad_02_Recursos.html)
+- Unidad 03: [Presentación](TALLERPROGRAMACION/Unidad_03.html) | [Recursos](TALLERPROGRAMACION/Unidad_03_Recursos.html)
+- Unidad 04: [Presentación](TALLERPROGRAMACION/Unidad_04.html) | [Recursos](TALLERPROGRAMACION/Unidad_04_Recursos.html)
+- Unidad 05: [Presentación](TALLERPROGRAMACION/Unidad_05.html) | [Recursos](TALLERPROGRAMACION/Unidad_05_Recursos.html)
 
 ---
 
@@ -115,14 +115,14 @@ Curso integral sobre virtualización de aplicaciones, cubriendo desde los concep
    - Seguridad en virtualización
    - Mejores prácticas
 
-**📁 Ubicación:** [`UNICARIBE/VIRTUALIZACION/`](UNICARIBE/VIRTUALIZACION/)
+**📁 Ubicación:** [`VIRTUALIZACION/`](VIRTUALIZACION/)
 
 **📄 Archivos:**
-- Unidad 01: [Presentación](UNICARIBE/VIRTUALIZACION/Unidad_01.html) | [Recursos](UNICARIBE/VIRTUALIZACION/Unidad_01_Recursos.html)
-- Unidad 02: [Presentación](UNICARIBE/VIRTUALIZACION/Unidad_02.html) | [Recursos](UNICARIBE/VIRTUALIZACION/Unidad_02_Recursos.html)
-- Unidad 03: [Presentación](UNICARIBE/VIRTUALIZACION/Unidad_03.html) | [Recursos](UNICARIBE/VIRTUALIZACION/Unidad_03_Recursos.html)
-- Unidad 04: [Presentación](UNICARIBE/VIRTUALIZACION/Unidad_04.html) | [Recursos](UNICARIBE/VIRTUALIZACION/Unidad_04_Recursos.html)
-- Unidad 05: [Presentación](UNICARIBE/VIRTUALIZACION/Unidad_05.html) | [Recursos](UNICARIBE/VIRTUALIZACION/Unidad_05_Recursos.html)
+- Unidad 01: [Presentación](VIRTUALIZACION/Unidad_01.html) | [Recursos](VIRTUALIZACION/Unidad_01_Recursos.html)
+- Unidad 02: [Presentación](VIRTUALIZACION/Unidad_02.html) | [Recursos](VIRTUALIZACION/Unidad_02_Recursos.html)
+- Unidad 03: [Presentación](VIRTUALIZACION/Unidad_03.html) | [Recursos](VIRTUALIZACION/Unidad_03_Recursos.html)
+- Unidad 04: [Presentación](VIRTUALIZACION/Unidad_04.html) | [Recursos](VIRTUALIZACION/Unidad_04_Recursos.html)
+- Unidad 05: [Presentación](VIRTUALIZACION/Unidad_05.html) | [Recursos](VIRTUALIZACION/Unidad_05_Recursos.html)
 
 ---
 
@@ -176,17 +176,17 @@ Curso fundamental de programación utilizando el lenguaje C#. Los estudiantes ap
    - Integración de conocimientos
    - Desarrollo de proyecto completo
 
-**📁 Ubicación:** [`UTECO/Desarrollo1/`](UTECO/Desarrollo1/)
+**📁 Ubicación:** [`DESARROLLOSOFTWARE1/`](DESARROLLOSOFTWARE1/)
 
 **📄 Archivos:**
-- Unidad 01: [Presentación](UTECO/Desarrollo1/Unidad_01.html)
-- Unidad 02: [Presentación](UTECO/Desarrollo1/Unidad_02.html)
-- Unidad 03: [Presentación](UTECO/Desarrollo1/Unidad_03.html)
-- Unidad 04: [Presentación](UTECO/Desarrollo1/Unidad_04.html)
-- Unidad 05: [Presentación](UTECO/Desarrollo1/Unidad_05.html)
-- Unidad 06: [Presentación](UTECO/Desarrollo1/Unidad_06.html)
-- Unidad 07: [Presentación](UTECO/Desarrollo1/Unidad_07.html)
-- Unidad 08: [Presentación](UTECO/Desarrollo1/Unidad_08.html)
+- Unidad 01: [Presentación](DESARROLLOSOFTWARE1/Unidad_01.html)
+- Unidad 02: [Presentación](DESARROLLOSOFTWARE1/Unidad_02.html)
+- Unidad 03: [Presentación](DESARROLLOSOFTWARE1/Unidad_03.html)
+- Unidad 04: [Presentación](DESARROLLOSOFTWARE1/Unidad_04.html)
+- Unidad 05: [Presentación](DESARROLLOSOFTWARE1/Unidad_05.html)
+- Unidad 06: [Presentación](DESARROLLOSOFTWARE1/Unidad_06.html)
+- Unidad 07: [Presentación](DESARROLLOSOFTWARE1/Unidad_07.html)
+- Unidad 08: [Presentación](DESARROLLOSOFTWARE1/Unidad_08.html)
 
 ---
 
@@ -229,15 +229,15 @@ Curso especializado en Test-Driven Development (TDD), una metodología de desarr
    - Pruebas de integración
    - TDD en arquitecturas complejas
 
-**📁 Ubicación:** [`UTECO/TDD/`](UTECO/TDD/)
+**📁 Ubicación:** [`TDD/`](TDD/)
 
 **📄 Archivos:**
-- Unidad 01: [Presentación](UTECO/TDD/Unidad_01.html)
-- Unidad 02: [Presentación](UTECO/TDD/Unidad_02.html)
-- Unidad 03: [Presentación](UTECO/TDD/Unidad_03.html)
-- Unidad 04: [Presentación](UTECO/TDD/Unidad_04.html)
-- Unidad 05: [Presentación](UTECO/TDD/Unidad_05.html)
-- Unidad 06: [Presentación](UTECO/TDD/Unidad_06.html)
+- Unidad 01: [Presentación](TDD/Unidad_01.html)
+- Unidad 02: [Presentación](TDD/Unidad_02.html)
+- Unidad 03: [Presentación](TDD/Unidad_03.html)
+- Unidad 04: [Presentación](TDD/Unidad_04.html)
+- Unidad 05: [Presentación](TDD/Unidad_05.html)
+- Unidad 06: [Presentación](TDD/Unidad_06.html)
 
 ---
 
@@ -275,14 +275,14 @@ Curso completo sobre Unified Modeling Language (UML), el estándar internacional
    - Relaciones entre clases
    - Herencia y polimorfismo en UML
 
-**📁 Ubicación:** [`UTECO/UML/`](UTECO/UML/)
+**📁 Ubicación:** [`UML/`](UML/)
 
 **📄 Archivos:**
-- Unidad 01: [Presentación](UTECO/UML/Unidad_01.html) | [Recursos](UTECO/UML/Unidad_01_Recursos.html)
-- Unidad 02: [Presentación](UTECO/UML/Unidad_02.html) | [Recursos](UTECO/UML/Unidad_02_Recursos.html)
-- Unidad 03: [Presentación](UTECO/UML/Unidad_03.html) | [Recursos](UTECO/UML/Unidad_03_Recursos.html)
-- Unidad 04: [Presentación](UTECO/UML/Unidad_04.html) | [Recursos](UTECO/UML/Unidad_04_Recursos.html)
-- Unidad 05: [Presentación](UTECO/UML/Unidad_05.html) | [Recursos](UTECO/UML/Unidad_05_Recursos.html)
+- Unidad 01: [Presentación](UML/Unidad_01.html) | [Recursos](UML/Unidad_01_Recursos.html)
+- Unidad 02: [Presentación](UML/Unidad_02.html) | [Recursos](UML/Unidad_02_Recursos.html)
+- Unidad 03: [Presentación](UML/Unidad_03.html) | [Recursos](UML/Unidad_03_Recursos.html)
+- Unidad 04: [Presentación](UML/Unidad_04.html) | [Recursos](UML/Unidad_04_Recursos.html)
+- Unidad 05: [Presentación](UML/Unidad_05.html) | [Recursos](UML/Unidad_05_Recursos.html)
 
 ---
 
@@ -292,37 +292,33 @@ Curso completo sobre Unified Modeling Language (UML), el estándar internacional
 Cursos/
 │
 ├── README.md                          # Este archivo
-├── PROMPT_NET_MAUI_BASICO.md         # Prompt para generación de material
-├── PROMPT_PARA_FUTUROS_TRABAJOS.md   # Plantilla para futuros cursos
 │
-├── UNICARIBE/
-│   ├── TALLERPROGRAMACION/           # Curso .NET MAUI
-│   │   ├── Unidad_01.html
-│   │   ├── Unidad_01_Recursos.html
-│   │   ├── Unidad_02.html
-│   │   ├── Unidad_02_Recursos.html
-│   │   └── ...
-│   │
-│   └── VIRTUALIZACION/               # Curso Virtualización
-│       ├── Unidad_01.html
-│       ├── Unidad_01_Recursos.html
-│       └── ...
+├── TALLERPROGRAMACION/               # Curso .NET MAUI
+│   ├── Unidad_01.html
+│   ├── Unidad_01_Recursos.html
+│   ├── Unidad_02.html
+│   ├── Unidad_02_Recursos.html
+│   └── ...
 │
-└── UTECO/
-    ├── Desarrollo1/                  # Curso Desarrollo de Software I
-    │   ├── Unidad_01.html
-    │   ├── Unidad_02.html
-    │   └── ...
-    │
-    ├── TDD/                          # Curso TDD
-    │   ├── Unidad_01.html
-    │   ├── Unidad_02.html
-    │   └── ...
-    │
-    └── UML/                          # Curso UML
-        ├── Unidad_01.html
-        ├── Unidad_01_Recursos.html
-        └── ...
+├── VIRTUALIZACION/                   # Curso Virtualización
+│   ├── Unidad_01.html
+│   ├── Unidad_01_Recursos.html
+│   └── ...
+│
+├── DESARROLLOSOFTWARE1/              # Curso Desarrollo de Software I
+│   ├── Unidad_01.html
+│   ├── Unidad_02.html
+│   └── ...
+│
+├── TDD/                              # Curso TDD
+│   ├── Unidad_01.html
+│   ├── Unidad_02.html
+│   └── ...
+│
+└── UML/                              # Curso UML
+    ├── Unidad_01.html
+    ├── Unidad_01_Recursos.html
+    └── ...
 ```
 
 ---
