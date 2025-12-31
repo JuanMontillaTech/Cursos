@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 06 - Recursos Adicionales</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        h1 { font-size: 3em; color: #4CAF50; margin-bottom: 20px; text-align: center; }
+        h2 { font-size: 2.2em; color: #64B5F6; margin: 40px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        h3 { font-size: 1.6em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .back-link { display: inline-block; background: #64B5F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-bottom: 30px; transition: all 0.3s; }
+        .back-link:hover { background: #42A5F5; transform: translateY(-2px); }
+        .resource-section { background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 30px; margin: 25px 0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+        .resource-item { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 15px 0; border-radius: 8px; transition: all 0.3s; }
+        .resource-item:hover { background: rgba(76, 175, 80, 0.2); transform: translateX(5px); }
+        .resource-item a { color: #64B5F6; text-decoration: none; font-size: 1.2em; font-weight: bold; }
+        .resource-item a:hover { color: #42A5F5; text-decoration: underline; }
+        .resource-item p { margin-top: 10px; color: #b0b0b0; font-size: 1em; line-height: 1.6; }
+        .badge { display: inline-block; background: #9C27B0; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; margin-left: 10px; }
+        .badge.video { background: #f44336; }
+        .badge.doc { background: #2196F3; }
+        ul { margin-left: 30px; margin-top: 15px; }
+        li { margin: 10px 0; font-size: 1.1em; line-height: 1.8; }
+        .highlight-box { background: rgba(255, 193, 7, 0.1); border-left: 4px solid #FFC107; padding: 20px; margin: 20px 0; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="Unidad_06.html" class="back-link">← Volver a Unidad 06</a>
+        
+        <h1>Recursos Adicionales - Unidad 06</h1>
+        <p style="text-align: center; font-size: 1.2em; color: #b0b0b0; margin-bottom: 40px;">
+            Técnicas Avanzadas en TDD - Enlaces, videos y material complementario
+        </p>
+
+        <div class="resource-section">
+            <h2>📚 Documentación Avanzada</h2>
+            
+            <div class="resource-item">
+                <a href="https://martinfowler.com/articles/mocksArentStubs.html" target="_blank">
+                    Mocks Aren't Stubs - Martin Fowler <span class="badge doc">Artículo</span>
+                </a>
+                <p>Artículo clásico sobre la diferencia entre mocks, stubs y fakes, y cuándo usar cada uno.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.jamesshore.com/v2/blog/2008/testing-without-mocks" target="_blank">
+                    Testing Without Mocks <span class="badge doc">Artículo</span>
+                </a>
+                <p>Estrategias avanzadas para escribir pruebas sin depender excesivamente de mocks.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://kentcdodds.com/blog/avoid-nesting-when-youre-testing" target="_blank">
+                    Avoid Nesting When You're Testing <span class="badge doc">Artículo</span>
+                </a>
+                <p>Mejores prácticas para estructurar pruebas complejas y mantenerlas legibles.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>🎥 Videos Educativos</h2>
+            
+            <div class="resource-item">
+                <a href="https://www.youtube.com/watch?v=qkblc5WRn-U" target="_blank">
+                    Técnicas Avanzadas de TDD <span class="badge video">Video</span>
+                </a>
+                <p>Charla sobre técnicas avanzadas y patrones para aplicar TDD en proyectos complejos.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.youtube.com/watch?v=uGaNkTahrIw" target="_blank">
+                    Mocking y Stubbing en TDD <span class="badge video">Tutorial</span>
+                </a>
+                <p>Tutorial sobre cómo usar mocks y stubs efectivamente en TDD.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>🛠️ Frameworks y Herramientas</h2>
+            
+            <div class="resource-item">
+                <a href="https://github.com/moq/moq4" target="_blank">
+                    Moq - Framework de Mocking <span class="badge doc">Herramienta</span>
+                </a>
+                <p>Framework popular para crear mocks en .NET y C#.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://xunit.net/" target="_blank">
+                    xUnit - Framework de Testing <span class="badge doc">Herramienta</span>
+                </a>
+                <p>Framework moderno de testing para .NET con excelente soporte para TDD.</p>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <h3>💡 Consejo de Estudio</h3>
+            <p>Para dominar técnicas avanzadas: 1) Practica con diferentes frameworks de mocking, 2) Aprende a identificar cuándo usar mocks vs stubs vs fakes, 3) Estudia patrones de diseño que facilitan el testing, 4) Experimenta con pruebas de integración además de unitarias, 5) Lee código de proyectos open source que usen TDD. Las técnicas avanzadas vienen con experiencia práctica.</p>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #333;">
+            <a href="Unidad_05_Recursos.html" class="back-link">← Recursos Unidad 05</a>
+            <a href="Unidad_06.html" class="back-link" style="margin-left: 20px;">← Volver a Unidad 06</a>
+        </div>
+    </div>
+</body>
+</html>
+

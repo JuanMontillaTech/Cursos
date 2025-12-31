@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unidad 01 - Recursos Adicionales</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #e0e0e0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        h1 { font-size: 3em; color: #4CAF50; margin-bottom: 20px; text-align: center; }
+        h2 { font-size: 2.2em; color: #64B5F6; margin: 40px 0 20px 0; border-bottom: 3px solid #64B5F6; padding-bottom: 10px; }
+        h3 { font-size: 1.6em; color: #FFB74D; margin: 25px 0 15px 0; }
+        .back-link { display: inline-block; background: #64B5F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-bottom: 30px; transition: all 0.3s; }
+        .back-link:hover { background: #42A5F5; transform: translateY(-2px); }
+        .resource-section { background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%); border-radius: 12px; padding: 30px; margin: 25px 0; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+        .resource-item { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; padding: 20px; margin: 15px 0; border-radius: 8px; transition: all 0.3s; }
+        .resource-item:hover { background: rgba(76, 175, 80, 0.2); transform: translateX(5px); }
+        .resource-item a { color: #64B5F6; text-decoration: none; font-size: 1.2em; font-weight: bold; }
+        .resource-item a:hover { color: #42A5F5; text-decoration: underline; }
+        .resource-item p { margin-top: 10px; color: #b0b0b0; font-size: 1em; line-height: 1.6; }
+        .badge { display: inline-block; background: #9C27B0; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; margin-left: 10px; }
+        .badge.video { background: #f44336; }
+        .badge.doc { background: #2196F3; }
+        ul { margin-left: 30px; margin-top: 15px; }
+        li { margin: 10px 0; font-size: 1.1em; line-height: 1.8; }
+        .highlight-box { background: rgba(255, 193, 7, 0.1); border-left: 4px solid #FFC107; padding: 20px; margin: 20px 0; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="Unidad_01.html" class="back-link">← Volver a Unidad 01</a>
+        
+        <h1>Recursos Adicionales - Unidad 01</h1>
+        <p style="text-align: center; font-size: 1.2em; color: #b0b0b0; margin-bottom: 40px;">
+            Introducción a TDD - Enlaces, videos y material complementario
+        </p>
+
+        <div class="resource-section">
+            <h2>📚 Documentación y Libros</h2>
+            
+            <div class="resource-item">
+                <a href="https://www.amazon.com/Test-Driven-Development-Kent-Beck/dp/0321146530" target="_blank">
+                    Test-Driven Development: By Example - Kent Beck <span class="badge doc">Libro</span>
+                </a>
+                <p>El libro fundacional de TDD escrito por Kent Beck, el creador de la metodología. Lectura esencial para entender TDD.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://martinfowler.com/articles/is-tdd-dead.html" target="_blank">
+                    Is TDD Dead? - Martin Fowler <span class="badge doc">Artículo</span>
+                </a>
+                <p>Serie de debates sobre TDD con expertos como Kent Beck, David Heinemeier Hansson y Martin Fowler.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.agilealliance.org/glossary/tdd/" target="_blank">
+                    TDD en Agile Alliance <span class="badge doc">Referencia</span>
+                </a>
+                <p>Definición y recursos sobre TDD desde la perspectiva de metodologías ágiles.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>🎥 Videos Educativos</h2>
+            
+            <div class="resource-item">
+                <a href="https://www.youtube.com/watch?v=qkblc5WRn-U" target="_blank">
+                    TDD: Where Did It All Go Wrong? - Ian Cooper <span class="badge video">Video</span>
+                </a>
+                <p>Charla sobre los malentendidos comunes de TDD y cómo aplicarlo correctamente.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://www.youtube.com/watch?v=uGaNkTahrIw" target="_blank">
+                    Test-Driven Development (TDD) Tutorial <span class="badge video">Tutorial</span>
+                </a>
+                <p>Tutorial práctico sobre cómo aplicar TDD en un proyecto real.</p>
+            </div>
+        </div>
+
+        <div class="resource-section">
+            <h2>💡 Artículos Especializados</h2>
+            
+            <div class="resource-item">
+                <a href="https://blog.cleancoder.com/uncle-bob/2014/12/17/TheCyclesOfTDD.html" target="_blank">
+                    The Cycles of TDD - Robert C. Martin <span class="badge doc">Artículo</span>
+                </a>
+                <p>Explicación detallada del ciclo Red-Green-Refactor por "Uncle Bob" Martin.</p>
+            </div>
+
+            <div class="resource-item">
+                <a href="https://kentcdodds.com/blog/common-mistakes-with-react-testing-library" target="_blank">
+                    Common Mistakes with Testing <span class="badge doc">Artículo</span>
+                </a>
+                <p>Errores comunes al escribir pruebas y cómo evitarlos.</p>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <h3>💡 Consejo de Estudio</h3>
+            <p>Para esta unidad introductoria: 1) Lee el libro de Kent Beck sobre TDD para entender los fundamentos, 2) Observa videos de expertos aplicando TDD en proyectos reales, 3) Comprende que TDD es más un enfoque de diseño que solo testing, 4) Practica el ciclo Red-Green-Refactor con ejercicios simples. La mentalidad es tan importante como la técnica.</p>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #333;">
+            <a href="Unidad_01.html" class="back-link">← Volver a Unidad 01</a>
+            <a href="Unidad_02_Recursos.html" class="back-link" style="margin-left: 20px;">Siguiente: Recursos Unidad 02 →</a>
+        </div>
+    </div>
+</body>
+</html>
+
